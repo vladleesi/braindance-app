@@ -49,4 +49,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
     implementation("androidx.compose.foundation:foundation:$composeVersion")
     implementation("androidx.compose.material:material:$composeVersion")
+
+    // Testing
+    testImplementation("junit:junit:4.13.2")
 }
