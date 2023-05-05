@@ -1,7 +1,10 @@
 name: Build, Test and Push
+
 on:
   push:
     branches: [ develop ]
+
+permissions: read-all|write-all
 
 jobs:
   build:
