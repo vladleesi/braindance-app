@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Braindance</string>
+
+    <!-- Bottom bar -->
+    <string name="bottom_bar_home">Home</string>
+    <string name="bottom_bar_collections">Collections</string>
+    <string name="bottom_bar_community">Community</string>
+    <string name="bottom_bar_profile">Profile</string>
+</resources>

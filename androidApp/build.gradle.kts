@@ -50,6 +50,9 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:$composeVersion")
     implementation("androidx.compose.material:material:$composeVersion")
 
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.5.3")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
 }

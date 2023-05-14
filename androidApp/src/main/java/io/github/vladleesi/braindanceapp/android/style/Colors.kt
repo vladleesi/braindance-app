@@ -12,8 +12,9 @@ val secondary = Color(0xFF2F2F2F)
 val secondary_variant = Color(0xFF2D3037)
 val error = Color(0xFFEA5A4A)
 
+// TODO: Needs to check all colors
 val DarkColors = darkColors(
-    primary = white,
+    primary = background,
     secondary = secondary,
     secondaryVariant = secondary_variant,
     background = background,
@@ -21,7 +22,7 @@ val DarkColors = darkColors(
     error = error
 )
 
-// TODO: Need to implement
+// TODO: Needs to implement?
 val LightColors = lightColors(
 
 )
