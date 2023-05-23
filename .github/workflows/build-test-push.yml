@@ -27,20 +27,11 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test
 
-      - name: Start emulator
-        run: |
-          echo "no" | $ANDROID_HOME/emulator/emulator -avd Pixel_4_API_30 -no-audio -no-window &
-
-      - name: Wait for emulator
-        run: adb wait-for-device
-
       - name: Run Android tests
-        run: ./gradlew connectedAndroidTest
-
-      - name: Close emulator
-        run: |
-          adb devices
-          adb -s emulator-5554 emu kill
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          script: ./gradlew connectedAndroidTest
 
       - name: Push to master branch
         if: ${{ success() }}
