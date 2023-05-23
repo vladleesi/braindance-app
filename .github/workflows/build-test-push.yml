@@ -27,8 +27,10 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test
 
-      - name: Install adb
-        uses: android-actions/setup-adb@v2
+      - name: Set up Android SDK
+        uses: android-actions/setup-android-sdk@v2
+        with:
+          sdk-platform: 'platforms;android-29'
 
       - name: Run Android tests
         uses: reactivecircus/android-emulator-runner@v2
