@@ -27,12 +27,20 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test
 
-      - name: Run Android tests
+      - name: Setup Android emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           emulator-build: 7425822
-          script: ./gradlew connectedAndroidTest
+
+      - name: Stop ADB server
+        run: adb kill-server
+
+      - name: Start ADB server
+        run: adb start-server
+
+      - name: Run Android tests
+        run: ./gradlew connectedAndroidTest
 
       - name: Push to master branch
         if: ${{ success() }}
