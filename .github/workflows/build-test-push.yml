@@ -27,32 +27,13 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test
 
-      - name: Set up Android emulator
+      - name: Run Android tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           arch: x86
           profile: Nexus 6
-          script: echo "Generated AVD"
-
-      - name: Stop ADB server
-        run: adb kill-server
-
-      - name: Start ADB server
-        run: adb start-server
-
-      - name: Wait for emulator/device to be ready
-        run: |
-          emulator_wait_counter=0
-          until adb devices | grep -c "device" || [ $emulator_wait_counter -eq 10 ]; do
-            echo "Waiting for emulator/device to be ready..."
-            sleep 5
-            ((emulator_wait_counter++))
-          done
-          adb devices
-
-      - name: Run Android tests
-        run: ./gradlew connectedCheck
+          script: ./gradlew connectedCheck --stacktrace
 
       - name: Push to master branch
         if: ${{ success() }}
