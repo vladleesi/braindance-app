@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,16 +20,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import io.github.vladleesi.braindanceapp.Greeting
 import io.github.vladleesi.braindanceapp.android.components.BottomBar
 import io.github.vladleesi.braindanceapp.android.components.BottomBarItem
 import io.github.vladleesi.braindanceapp.android.components.NavigationGraph
 import io.github.vladleesi.braindanceapp.android.components.TopBar
 import io.github.vladleesi.braindanceapp.android.style.BraindanceTheme
+import io.github.vladleesi.braindanceapp.android.style.Typography
+import io.github.vladleesi.braindanceapp.storage.token.AndroidContextProvider
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidContextProvider.getContext = { applicationContext }
         setContent {
             BraindanceTheme {
                 Surface(
@@ -70,6 +75,6 @@ fun MainScreen() {
 @Composable
 fun DefaultPreview() {
     BraindanceTheme {
-        MainScreen()
+        Text(text = Greeting().greet(), style = Typography.h1)
     }
 }
