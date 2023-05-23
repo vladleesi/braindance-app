@@ -8,7 +8,7 @@ permissions: write-all
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -31,12 +31,9 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          emulator-build: 7425822
-          script: |
-            echo "Generated AVD"
-            adb kill-server
-            adb start-server
-            ./gradlew connectedAndroidTest
+          arch: x86
+          profile: Nexus 6
+          script: ./gradlew connectedCheck --stacktrace
 
       - name: Push to master branch
         if: ${{ success() }}
