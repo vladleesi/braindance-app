@@ -27,6 +27,9 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test
 
+      - name: Run Android tests
+        run: ./gradlew connectedAndroidTest
+
       - name: Push to master branch
         if: ${{ success() }}
         uses: ad-m/github-push-action@master
