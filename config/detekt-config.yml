@@ -54,8 +54,8 @@ naming:
   InvalidPackageDeclaration:
     active: false
     rootPackage: ''
-#  MatchingDeclarationName:
-#    active: false
+  #  MatchingDeclarationName:
+  #    active: false
   MemberNameEqualsClassName:
     active: false
     ignoreOverridden: true
@@ -165,8 +165,3 @@ complexity:
     ignoreDeprecated: false
     ignorePrivate: false
     ignoreOverridden: false
-
-#imports:
-#  active: true
-#  UnusedImports:
-#    enabled: true
