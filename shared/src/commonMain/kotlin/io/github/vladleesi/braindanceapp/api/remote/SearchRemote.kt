@@ -13,7 +13,7 @@ class SearchRemote {
                 fields $fields;
                 where name ~ "$query"*;
                 limit $limit;
-            """.trimIndent()
+                """.trimIndent()
             )
         }
 }

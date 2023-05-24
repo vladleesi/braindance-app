@@ -8,7 +8,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import io.github.vladleesi.braindanceapp.android.R
 
-
 private val fonts = FontFamily(
     Font(R.font.lato_regular, FontWeight.Normal),
     Font(R.font.lato_medium, FontWeight.Medium),

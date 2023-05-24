@@ -27,7 +27,6 @@ import io.github.vladleesi.braindanceapp.android.style.secondary
 import io.github.vladleesi.braindanceapp.android.style.white
 import io.github.vladleesi.braindanceapp.android.viewmodels.SearchViewModel
 
-
 @Composable
 fun HomeScreen() {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -72,9 +71,9 @@ fun SearchBar(searchViewModel: SearchViewModel = viewModel()) {
     )
     Text(
         text = "Results: ${
-            searchResult.orEmpty().joinToString(", ") { game ->
-                game.name.orEmpty()
-            }
+        searchResult.orEmpty().joinToString(", ") { game ->
+            game.name.orEmpty()
+        }
         }",
         modifier = Modifier
             .fillMaxWidth()

@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 
-
 actual class TokenStorage {
 
     private val prefsName = "token_prefs"
@@ -38,7 +37,6 @@ actual class TokenStorage {
         editor.putString(tokenKey, accessToken)
         editor.apply()
     }
-
 }
 
 object AndroidContextProvider {

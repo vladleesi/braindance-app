@@ -69,13 +69,15 @@ fun HttpClientConfig<*>.loggerConfig() {
 @OptIn(ExperimentalSerializationApi::class)
 fun HttpClientConfig<*>.jsonConfig() {
     install(ContentNegotiation) {
-        json(json = Json {
-            ignoreUnknownKeys = true
-            prettyPrint = true
-            explicitNulls = false
-            // Set default value to expected values
-            isLenient = true
-        })
+        json(
+            json = Json {
+                ignoreUnknownKeys = true
+                prettyPrint = true
+                explicitNulls = false
+                // Set default value to expected values
+                isLenient = true
+            }
+        )
     }
 }
 

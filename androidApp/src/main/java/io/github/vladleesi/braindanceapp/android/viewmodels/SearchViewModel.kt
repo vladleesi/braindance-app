@@ -9,7 +9,7 @@ import io.github.vladleesi.braindanceapp.models.games.Game
 import io.github.vladleesi.braindanceapp.repository.SearchRepo
 import kotlinx.coroutines.launch
 
-class SearchViewModel: ViewModel() {
+class SearchViewModel : ViewModel() {
 
     // TODO: Move to DI
     private val searchRepo = SearchRepo(SearchRemote())

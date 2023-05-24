@@ -23,6 +23,4 @@ val DarkColors = darkColors(
 )
 
 // TODO: Needs to implement?
-val LightColors = lightColors(
-
-)
+val LightColors = lightColors()

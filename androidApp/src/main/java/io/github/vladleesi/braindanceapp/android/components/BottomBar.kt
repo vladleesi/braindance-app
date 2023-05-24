@@ -21,7 +21,6 @@ import io.github.vladleesi.braindanceapp.android.style.background
 import io.github.vladleesi.braindanceapp.android.style.secondary_text
 import io.github.vladleesi.braindanceapp.android.style.white
 
-
 @Composable
 fun BottomBar(navController: NavHostController, updateLabel: (Int) -> Unit) {
     BottomNavigation(backgroundColor = background) {

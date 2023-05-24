@@ -21,7 +21,6 @@ import io.github.vladleesi.braindanceapp.android.style.Typography
 import io.github.vladleesi.braindanceapp.android.style.secondary
 import io.github.vladleesi.braindanceapp.android.style.white
 
-
 @Composable
 fun TopBar(@StringRes label: Int) {
     Row(
