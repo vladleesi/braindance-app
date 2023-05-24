@@ -81,6 +81,7 @@ fun HttpClientConfig<*>.jsonConfig() {
     }
 }
 
+@Suppress("ForbiddenComment")
 fun HttpClientConfig<*>.errorHandlerConfig() {
     HttpResponseValidator {
         handleResponseExceptionWithRequest { cause, _ ->

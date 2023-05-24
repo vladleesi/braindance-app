@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
 
+    @SuppressWarnings("ForbiddenComment")
     // TODO: Move to DI
     private val searchRepo = SearchRepo(SearchRemote())
 

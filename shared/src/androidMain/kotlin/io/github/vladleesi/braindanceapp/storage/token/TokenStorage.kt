@@ -10,6 +10,7 @@ actual class TokenStorage {
     private val prefsName = "token_prefs"
     private val tokenKey = "access_token"
 
+    @SuppressWarnings("ForbiddenComment")
     actual fun getToken(): String? {
         // TODO: Get rid of deprecation
         val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
@@ -23,6 +24,7 @@ actual class TokenStorage {
         return preferences.getString(tokenKey, null)
     }
 
+    @SuppressWarnings("ForbiddenComment")
     actual fun saveToken(accessToken: String) {
         // TODO: Use util-kts library
         val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)

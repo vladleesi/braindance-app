@@ -7,6 +7,7 @@ import androidx.compose.material.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
+@SuppressWarnings("UnusedPrivateMember")
 @Composable
 fun BraindanceTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

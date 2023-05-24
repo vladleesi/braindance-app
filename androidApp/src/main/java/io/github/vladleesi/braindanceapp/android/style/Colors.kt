@@ -1,3 +1,5 @@
+@file:SuppressWarnings("ForbiddenComment")
+
 package io.github.vladleesi.braindanceapp.android.style
 
 import androidx.compose.material.darkColors

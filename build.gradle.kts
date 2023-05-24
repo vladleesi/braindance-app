@@ -1,3 +1,5 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
 plugins {
     val kotlinVersion: String by System.getProperties()
     // trick: for the same plugin versions in all sub-modules
@@ -7,21 +9,40 @@ plugins {
     kotlin("multiplatform").version(kotlinVersion).apply(false)
     kotlin("plugin.serialization") version kotlinVersion
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
-    id("io.gitlab.arturbosch.detekt") version "1.23.0-RC3"
+    id("io.gitlab.arturbosch.detekt") version "1.21.0"
 }
 
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "io.gitlab.arturbosch.detekt").also {
+        configureDetektTasks(tasks)
+    }
 }
 
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
 
-detekt {
-    config = files("detekt-config.yml")
-    parallel = true
-    ignoreFailures = true
-    autoCorrect = true
+fun configureDetektTasks(tasks: NamedDomainObjectContainer<Task>) {
+    tasks.withType<Detekt>().configureEach {
+        config.setFrom(file("config/detekt-config.yml"))
+        parallel = true
+        autoCorrect = true
+        reports {
+            xml.required.set(false)
+            html.required.set(false)
+            txt.required.set(false)
+            sarif.required.set(false)
+        }
+    }
+    tasks.withType<Detekt> {
+        setSource(files(project.projectDir))
+        exclude("**/build/**")
+        exclude {
+            it.file.relativeTo(projectDir).startsWith(project.buildDir.relativeTo(projectDir))
+        }
+    }
+    tasks.register("detektAll") {
+        dependsOn(tasks.withType<Detekt>())
+    }
 }

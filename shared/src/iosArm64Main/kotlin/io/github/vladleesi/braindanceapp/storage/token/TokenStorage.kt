@@ -6,5 +6,6 @@ actual class TokenStorage {
     }
 
     actual fun saveToken(accessToken: String) {
+        // ignore
     }
 }
