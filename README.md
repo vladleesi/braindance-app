@@ -60,7 +60,7 @@ Contributions to the Braindance project are welcome. If you would like to contri
 Please ensure that your contributions adhere to the project's coding conventions and follow best practices.
 
 ## License:
-This App is released under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0). You can find the license details in the `LICENSE` file in the project repository.
+This App is released under the [Apache License, Version 2.0](LICENSE).
 
 ## Support:
 For any issues or questions related to the Braindance project, please open an issue on the GitHub repository (https://github.com/vladleesi/braindance-app/issues). I will assist you as soon as possible.
