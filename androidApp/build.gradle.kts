@@ -7,10 +7,10 @@ plugins {
 }
 
 android {
-    namespace = "io.github.vladleesi.braindanceapp.android"
+    namespace = "dev.vladleesi.braindanceapp.android"
     compileSdk = 33
     defaultConfig {
-        applicationId = "io.github.vladleesi.braindanceapp.android"
+        applicationId = "dev.vladleesi.braindanceapp.android"
         minSdk = 24
         targetSdk = 33
         versionCode = 1

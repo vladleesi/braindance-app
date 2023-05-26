@@ -89,7 +89,7 @@ kotlin {
 }
 
 android {
-    namespace = "io.github.vladleesi.braindanceapp"
+    namespace = "dev.vladleesi.braindanceapp"
     compileSdk = 33
     defaultConfig {
         minSdk = 24
