@@ -9,9 +9,11 @@ import androidx.compose.ui.unit.sp
 import dev.vladleesi.braindanceapp.android.R
 
 private val fonts = FontFamily(
-    Font(R.font.lato_regular, FontWeight.Normal),
-    Font(R.font.lato_medium, FontWeight.Medium),
-    Font(R.font.lato_semibold, FontWeight.SemiBold)
+    Font(R.font.quicksand_light, FontWeight.Light),
+    Font(R.font.quicksand_regular, FontWeight.Normal),
+    Font(R.font.quicksand_medium, FontWeight.Medium),
+    Font(R.font.quicksand_semibold, FontWeight.SemiBold),
+    Font(R.font.quicksand_bold, FontWeight.Bold)
 )
 
 val Typography = Typography(
