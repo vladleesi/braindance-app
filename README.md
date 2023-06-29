@@ -7,7 +7,7 @@
 Braindance is a versatile game-tracking application that allows users to search, explore, and keep up with their favorite games. Powered by the extensive [RAWG](https://rawg.io/apidocs) database, users can effortlessly find detailed information about any game, add them to their favorites, stay updated with release dates using the integrated calendar, and read the latest game news.
 
 ## Platforms
-GameTracker is a multiplatform application that is available for Android, iOS, and Desktop. It is built using the Kotlin Multiplatform Mobile (KMM) framework and utilizes the powerful UI toolkit, Jetpack Compose, to provide a modern and seamless user experience across different platforms.
+Braindance is a multiplatform application that is available for Android, iOS, and Desktop. It is built using the Kotlin Multiplatform Mobile (KMM) framework and utilizes the powerful UI toolkit, Jetpack Compose, to provide a modern and seamless user experience across different platforms.
 
 ## License
 This App is released under the [The GNU General Public License v3.0](LICENSE).
