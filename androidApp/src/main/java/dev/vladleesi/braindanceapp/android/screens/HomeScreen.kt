@@ -73,9 +73,9 @@ fun SearchBar(searchViewModel: SearchViewModel = viewModel()) {
     )
     Text(
         text = "Results: ${
-            searchResult.orEmpty().joinToString(", ") { game ->
-                game.name.orEmpty()
-            }
+        searchResult.orEmpty().joinToString(", ") { game ->
+            game.name.orEmpty()
+        }
         }",
         modifier = Modifier
             .fillMaxWidth()
