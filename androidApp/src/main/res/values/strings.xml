@@ -5,6 +5,7 @@
     <!-- Bottom bar -->
     <string name="bottom_bar_home">Home</string>
     <string name="bottom_bar_collections">Collections</string>
-    <string name="bottom_bar_community">Community</string>
-    <string name="bottom_bar_profile">Profile</string>
+    <string name="bottom_bar_calendar">Calendar</string>
+    <string name="bottom_bar_news">News</string>
+    <string name="bottom_bar_settings">Settings</string>
 </resources>

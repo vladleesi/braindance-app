@@ -13,10 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.vladleesi.braindanceapp.android.R
+import dev.vladleesi.braindanceapp.android.screens.CalendarScreen
 import dev.vladleesi.braindanceapp.android.screens.CollectionsScreen
-import dev.vladleesi.braindanceapp.android.screens.CommunityScreen
 import dev.vladleesi.braindanceapp.android.screens.HomeScreen
-import dev.vladleesi.braindanceapp.android.screens.ProfileScreen
+import dev.vladleesi.braindanceapp.android.screens.NewsScreen
+import dev.vladleesi.braindanceapp.android.screens.SettingsScreen
 import dev.vladleesi.braindanceapp.android.style.background
 import dev.vladleesi.braindanceapp.android.style.secondary_text
 import dev.vladleesi.braindanceapp.android.style.white
@@ -28,9 +29,10 @@ fun BottomBar(navController: NavHostController, updateLabel: (Int) -> Unit) {
         val currentRoute = navBackStackEntry?.destination?.route
         updateLabel.invoke(
             when (currentRoute) {
+                BottomBarItem.NEWS.name -> BottomBarItem.NEWS.title
+                BottomBarItem.CALENDAR.name -> BottomBarItem.CALENDAR.title
                 BottomBarItem.COLLECTIONS.name -> BottomBarItem.COLLECTIONS.title
-                BottomBarItem.COMMUNITY.name -> BottomBarItem.COMMUNITY.title
-                BottomBarItem.PROFILE.name -> BottomBarItem.PROFILE.title
+                BottomBarItem.SETTINGS.name -> BottomBarItem.SETTINGS.title
                 else -> BottomBarItem.HOME.title
             }
         )
@@ -67,9 +69,10 @@ fun BottomBar(navController: NavHostController, updateLabel: (Int) -> Unit) {
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = BottomBarItem.HOME.name) {
         composable(BottomBarItem.HOME.name) { HomeScreen() }
+        composable(BottomBarItem.NEWS.name) { NewsScreen() }
+        composable(BottomBarItem.CALENDAR.name) { CalendarScreen() }
         composable(BottomBarItem.COLLECTIONS.name) { CollectionsScreen() }
-        composable(BottomBarItem.COMMUNITY.name) { CommunityScreen() }
-        composable(BottomBarItem.PROFILE.name) { ProfileScreen() }
+        composable(BottomBarItem.SETTINGS.name) { SettingsScreen() }
     }
 }
 
@@ -81,16 +84,20 @@ enum class BottomBarItem(
         title = R.string.bottom_bar_home,
         icon = R.drawable.ic_home
     ),
+    NEWS(
+        title = R.string.bottom_bar_news,
+        icon = R.drawable.ic_news
+    ),
+    CALENDAR(
+        title = R.string.bottom_bar_calendar,
+        icon = R.drawable.ic_calendar
+    ),
     COLLECTIONS(
         title = R.string.bottom_bar_collections,
         icon = R.drawable.ic_collections
     ),
-    COMMUNITY(
-        title = R.string.bottom_bar_community,
-        icon = R.drawable.ic_community
-    ),
-    PROFILE(
-        title = R.string.bottom_bar_profile,
-        icon = R.drawable.ic_user
+    SETTINGS(
+        title = R.string.bottom_bar_settings,
+        icon = R.drawable.ic_settings
     )
 }
