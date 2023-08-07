@@ -1,6 +1,3 @@
-val composeVersion: String by project
-val coroutinesVersion: String by project
-
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -20,7 +17,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -45,22 +42,19 @@ dependencies {
     implementation(project(":shared"))
 
     // Compose
-    implementation("androidx.activity:activity-compose:1.7.1")
-    implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.compose.ui:ui-tooling:$composeVersion")
-    implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
-    implementation("androidx.compose.foundation:foundation:$composeVersion")
-    implementation("androidx.compose.material:material:$composeVersion")
+    implementation(libs.activity.compose)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.material)
 
     // LiveData
-    implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
+    implementation(libs.compose.runtime.livedata)
 
     // Navigation
-    implementation("androidx.navigation:navigation-compose:2.5.3")
-
-    // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+    implementation(libs.compose.navigation)
 
     // Testing
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(libs.unit.tests.junit)
 }

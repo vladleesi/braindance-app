@@ -7,6 +7,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import dev.vladleesi.braindanceapp.android.R
+import dev.vladleesi.braindanceapp.presentation.style.secondary_text
+import dev.vladleesi.braindanceapp.presentation.style.white
 
 private val fonts = FontFamily(
     Font(R.font.poppins_light, FontWeight.Light),

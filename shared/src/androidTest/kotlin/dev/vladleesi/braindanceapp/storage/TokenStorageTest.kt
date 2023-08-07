@@ -2,8 +2,8 @@ package dev.vladleesi.braindanceapp.storage
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import dev.vladleesi.braindanceapp.storage.token.AndroidContextProvider
-import dev.vladleesi.braindanceapp.storage.token.TokenStorage
+import dev.vladleesi.braindanceapp.data.storage.token.AndroidContextProvider
+import dev.vladleesi.braindanceapp.data.storage.token.TokenStorage
 import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.random.Random

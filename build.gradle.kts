@@ -1,15 +1,14 @@
 import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
-    val kotlinVersion: String by System.getProperties()
-    // trick: for the same plugin versions in all sub-modules
-    id("com.android.application").version("8.0.0").apply(false)
-    id("com.android.library").version("8.0.0").apply(false)
-    kotlin("android").version(kotlinVersion).apply(false)
-    kotlin("multiplatform").version(kotlinVersion).apply(false)
-    kotlin("plugin.serialization") version kotlinVersion
-    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
-    id("io.gitlab.arturbosch.detekt") version "1.21.0"
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.compose.multiplatform) apply false
+    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.detekt) apply false
 }
 
 allprojects {

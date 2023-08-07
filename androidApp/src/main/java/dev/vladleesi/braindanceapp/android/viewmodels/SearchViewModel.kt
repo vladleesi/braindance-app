@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.vladleesi.braindanceapp.api.remote.SearchRemote
-import dev.vladleesi.braindanceapp.models.games.Game
-import dev.vladleesi.braindanceapp.repository.SearchRepo
+import dev.vladleesi.braindanceapp.data.api.remote.SearchRemote
+import dev.vladleesi.braindanceapp.data.models.games.Game
+import dev.vladleesi.braindanceapp.data.repository.SearchRepo
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {

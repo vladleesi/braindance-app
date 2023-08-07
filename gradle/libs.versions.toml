@@ -1,0 +1,66 @@
+[versions]
+gradle = "8.1.0"
+kotlin = "1.9.0"
+compose-plugin = "1.5.0-beta01"
+activity-compose = "1.7.2"
+ktlint = "11.5.0"
+detekt = "1.23.1"
+serialization = "1.5.1"
+coroutines = "1.6.4"
+
+[libraries]
+
+# androidx
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.6.1" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version = "1.10.1" }
+androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx", version = "1.1.0-alpha06" }
+
+# compose
+activity-compose = { module = "androidx.activity:activity-compose", version = "activity-compose" }
+compose-ui = { module = "androidx.compose.ui:ui", version = "compose" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version = "1.4.3" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version = "1.4.3" }
+compose-foundation = { module = "androidx.compose.foundation:foundation", version = "1.4.3" }
+compose-material = { module = "androidx.compose.material:material", version = "1.4.3" }
+
+# compose livedata
+compose-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version = "1.4.3" }
+
+# compose navigation
+compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.6.0" }
+
+# ktor
+ktor-client-core = { module = "io.ktor:ktor-client-core", version = "2.3.3" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version = "2.3.3" }
+ktor-client-serialization = { module = "io.ktor:ktor-client-serialization", version = "2.3.3" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version = "2.3.3" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version = "2.3.3" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version = "2.3.3" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version = "2.3.3" }
+
+# serialization
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "serialization" }
+
+# coroutines
+kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version = "coroutines" }
+
+# logger
+logging-napier = { module = "io.github.aakira:napier", version = "2.6.1" }
+
+# tests
+unit-tests-junit = { module = "junit:junit", version = "4.13.2" }
+
+# ui-tests
+android-tests-runner = { module = "androidx.test:runner", version = "1.5.2" }
+android-tests-ext-junit = { module = "androidx.test.ext:junit", version = "1.1.5" }
+android-tests-espresso = { module = "androidx.test.espresso:espresso-core", version = "3.5.1" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "gradle" }
+android-library = { id = "com.android.library", version.ref = "gradle" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

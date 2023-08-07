@@ -13,17 +13,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.vladleesi.braindanceapp.android.R
-import dev.vladleesi.braindanceapp.android.screens.CalendarScreen
-import dev.vladleesi.braindanceapp.android.screens.CollectionsScreen
 import dev.vladleesi.braindanceapp.android.screens.HomeScreen
-import dev.vladleesi.braindanceapp.android.screens.NewsScreen
-import dev.vladleesi.braindanceapp.android.screens.SettingsScreen
-import dev.vladleesi.braindanceapp.android.style.background
-import dev.vladleesi.braindanceapp.android.style.secondary_text
-import dev.vladleesi.braindanceapp.android.style.white
+import dev.vladleesi.braindanceapp.presentation.screens.CalendarScreen
+import dev.vladleesi.braindanceapp.presentation.screens.CollectionsScreen
+import dev.vladleesi.braindanceapp.presentation.screens.NewsScreen
+import dev.vladleesi.braindanceapp.presentation.screens.SettingsScreen
+import dev.vladleesi.braindanceapp.presentation.style.background
+import dev.vladleesi.braindanceapp.presentation.style.secondary_text
+import dev.vladleesi.braindanceapp.presentation.style.white
 
 @Composable
 fun BottomBar(navController: NavHostController, updateLabel: (Int) -> Unit) {
+    // TODO: Find the navigation for Compose Multiplatform
     BottomNavigation(backgroundColor = background) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route

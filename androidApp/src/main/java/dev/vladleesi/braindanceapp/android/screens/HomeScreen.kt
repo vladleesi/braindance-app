@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,10 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.vladleesi.braindanceapp.android.R
 import dev.vladleesi.braindanceapp.android.style.Typography
-import dev.vladleesi.braindanceapp.android.style.hint_text
-import dev.vladleesi.braindanceapp.android.style.secondary
-import dev.vladleesi.braindanceapp.android.style.white
 import dev.vladleesi.braindanceapp.android.viewmodels.SearchViewModel
+import dev.vladleesi.braindanceapp.presentation.style.hint_text
+import dev.vladleesi.braindanceapp.presentation.style.secondary
+import dev.vladleesi.braindanceapp.presentation.style.white
 
 @Composable
 fun HomeScreen() {
@@ -40,7 +40,7 @@ fun HomeScreen() {
 
 @Composable
 fun SearchBar(searchViewModel: SearchViewModel = viewModel()) {
-    var query by remember { mutableStateOf("") }
+    var query by rememberSaveable { mutableStateOf("") }
     val searchResult by searchViewModel.searchResult.observeAsState()
     TextField(
         value = query,

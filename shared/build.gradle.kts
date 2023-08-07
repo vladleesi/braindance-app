@@ -1,11 +1,7 @@
-val ktorVersion: String by project
-val coroutinesVersion: String by project
-val serializationVersion: String by project
-val napierVersion: String by project
-
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    id("org.jetbrains.compose")
     kotlin("plugin.serialization")
 }
 
@@ -31,22 +27,28 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                // Compose
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+                implementation(compose.components.resources)
+
                 // Ktor
-                implementation("io.ktor:ktor-client-core:$ktorVersion")
-                implementation("io.ktor:ktor-client-logging:$ktorVersion")
-                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-client-auth:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.logging)
+                implementation(libs.ktor.client.serialization)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
 
                 // Serialization
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+                implementation(libs.kotlinx.serialization.json)
 
                 // Coroutines
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+                implementation(libs.kotlinx.coroutines)
 
                 // Logger
-                implementation("io.github.aakira:napier:$napierVersion")
+                implementation(libs.logging.napier)
             }
         }
         val commonTest by getting {
@@ -56,11 +58,11 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-                implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.androidx.security.crypto.ktx)
 
-                implementation("androidx.test:runner:1.5.2")
-                implementation("androidx.test.ext:junit:1.1.5")
+                implementation(libs.android.tests.runner)
+                implementation(libs.android.tests.ext.junit)
             }
         }
         val androidUnitTest by getting
@@ -73,7 +75,7 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
-                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+                implementation(libs.ktor.client.darwin)
             }
         }
         val iosX64Test by getting

@@ -13,7 +13,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.vladleesi.braindanceapp.android.style.Typography
 
-@SuppressWarnings("ForbiddenComment")
 @Composable
 fun TopBar(@StringRes label: Int) {
     Row(
