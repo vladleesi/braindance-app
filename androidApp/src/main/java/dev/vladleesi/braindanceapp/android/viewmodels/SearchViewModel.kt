@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.api.remote.SearchRemote
-import dev.vladleesi.braindanceapp.data.models.games.Game
+import dev.vladleesi.braindanceapp.data.models.search.SearchResult
 import dev.vladleesi.braindanceapp.data.repository.SearchRepo
 import kotlinx.coroutines.launch
 
@@ -15,8 +15,8 @@ class SearchViewModel : ViewModel() {
     // TODO: Move to DI
     private val searchRepo = SearchRepo(SearchRemote())
 
-    private val _searchResult = MutableLiveData<List<Game>>()
-    val searchResult: LiveData<List<Game>> = _searchResult
+    private val _searchResult = MutableLiveData<SearchResult>()
+    val searchResult: LiveData<SearchResult> = _searchResult
 
     fun search(query: CharSequence) {
         viewModelScope.launch {

@@ -1,7 +1,6 @@
 package dev.vladleesi.braindanceapp.data.api
 
 import dev.vladleesi.braindanceapp.data.config.Config
-import dev.vladleesi.braindanceapp.data.config.Config.IGDB_URL
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -14,16 +13,14 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.retry
 import io.ktor.client.plugins.timeout
-import io.ktor.client.request.headers
 import io.ktor.client.request.request
+import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 private const val TIMEOUT_SECONDS = 5000L
 private const val MAX_RETRIES = 5
-
-const val HEADER_CLIENT_ID = "Client-ID"
 
 val httpClient = HttpClient {
     expectSuccess = true
@@ -85,9 +82,10 @@ fun HttpClientConfig<*>.errorHandlerConfig() {
 
 fun HttpClientConfig<*>.defaultRequestConfig() {
     defaultRequest {
-        url(IGDB_URL)
-        headers {
-            append(HEADER_CLIENT_ID, Config.CLIENT_ID)
+        url {
+            protocol = URLProtocol.HTTPS
+            host = Config.RAWG_HOST
+            parameters.append("key", Config.API_KEY)
         }
     }
 }

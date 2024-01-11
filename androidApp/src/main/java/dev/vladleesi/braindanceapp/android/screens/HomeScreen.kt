@@ -72,11 +72,7 @@ fun SearchBar(searchViewModel: SearchViewModel = viewModel()) {
         modifier = Modifier.fillMaxWidth()
     )
     Text(
-        text = "Results: ${
-        searchResult.orEmpty().joinToString(", ") { game ->
-            game.name.orEmpty()
-        }
-        }",
+        text = "Results: ${searchResult?.count}",
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, top = 8.dp)

@@ -1,8 +1,6 @@
 package dev.vladleesi.braindanceapp.data.config
 
 object Config {
-    const val CLIENT_ID = "YOUR_CLIENT_ID"
-    const val CLIENT_SECRET = "YOUR_CLIENT_SECRET"
-    const val IGDB_URL = "https://api.igdb.com/v4/"
-    const val TWITCH_URL = "https://id.twitch.tv/oauth2/token"
+    const val RAWG_HOST = "api.rawg.io/api"
+    const val API_KEY = "f09aca6c5090418d9a8761ab7bca1037"
 }
