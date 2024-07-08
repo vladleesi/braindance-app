@@ -64,7 +64,6 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(libs.ktor.client.okhttp)
-                implementation(libs.androidx.security.crypto.ktx)
 
                 implementation(libs.android.tests.runner)
                 implementation(libs.android.tests.ext.junit)

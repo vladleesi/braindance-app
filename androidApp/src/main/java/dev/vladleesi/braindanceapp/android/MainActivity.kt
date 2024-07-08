@@ -9,12 +9,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.vladleesi.braindanceapp.Greeting
 import dev.vladleesi.braindanceapp.android.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.android.style.Typography
-import dev.vladleesi.braindanceapp.data.storage.token.AndroidContextProvider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AndroidContextProvider.getContext = { applicationContext }
         setContent {
             App()
         }

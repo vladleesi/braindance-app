@@ -8,7 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -22,7 +22,7 @@ import dev.vladleesi.braindanceapp.android.style.BraindanceTheme
 @Composable
 fun App(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    var label by remember { mutableStateOf(BottomBarItem.HOME.title) }
+    var label by remember { mutableIntStateOf(BottomBarItem.HOME.title) }
     BraindanceTheme {
         Scaffold(
             topBar = { TopBar(label) },

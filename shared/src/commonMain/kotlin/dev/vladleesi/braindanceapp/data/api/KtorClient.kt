@@ -16,7 +16,6 @@ import io.ktor.client.plugins.timeout
 import io.ktor.client.request.request
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 
 private const val TIMEOUT_SECONDS = 5000L
@@ -57,7 +56,6 @@ fun HttpClientConfig<*>.loggerConfig() {
     }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 fun HttpClientConfig<*>.jsonConfig() {
     install(ContentNegotiation) {
         json(

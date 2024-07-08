@@ -40,7 +40,7 @@ fun BottomBar(
                 else -> BottomBarItem.HOME.title
             },
         )
-        BottomBarItem.values().forEach { item ->
+        BottomBarItem.entries.forEach { item ->
             BottomNavigationItem(
                 icon = {
                     Icon(
