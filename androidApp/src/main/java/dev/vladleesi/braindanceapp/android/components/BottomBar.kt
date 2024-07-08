@@ -23,7 +23,10 @@ import dev.vladleesi.braindanceapp.presentation.style.secondary_text
 import dev.vladleesi.braindanceapp.presentation.style.white
 
 @Composable
-fun BottomBar(navController: NavHostController, updateLabel: (Int) -> Unit) {
+fun BottomBar(
+    navController: NavHostController,
+    updateLabel: (Int) -> Unit,
+) {
     // TODO: Find the navigation for Compose Multiplatform
     BottomNavigation(backgroundColor = background) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -35,14 +38,14 @@ fun BottomBar(navController: NavHostController, updateLabel: (Int) -> Unit) {
                 BottomBarItem.COLLECTIONS.name -> BottomBarItem.COLLECTIONS.title
                 BottomBarItem.SETTINGS.name -> BottomBarItem.SETTINGS.title
                 else -> BottomBarItem.HOME.title
-            }
+            },
         )
         BottomBarItem.values().forEach { item ->
             BottomNavigationItem(
                 icon = {
                     Icon(
                         painter = painterResource(id = item.icon),
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 },
                 selected = currentRoute == item.name,
@@ -60,7 +63,7 @@ fun BottomBar(navController: NavHostController, updateLabel: (Int) -> Unit) {
                         // Restore state when reselecting a previously selected item
                         restoreState = true
                     }
-                }
+                },
             )
         }
     }
@@ -79,26 +82,26 @@ fun NavigationGraph(navController: NavHostController) {
 
 enum class BottomBarItem(
     @StringRes val title: Int,
-    @DrawableRes val icon: Int
+    @DrawableRes val icon: Int,
 ) {
     HOME(
         title = R.string.bottom_bar_home,
-        icon = R.drawable.ic_home
+        icon = R.drawable.ic_home,
     ),
     NEWS(
         title = R.string.bottom_bar_news,
-        icon = R.drawable.ic_news
+        icon = R.drawable.ic_news,
     ),
     CALENDAR(
         title = R.string.bottom_bar_calendar,
-        icon = R.drawable.ic_calendar
+        icon = R.drawable.ic_calendar,
     ),
     COLLECTIONS(
         title = R.string.bottom_bar_collections,
-        icon = R.drawable.ic_collections
+        icon = R.drawable.ic_collections,
     ),
     SETTINGS(
         title = R.string.bottom_bar_settings,
-        icon = R.drawable.ic_settings
-    )
+        icon = R.drawable.ic_settings,
+    ),
 }

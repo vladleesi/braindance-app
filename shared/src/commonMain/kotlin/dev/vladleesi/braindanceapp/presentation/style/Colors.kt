@@ -15,14 +15,15 @@ val secondary_variant = Color(0xFF2D3037)
 val error = Color(0xFFEA5A4A)
 
 // TODO: Needs to check all colors
-val DarkColors = darkColors(
-    primary = background,
-    secondary = secondary,
-    secondaryVariant = secondary_variant,
-    background = background,
-    surface = background,
-    error = error
-)
+val DarkColors =
+    darkColors(
+        primary = background,
+        secondary = secondary,
+        secondaryVariant = secondary_variant,
+        background = background,
+        surface = background,
+        error = error,
+    )
 
 // TODO: Needs to implement?
 val LightColors = lightColors()

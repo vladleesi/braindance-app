@@ -30,9 +30,10 @@ import dev.vladleesi.braindanceapp.presentation.style.white
 @Composable
 fun HomeScreen() {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp, top = 32.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(start = 16.dp, end = 16.dp, top = 32.dp),
     ) {
         SearchBar()
     }
@@ -52,29 +53,31 @@ fun SearchBar(searchViewModel: SearchViewModel = viewModel()) {
         placeholder = {
             Text(
                 text = "Search for games",
-                style = Typography.body2
+                style = Typography.body2,
             )
         },
         shape = CircleShape,
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = secondary,
-            cursorColor = hint_text,
-            textColor = white,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        ),
+        colors =
+            TextFieldDefaults.textFieldColors(
+                backgroundColor = secondary,
+                cursorColor = hint_text,
+                textColor = white,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+            ),
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_search),
-                contentDescription = null
+                contentDescription = null,
             )
         },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     )
     Text(
         text = "Results: ${searchResult?.count}",
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp),
     )
 }

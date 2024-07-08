@@ -10,7 +10,6 @@ import kotlin.random.Random
 
 @RunWith(AndroidJUnit4::class)
 class TokenStorageTest {
-
     private val tokenStorage = TokenStorage()
     private val token = Random.nextBytes(Int.SIZE_BYTES).toString()
 

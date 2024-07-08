@@ -22,11 +22,11 @@ fun BraindanceApp(modifier: Modifier = Modifier) {
 fun MainScreen(modifier: Modifier = Modifier) {
     // TODO: Move common UI from androidApp
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
         Text(
             modifier = modifier.align(Alignment.Center),
-            text = Greeting().greet()
+            text = Greeting().greet(),
         )
     }
 }

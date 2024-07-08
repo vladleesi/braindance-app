@@ -10,7 +10,6 @@ import dev.vladleesi.braindanceapp.data.repository.SearchRepo
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
-
     @SuppressWarnings("ForbiddenComment")
     // TODO: Move to DI
     private val searchRepo = SearchRepo(SearchRemote())

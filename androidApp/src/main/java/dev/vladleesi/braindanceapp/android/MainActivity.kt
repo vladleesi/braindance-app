@@ -12,7 +12,6 @@ import dev.vladleesi.braindanceapp.android.style.Typography
 import dev.vladleesi.braindanceapp.data.storage.token.AndroidContextProvider
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidContextProvider.getContext = { applicationContext }

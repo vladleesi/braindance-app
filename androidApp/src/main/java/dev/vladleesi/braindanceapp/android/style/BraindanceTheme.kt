@@ -11,20 +11,21 @@ import dev.vladleesi.braindanceapp.presentation.style.DarkColors
 @Composable
 fun BraindanceTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     if (darkTheme.not()) {
         // ignore
     }
-    val shapes = Shapes(
-        small = RoundedCornerShape(4.dp),
-        medium = RoundedCornerShape(8.dp),
-        large = RoundedCornerShape(12.dp)
-    )
+    val shapes =
+        Shapes(
+            small = RoundedCornerShape(4.dp),
+            medium = RoundedCornerShape(8.dp),
+            large = RoundedCornerShape(12.dp),
+        )
     MaterialTheme(
         colors = DarkColors,
         typography = Typography,
         shapes = shapes,
-        content = content
+        content = content,
     )
 }

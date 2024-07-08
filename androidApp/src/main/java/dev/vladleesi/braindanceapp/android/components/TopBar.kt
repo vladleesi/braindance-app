@@ -14,17 +14,20 @@ import androidx.compose.ui.unit.dp
 import dev.vladleesi.braindanceapp.android.style.Typography
 
 @Composable
-fun TopBar(@StringRes label: Int) {
+fun TopBar(
+    @StringRes label: Int,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = stringResource(id = label),
             style = Typography.h1,
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(start = 24.dp, end = 24.dp, top = 96.dp)
+            modifier =
+                Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 24.dp, end = 24.dp, top = 96.dp),
         )
     }
 }

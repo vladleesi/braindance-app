@@ -22,14 +22,15 @@ import kotlinx.serialization.json.Json
 private const val TIMEOUT_SECONDS = 5000L
 private const val MAX_RETRIES = 5
 
-val httpClient = HttpClient {
-    expectSuccess = true
-    loggerConfig()
-    engineConfig()
-    jsonConfig()
-    errorHandlerConfig()
-    defaultRequestConfig()
-}.also { initNapier() }
+val httpClient =
+    HttpClient {
+        expectSuccess = true
+        loggerConfig()
+        engineConfig()
+        jsonConfig()
+        errorHandlerConfig()
+        defaultRequestConfig()
+    }.also { initNapier() }
 
 fun HttpClientConfig<*>.engineConfig() {
     engine {
@@ -47,11 +48,12 @@ fun HttpClientConfig<*>.engineConfig() {
 fun HttpClientConfig<*>.loggerConfig() {
     install(Logging) {
         level = LogLevel.ALL
-        logger = object : Logger {
-            override fun log(message: String) {
-                Napier.d(tag = "HTTP Client", message = message)
+        logger =
+            object : Logger {
+                override fun log(message: String) {
+                    Napier.d(tag = "HTTP Client", message = message)
+                }
             }
-        }
     }
 }
 
@@ -59,13 +61,14 @@ fun HttpClientConfig<*>.loggerConfig() {
 fun HttpClientConfig<*>.jsonConfig() {
     install(ContentNegotiation) {
         json(
-            json = Json {
-                ignoreUnknownKeys = true
-                prettyPrint = true
-                explicitNulls = false
-                // Set default value to expected values
-                isLenient = true
-            }
+            json =
+                Json {
+                    ignoreUnknownKeys = true
+                    prettyPrint = true
+                    explicitNulls = false
+                    // Set default value to expected values
+                    isLenient = true
+                },
         )
     }
 }

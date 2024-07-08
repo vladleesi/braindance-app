@@ -29,16 +29,17 @@ fun App(modifier: Modifier = Modifier) {
             bottomBar = {
                 BottomBar(
                     navController = navController,
-                    updateLabel = { label = it }
+                    updateLabel = { label = it },
                 )
             },
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
         ) { paddingValues ->
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .verticalScroll(rememberScrollState()),
             ) {
                 NavigationGraph(navController = navController)
             }
