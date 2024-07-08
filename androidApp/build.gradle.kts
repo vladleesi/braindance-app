@@ -1,23 +1,21 @@
 plugins {
     id("com.android.application")
+    id("org.jetbrains.kotlin.plugin.compose")
     kotlin("android")
 }
 
 android {
     namespace = "dev.vladleesi.braindanceapp.android"
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         applicationId = "dev.vladleesi.braindanceapp.android"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
