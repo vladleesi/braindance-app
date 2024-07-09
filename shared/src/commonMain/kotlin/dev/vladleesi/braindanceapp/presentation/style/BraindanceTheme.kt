@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.android.style
+package dev.vladleesi.braindanceapp.presentation.style
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -6,7 +6,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import dev.vladleesi.braindanceapp.presentation.style.DarkColors
 
 @Composable
 fun BraindanceTheme(
@@ -24,7 +23,7 @@ fun BraindanceTheme(
         )
     MaterialTheme(
         colors = DarkColors,
-        typography = Typography,
+        typography = getTypography(),
         shapes = shapes,
         content = content,
     )

@@ -17,7 +17,7 @@ import dev.vladleesi.braindanceapp.android.components.BottomBar
 import dev.vladleesi.braindanceapp.android.components.BottomBarItem
 import dev.vladleesi.braindanceapp.android.components.NavigationGraph
 import dev.vladleesi.braindanceapp.android.components.TopBar
-import dev.vladleesi.braindanceapp.android.style.BraindanceTheme
+import dev.vladleesi.braindanceapp.presentation.style.BraindanceTheme
 
 @Composable
 fun App(modifier: Modifier = Modifier) {

@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import dev.vladleesi.braindanceapp.android.style.Typography
+import dev.vladleesi.braindanceapp.presentation.style.getTypography
 
 @Composable
 fun TopBar(
@@ -23,7 +23,7 @@ fun TopBar(
     ) {
         Text(
             text = stringResource(id = label),
-            style = Typography.h1,
+            style = getTypography().h1,
             modifier =
                 Modifier
                     .align(Alignment.CenterVertically)

@@ -7,8 +7,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import dev.vladleesi.braindanceapp.Greeting
-import dev.vladleesi.braindanceapp.android.style.BraindanceTheme
-import dev.vladleesi.braindanceapp.android.style.Typography
+import dev.vladleesi.braindanceapp.presentation.style.BraindanceTheme
+import dev.vladleesi.braindanceapp.presentation.style.getTypography
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +23,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     BraindanceTheme {
-        Text(text = Greeting().greet(), style = Typography.h1)
+        Text(text = Greeting().greet(), style = getTypography().h1)
     }
 }

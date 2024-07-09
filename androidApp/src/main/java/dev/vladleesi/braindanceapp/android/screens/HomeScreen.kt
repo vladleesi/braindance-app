@@ -21,8 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.vladleesi.braindanceapp.android.R
-import dev.vladleesi.braindanceapp.android.style.Typography
 import dev.vladleesi.braindanceapp.android.viewmodels.SearchViewModel
+import dev.vladleesi.braindanceapp.presentation.style.getTypography
 import dev.vladleesi.braindanceapp.presentation.style.hint_text
 import dev.vladleesi.braindanceapp.presentation.style.secondary
 import dev.vladleesi.braindanceapp.presentation.style.white
@@ -53,7 +53,7 @@ fun SearchBar(searchViewModel: SearchViewModel = viewModel()) {
         placeholder = {
             Text(
                 text = "Search for games",
-                style = Typography.body2,
+                style = getTypography().body2,
             )
         },
         shape = CircleShape,

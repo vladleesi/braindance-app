@@ -36,7 +36,6 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material)
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
 
                 // Ktor
@@ -92,6 +91,12 @@ kotlin {
             iosSimulatorArm64Test.dependsOn(this)
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
+    packageOfResClass = "dev.vladleesi.braindanceapp.resources"
+    generateResClass = always
 }
 
 android {

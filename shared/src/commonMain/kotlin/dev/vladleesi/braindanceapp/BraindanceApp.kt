@@ -2,18 +2,28 @@ package dev.vladleesi.braindanceapp
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import dev.vladleesi.braindanceapp.presentation.style.BraindanceTheme
+import dev.vladleesi.braindanceapp.presentation.style.getTypography
 
 @Composable
 fun BraindanceApp(modifier: Modifier = Modifier) {
-    MaterialTheme {
-        Scaffold(modifier.fillMaxSize()) {
-            MainScreen()
+    BraindanceTheme {
+        Scaffold(modifier.fillMaxSize()) { innerPadding ->
+            MainScreen(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState()),
+            )
         }
     }
 }
@@ -21,11 +31,10 @@ fun BraindanceApp(modifier: Modifier = Modifier) {
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
     // TODO: Move common UI from androidApp
-    Box(
-        modifier = modifier.fillMaxSize(),
-    ) {
+    Box(modifier = modifier) {
         Text(
-            modifier = modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center),
+            style = getTypography().h1,
             text = Greeting().greet(),
         )
     }
