@@ -8,6 +8,6 @@ actual fun getScreenSize(): ScreenSize {
     val configuration = LocalConfiguration.current
     return ScreenSize(
         width = configuration.screenWidthDp.toFloat(),
-        height = configuration.screenHeightDp.toFloat()
+        height = configuration.screenHeightDp.toFloat(),
     )
 }

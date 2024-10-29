@@ -7,5 +7,5 @@ expect fun getScreenSize(): ScreenSize
 
 data class ScreenSize(
     val width: Float,
-    val height: Float
+    val height: Float,
 )

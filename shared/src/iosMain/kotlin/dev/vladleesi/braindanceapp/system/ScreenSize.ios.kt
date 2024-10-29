@@ -10,6 +10,6 @@ actual fun getScreenSize(): ScreenSize {
     val containerSize = LocalWindowInfo.current.containerSize
     return ScreenSize(
         width = containerSize.width.toFloat(),
-        height = containerSize.height.toFloat()
+        height = containerSize.height.toFloat(),
     )
 }
