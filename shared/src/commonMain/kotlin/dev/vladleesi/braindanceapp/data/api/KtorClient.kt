@@ -63,13 +63,13 @@ fun HttpClientConfig<*>.jsonConfig() {
     install(ContentNegotiation) {
         json(
             json =
-            Json {
-                ignoreUnknownKeys = true
-                prettyPrint = true
-                explicitNulls = false
-                // Set default value to expected values
-                isLenient = true
-            },
+                Json {
+                    ignoreUnknownKeys = true
+                    prettyPrint = true
+                    explicitNulls = false
+                    // Set default value to expected values
+                    isLenient = true
+                },
         )
     }
 }
