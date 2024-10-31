@@ -53,7 +53,11 @@ fun BottomBar(navController: NavHostController) {
                         // Pop up to the start destination of the graph to
                         // avoid building up a large stack of destination
                         // on the back stack as users select items
-                        popUpTo(navController.graph.startDestinationId)
+                        navController.graph.startDestinationRoute?.let {
+                            popUpTo(BottomBarItem.HOME.name) {
+                                saveState = true
+                            }
+                        }
                         // Avoid multiple copies of the same destination
                         // when reselecting the same item
                         launchSingleTop = true
