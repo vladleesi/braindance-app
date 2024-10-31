@@ -47,12 +47,6 @@ dependencies {
     implementation(libs.compose.foundation)
     implementation(libs.compose.material)
 
-    // LiveData
-    implementation(libs.compose.runtime.livedata)
-
-    // Navigation
-    implementation(libs.compose.navigation)
-
     // Testing
     testImplementation(libs.unit.tests.junit)
 }

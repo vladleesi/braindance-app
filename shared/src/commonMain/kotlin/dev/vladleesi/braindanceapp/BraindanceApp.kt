@@ -1,41 +1,50 @@
 package dev.vladleesi.braindanceapp
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import dev.vladleesi.braindanceapp.presentation.components.BottomBar
+import dev.vladleesi.braindanceapp.presentation.components.NavigationGraph
 import dev.vladleesi.braindanceapp.presentation.style.BraindanceTheme
-import dev.vladleesi.braindanceapp.presentation.style.getTypography
+import dev.vladleesi.braindanceapp.utils.ImageLoaderInitializer
 
 @Composable
 fun BraindanceApp(modifier: Modifier = Modifier) {
+    // TODO: Refactor
+    val isInitialized = remember { mutableStateOf(false) }
+    if (!isInitialized.value) {
+        ImageLoaderInitializer.initialize()
+        isInitialized.value = true
+    }
+
+    val navController = rememberNavController()
+
     BraindanceTheme {
-        Scaffold(modifier.fillMaxSize()) { innerPadding ->
-            MainScreen(
+        Scaffold(
+            bottomBar = {
+                BottomBar(
+                    navController = navController,
+                )
+            },
+            modifier = modifier.fillMaxSize(),
+        ) { paddingValues ->
+            Column(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(innerPadding)
+                        .padding(paddingValues)
                         .verticalScroll(rememberScrollState()),
-            )
+            ) {
+                NavigationGraph(navController = navController)
+            }
         }
-    }
-}
-
-@Composable
-fun MainScreen(modifier: Modifier = Modifier) {
-    // TODO: Move common UI from androidApp
-    Box(modifier = modifier) {
-        Text(
-            modifier = Modifier.align(Alignment.Center),
-            style = getTypography().h1,
-            text = Greeting().greet(),
-        )
     }
 }

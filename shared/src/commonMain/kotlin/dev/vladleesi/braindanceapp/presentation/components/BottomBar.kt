@@ -1,50 +1,47 @@
-package dev.vladleesi.braindanceapp.android.components
+package dev.vladleesi.braindanceapp.presentation.components
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import dev.vladleesi.braindanceapp.android.R
-import dev.vladleesi.braindanceapp.android.screens.HomeScreen
 import dev.vladleesi.braindanceapp.presentation.screens.CalendarScreen
 import dev.vladleesi.braindanceapp.presentation.screens.CollectionsScreen
+import dev.vladleesi.braindanceapp.presentation.screens.HomeScreen
 import dev.vladleesi.braindanceapp.presentation.screens.NewsScreen
-import dev.vladleesi.braindanceapp.presentation.screens.SettingsScreen
+import dev.vladleesi.braindanceapp.presentation.screens.ProfileScreen
 import dev.vladleesi.braindanceapp.presentation.style.background
 import dev.vladleesi.braindanceapp.presentation.style.secondary_text
 import dev.vladleesi.braindanceapp.presentation.style.white
+import dev.vladleesi.braindanceapp.resources.Res
+import dev.vladleesi.braindanceapp.resources.bottom_bar_calendar
+import dev.vladleesi.braindanceapp.resources.bottom_bar_collections
+import dev.vladleesi.braindanceapp.resources.bottom_bar_home
+import dev.vladleesi.braindanceapp.resources.bottom_bar_news
+import dev.vladleesi.braindanceapp.resources.bottom_bar_settings
+import dev.vladleesi.braindanceapp.resources.ic_calendar
+import dev.vladleesi.braindanceapp.resources.ic_collections
+import dev.vladleesi.braindanceapp.resources.ic_home
+import dev.vladleesi.braindanceapp.resources.ic_news
+import dev.vladleesi.braindanceapp.resources.ic_settings
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun BottomBar(
-    navController: NavHostController,
-    updateLabel: (Int) -> Unit,
-) {
-    // TODO: Find the navigation for Compose Multiplatform
+fun BottomBar(navController: NavHostController) {
     BottomNavigation(backgroundColor = background) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
-        updateLabel.invoke(
-            when (currentRoute) {
-                BottomBarItem.NEWS.name -> BottomBarItem.NEWS.title
-                BottomBarItem.CALENDAR.name -> BottomBarItem.CALENDAR.title
-                BottomBarItem.COLLECTIONS.name -> BottomBarItem.COLLECTIONS.title
-                BottomBarItem.SETTINGS.name -> BottomBarItem.SETTINGS.title
-                else -> BottomBarItem.HOME.title
-            },
-        )
         BottomBarItem.entries.forEach { item ->
             BottomNavigationItem(
                 icon = {
                     Icon(
-                        painter = painterResource(id = item.icon),
+                        painter = painterResource(resource = item.icon),
                         contentDescription = null,
                     )
                 },
@@ -76,32 +73,32 @@ fun NavigationGraph(navController: NavHostController) {
         composable(BottomBarItem.NEWS.name) { NewsScreen() }
         composable(BottomBarItem.CALENDAR.name) { CalendarScreen() }
         composable(BottomBarItem.COLLECTIONS.name) { CollectionsScreen() }
-        composable(BottomBarItem.SETTINGS.name) { SettingsScreen() }
+        composable(BottomBarItem.SETTINGS.name) { ProfileScreen() }
     }
 }
 
 enum class BottomBarItem(
-    @StringRes val title: Int,
-    @DrawableRes val icon: Int,
+    val title: StringResource,
+    val icon: DrawableResource,
 ) {
     HOME(
-        title = R.string.bottom_bar_home,
-        icon = R.drawable.ic_home,
+        title = Res.string.bottom_bar_home,
+        icon = Res.drawable.ic_home,
     ),
     NEWS(
-        title = R.string.bottom_bar_news,
-        icon = R.drawable.ic_news,
+        title = Res.string.bottom_bar_news,
+        icon = Res.drawable.ic_news,
     ),
     CALENDAR(
-        title = R.string.bottom_bar_calendar,
-        icon = R.drawable.ic_calendar,
+        title = Res.string.bottom_bar_calendar,
+        icon = Res.drawable.ic_calendar,
     ),
     COLLECTIONS(
-        title = R.string.bottom_bar_collections,
-        icon = R.drawable.ic_collections,
+        title = Res.string.bottom_bar_collections,
+        icon = Res.drawable.ic_collections,
     ),
     SETTINGS(
-        title = R.string.bottom_bar_settings,
-        icon = R.drawable.ic_settings,
+        title = Res.string.bottom_bar_settings,
+        icon = Res.drawable.ic_settings,
     ),
 }

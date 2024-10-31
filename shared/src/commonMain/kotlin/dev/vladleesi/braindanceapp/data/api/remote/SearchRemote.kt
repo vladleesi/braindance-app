@@ -7,11 +7,15 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
 class SearchRemote {
-    suspend fun search(query: String): HttpResponse =
+    suspend fun search(
+        query: String,
+        pageSize: Int,
+    ): HttpResponse =
         httpClient.get("games") {
             contentType(ContentType.Application.Json)
             url {
                 parameters.append("search", query)
+                parameters.append("page_size", pageSize.toString())
             }
         }
 }

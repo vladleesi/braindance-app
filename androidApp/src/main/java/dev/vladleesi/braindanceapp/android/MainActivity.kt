@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import dev.vladleesi.braindanceapp.BraindanceApp
 import dev.vladleesi.braindanceapp.Greeting
 import dev.vladleesi.braindanceapp.presentation.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.presentation.style.getTypography
@@ -14,7 +15,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            App()
+            BraindanceApp()
         }
     }
 }

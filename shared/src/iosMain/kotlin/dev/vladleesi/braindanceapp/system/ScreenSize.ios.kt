@@ -1,15 +1,17 @@
 package dev.vladleesi.braindanceapp.system
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.platform.LocalWindowInfo
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.useContents
+import platform.UIKit.UIScreen
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-actual fun getScreenSize(): ScreenSize {
-    val containerSize = LocalWindowInfo.current.containerSize
-    return ScreenSize(
-        width = containerSize.width.toFloat(),
-        height = containerSize.height.toFloat(),
-    )
-}
+@OptIn(ExperimentalForeignApi::class)
+actual val screenSize: ScreenSize
+    @Composable
+    get() {
+        val (width, height) = UIScreen.mainScreen.bounds.useContents { size.width to size.height }
+        return ScreenSize(
+            width = width.toFloat(),
+            height = height.toFloat(),
+        )
+    }

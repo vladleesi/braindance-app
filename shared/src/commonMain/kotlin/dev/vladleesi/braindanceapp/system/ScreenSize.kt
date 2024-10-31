@@ -2,8 +2,8 @@ package dev.vladleesi.braindanceapp.system
 
 import androidx.compose.runtime.Composable
 
-@Composable
-expect fun getScreenSize(): ScreenSize
+@get:Composable
+expect val screenSize: ScreenSize
 
 data class ScreenSize(
     val width: Float,

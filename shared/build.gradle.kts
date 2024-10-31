@@ -41,6 +41,12 @@ kotlin {
                 implementation(compose.material)
                 implementation(compose.components.resources)
 
+                // Navigation
+                implementation(libs.compose.navigation)
+
+                // View Model
+                implementation(libs.compose.viewmodel)
+
                 // Ktor
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.logging)
@@ -53,6 +59,10 @@ kotlin {
 
                 // Coroutines
                 implementation(libs.kotlinx.coroutines)
+
+                // Coil
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor)
 
                 // Logger
                 implementation(libs.logging.napier)
@@ -122,8 +132,9 @@ buildkonfig {
 
     defaultConfigs {
         val apiKey: String? = gradleLocalProperties(rootDir).getProperty("API_KEY")
+        val buildWithoutApiKey = project.property("buildWithoutApiKey").toString().toBoolean()
 
-        require(apiKey.isNullOrEmpty().not() || project.findProperty("buildWithoutApiKey") == true) {
+        require(apiKey.isNullOrEmpty().not() || buildWithoutApiKey) {
             "Please add your API key to local.properties with the key name `API_KEY`."
         }
 

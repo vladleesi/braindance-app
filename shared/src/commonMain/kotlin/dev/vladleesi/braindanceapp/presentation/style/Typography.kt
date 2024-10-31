@@ -69,4 +69,11 @@ fun getTypography() =
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
             ),
+        caption =
+            TextStyle(
+                color = secondary_text,
+                fontFamily = getFonts(),
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp,
+            ),
     )
