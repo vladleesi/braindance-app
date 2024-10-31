@@ -121,10 +121,12 @@ buildkonfig {
     packageName = "dev.vladleesi.braindanceapp"
 
     defaultConfigs {
-        val apiKey: String = gradleLocalProperties(rootDir).getProperty("API_KEY")
+        val apiKey: String? = gradleLocalProperties(rootDir).getProperty("API_KEY")
 
-        require(apiKey.isNotEmpty()) {
-            "Please add your API key to local.properties with the key name `API_KEY`."
+        if (project.hasProperty("buildWithoutApiKey").not()) {
+            requireNotNull(apiKey) {
+                "Please add your API key to local.properties with the key name `API_KEY`."
+            }
         }
 
         buildConfigField(FieldSpec.Type.STRING, "API_KEY", apiKey)
