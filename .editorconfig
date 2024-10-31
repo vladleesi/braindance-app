@@ -9,3 +9,7 @@ ktlint_function_naming_ignore_when_annotated_with = Composable
 [**/build/generated/**]
 # Exclude build/generated directory from ktlint checks
 ktlint = disabled
+
+[**/build/buildkonfig/**]
+# Exclude build/buildkonfig directory from ktlint checks
+ktlint = disabled
