@@ -22,7 +22,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build -PbuildWithoutApiKey=true
+        run: ./gradlew clean build -PbuildWithoutApiKey=true
 
       - name: Run unit tests
         run: ./gradlew test

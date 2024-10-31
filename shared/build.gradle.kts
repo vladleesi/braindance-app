@@ -123,7 +123,7 @@ buildkonfig {
     defaultConfigs {
         val apiKey: String? = gradleLocalProperties(rootDir).getProperty("API_KEY")
 
-        require(apiKey.isNullOrEmpty().not() || project.hasProperty("buildWithoutApiKey")) {
+        require(apiKey.isNullOrEmpty().not() || project.findProperty("buildWithoutApiKey") == true) {
             "Please add your API key to local.properties with the key name `API_KEY`."
         }
 
