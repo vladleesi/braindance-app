@@ -1,6 +1,7 @@
 package dev.vladleesi.braindanceapp.data.api
 
-import dev.vladleesi.braindanceapp.data.config.Config
+import dev.vladleesi.braindanceapp.BuildKonfig
+import dev.vladleesi.braindanceapp.data.config.ApiConfig
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -14,7 +15,9 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.retry
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.request
+import io.ktor.http.ContentType
 import io.ktor.http.URLProtocol
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
@@ -60,13 +63,13 @@ fun HttpClientConfig<*>.jsonConfig() {
     install(ContentNegotiation) {
         json(
             json =
-                Json {
-                    ignoreUnknownKeys = true
-                    prettyPrint = true
-                    explicitNulls = false
-                    // Set default value to expected values
-                    isLenient = true
-                },
+            Json {
+                ignoreUnknownKeys = true
+                prettyPrint = true
+                explicitNulls = false
+                // Set default value to expected values
+                isLenient = true
+            },
         )
     }
 }
@@ -85,8 +88,9 @@ fun HttpClientConfig<*>.defaultRequestConfig() {
     defaultRequest {
         url {
             protocol = URLProtocol.HTTPS
-            host = Config.RAWG_HOST
-            parameters.append("key", Config.API_KEY)
+            host = ApiConfig.RAWG_HOST
+            parameters.append(ApiConfig.Query.KEY, BuildKonfig.API_KEY)
+            contentType(ContentType.Application.Json)
         }
     }
 }

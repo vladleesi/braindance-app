@@ -7,6 +7,7 @@ detekt = "1.23.6"
 ktor = "2.3.12"
 activity-compose = "1.9.3"
 compose = "1.7.4"
+buildkonfig = "0.15.2"
 
 [libraries]
 
@@ -64,3 +65,4 @@ kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.
 compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
