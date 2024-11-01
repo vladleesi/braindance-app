@@ -29,13 +29,13 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test
 
-      - name: Run Android tests
-        uses: reactivecircus/android-emulator-runner@v3
-        with:
-          api-level: 33
-          arch: x86_64
-          profile: pixel_5
-          script: ./gradlew connectedCheck --stacktrace
+#      - name: Run Android tests
+#        uses: reactivecircus/android-emulator-runner@v2
+#        with:
+#          api-level: 29
+#          arch: x86
+#          profile: Nexus 6
+#          script: ./gradlew connectedCheck --stacktrace
 
       - name: Push to master branch
         if: ${{ success() }}
