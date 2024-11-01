@@ -9,6 +9,8 @@ permissions: write-all
 jobs:
   pipeline:
     runs-on: macos-latest
+    env:
+      ORG_GRADLE_PROJECT_buildWithoutApiKey: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -22,7 +24,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build -PbuildWithoutApiKey=true
+        run: ./gradlew clean build
 
       - name: Run unit tests
         run: ./gradlew test
