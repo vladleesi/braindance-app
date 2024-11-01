@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.presentation.components
+package dev.vladleesi.braindanceapp.ui.components
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -9,14 +9,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import dev.vladleesi.braindanceapp.presentation.screens.CalendarScreen
-import dev.vladleesi.braindanceapp.presentation.screens.CollectionsScreen
-import dev.vladleesi.braindanceapp.presentation.screens.HomeScreen
-import dev.vladleesi.braindanceapp.presentation.screens.NewsScreen
-import dev.vladleesi.braindanceapp.presentation.screens.ProfileScreen
-import dev.vladleesi.braindanceapp.presentation.style.background
-import dev.vladleesi.braindanceapp.presentation.style.secondary_text
-import dev.vladleesi.braindanceapp.presentation.style.white
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.bottom_bar_calendar
 import dev.vladleesi.braindanceapp.resources.bottom_bar_collections
@@ -28,6 +20,14 @@ import dev.vladleesi.braindanceapp.resources.ic_collections
 import dev.vladleesi.braindanceapp.resources.ic_home
 import dev.vladleesi.braindanceapp.resources.ic_news
 import dev.vladleesi.braindanceapp.resources.ic_settings
+import dev.vladleesi.braindanceapp.ui.screens.CalendarScreen
+import dev.vladleesi.braindanceapp.ui.screens.CollectionsScreen
+import dev.vladleesi.braindanceapp.ui.screens.HomeScreen
+import dev.vladleesi.braindanceapp.ui.screens.NewsScreen
+import dev.vladleesi.braindanceapp.ui.screens.ProfileScreen
+import dev.vladleesi.braindanceapp.ui.style.background
+import dev.vladleesi.braindanceapp.ui.style.secondary_text
+import dev.vladleesi.braindanceapp.ui.style.white
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource

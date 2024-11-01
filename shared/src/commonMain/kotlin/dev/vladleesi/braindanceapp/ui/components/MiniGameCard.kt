@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.presentation.components
+package dev.vladleesi.braindanceapp.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,10 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import dev.vladleesi.braindanceapp.presentation.style.getTypography
-import dev.vladleesi.braindanceapp.presentation.style.secondary_variant
-import dev.vladleesi.braindanceapp.presentation.style.small
 import dev.vladleesi.braindanceapp.system.screenSize
+import dev.vladleesi.braindanceapp.ui.style.getTypography
+import dev.vladleesi.braindanceapp.ui.style.secondary_variant
+import dev.vladleesi.braindanceapp.ui.style.small
 
 @Composable
 fun MiniGameCard(

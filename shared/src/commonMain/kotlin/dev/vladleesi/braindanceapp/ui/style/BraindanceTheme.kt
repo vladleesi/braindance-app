@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.presentation.style
+package dev.vladleesi.braindanceapp.ui.style
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +13,7 @@ fun BraindanceTheme(
     content: @Composable () -> Unit,
 ) {
     if (darkTheme.not()) {
-        // ignore
+        // ignore by now
     }
     val shapes =
         Shapes(

@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.presentation.components
+package dev.vladleesi.braindanceapp.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
@@ -13,12 +13,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import dev.vladleesi.braindanceapp.presentation.style.getTypography
-import dev.vladleesi.braindanceapp.presentation.style.hint_text
-import dev.vladleesi.braindanceapp.presentation.style.secondary
-import dev.vladleesi.braindanceapp.presentation.style.white
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.ic_search
+import dev.vladleesi.braindanceapp.ui.style.getTypography
+import dev.vladleesi.braindanceapp.ui.style.hint_text
+import dev.vladleesi.braindanceapp.ui.style.secondary
+import dev.vladleesi.braindanceapp.ui.style.white
 import org.jetbrains.compose.resources.painterResource
 
 @Composable

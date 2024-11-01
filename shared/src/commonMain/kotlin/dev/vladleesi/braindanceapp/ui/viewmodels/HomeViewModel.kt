@@ -1,10 +1,10 @@
-package dev.vladleesi.braindanceapp.presentation.viewmodels
+package dev.vladleesi.braindanceapp.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.api.remote.CompilationRemote
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
-import dev.vladleesi.braindanceapp.presentation.components.MiniGameCard
+import dev.vladleesi.braindanceapp.ui.components.MiniGameCard
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow

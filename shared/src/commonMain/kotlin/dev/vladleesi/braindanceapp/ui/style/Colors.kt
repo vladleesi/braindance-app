@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.presentation.style
+package dev.vladleesi.braindanceapp.ui.style
 
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors

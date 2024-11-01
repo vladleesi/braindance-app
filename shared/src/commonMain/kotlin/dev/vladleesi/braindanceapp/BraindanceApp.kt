@@ -11,9 +11,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import dev.vladleesi.braindanceapp.presentation.components.BottomBar
-import dev.vladleesi.braindanceapp.presentation.components.NavigationGraph
-import dev.vladleesi.braindanceapp.presentation.style.BraindanceTheme
+import dev.vladleesi.braindanceapp.ui.components.BottomBar
+import dev.vladleesi.braindanceapp.ui.components.NavigationGraph
+import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.utils.ImageLoaderInitializer
 
 @Composable
