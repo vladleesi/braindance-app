@@ -16,7 +16,7 @@ kotlin {
         compilations.all {
             compileTaskProvider.configure {
                 compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_1_8)
+                    jvmTarget.set(JvmTarget.JVM_17)
                 }
             }
         }
@@ -125,13 +125,17 @@ android {
             isReturnDefaultValues = true
         }
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 buildkonfig {
     packageName = "dev.vladleesi.braindanceapp"
 
     defaultConfigs {
-        val apiKey: String? = gradleLocalProperties(rootDir).getProperty("API_KEY")
+        val apiKey: String? = gradleLocalProperties(rootDir, project.providers).getProperty("API_KEY")
         val buildWithoutApiKey = project.property("buildWithoutApiKey").toString().toBoolean()
 
         require(apiKey.isNullOrEmpty().not() || buildWithoutApiKey) {

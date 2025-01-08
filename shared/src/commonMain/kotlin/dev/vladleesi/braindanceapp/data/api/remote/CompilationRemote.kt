@@ -14,4 +14,16 @@ class CompilationRemote {
                 parameter(ApiConfig.Query.PAGE_SIZE, pageSize.toString())
             }
         }
+
+    suspend fun bestOfTheYear(
+        pageSize: Int,
+        year: Int,
+    ): HttpResponse =
+        httpClient.get("/api/games/lists/greatest") {
+            url {
+                parameter(ApiConfig.Query.DISCOVER, true.toString())
+                parameter(ApiConfig.Query.PAGE_SIZE, pageSize.toString())
+                parameter(ApiConfig.Query.YEAR, year.toString())
+            }
+        }
 }

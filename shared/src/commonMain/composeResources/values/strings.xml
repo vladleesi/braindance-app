@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Bottom bar -->
-    <string name="bottom_bar_home">Home</string>
-    <string name="bottom_bar_collections">Collections</string>
-    <string name="bottom_bar_calendar">Calendar</string>
-    <string name="bottom_bar_news">News</string>
-    <string name="bottom_bar_settings">Settings</string>
+    <string name="back_button_content_description">Button: Back</string>
+
+    <!-- Error screen -->
+    <string name="error_screen_title">Oops!</string>
+    <string name="error_screen_error_message">Something went wrong. Please try again.</string>
+    <string name="error_screen_retry_button_text">Retry</string>
 </resources>

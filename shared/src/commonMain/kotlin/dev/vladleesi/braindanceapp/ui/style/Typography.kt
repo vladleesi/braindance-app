@@ -50,7 +50,7 @@ fun getTypography() =
             ),
         body2 =
             TextStyle(
-                color = secondary_text,
+                color = secondaryText,
                 fontFamily = getFonts(),
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
@@ -64,16 +64,23 @@ fun getTypography() =
             ),
         subtitle2 =
             TextStyle(
-                color = secondary_text,
+                color = secondaryText,
                 fontFamily = getFonts(),
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
             ),
         caption =
             TextStyle(
-                color = secondary_text,
+                color = secondaryText,
                 fontFamily = getFonts(),
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
+            ),
+        button =
+            TextStyle(
+                color = white,
+                fontFamily = getFonts(),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
             ),
     )

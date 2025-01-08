@@ -4,48 +4,83 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import dev.vladleesi.braindanceapp.routes.Route
+import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.style.getTypography
-import dev.vladleesi.braindanceapp.ui.style.secondary_variant
+import dev.vladleesi.braindanceapp.ui.style.micro
+import dev.vladleesi.braindanceapp.ui.style.secondaryText
+import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.small
+import dev.vladleesi.braindanceapp.ui.style.tiny
+import dev.vladleesi.braindanceapp.utils.toContentDescription
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MiniGameCard(
+fun MiniGameCardComponent(
     card: MiniGameCard,
     modifier: Modifier = Modifier,
+    navHostController: NavHostController,
 ) {
     val cardWidth = screenSize.width.dp * CARD_WIDTH_FACTOR
     Column(modifier = modifier.fillMaxSize()) {
         Card(
             modifier =
                 Modifier
-                    .height(144.dp)
+                    .height(128.dp)
                     .width(cardWidth),
-            backgroundColor = secondary_variant,
+            backgroundColor = secondaryVariant,
+            onClick = {
+                navHostController.navigate(
+                    route = Route.GameDetailsRoute,
+                    arguments = mapOf(Route.GameDetailsRoute.Params.GAME_ID to card.id.toString()),
+                )
+            },
         ) {
             AsyncImage(
                 modifier = Modifier.fillMaxSize(),
-                model = card.backgroundImage,
+                model = card.backgroundImageUrl,
                 contentScale = ContentScale.Crop,
-                contentDescription = null,
+                contentDescription = card.title.toContentDescription(),
             )
         }
         Spacer(Modifier.height(small))
-        Text(text = card.title, style = getTypography().subtitle1)
+        Text(
+            text = card.title,
+            style = getTypography().subtitle1,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.width(cardWidth).padding(start = tiny, end = tiny),
+        )
+        Spacer(Modifier.height(micro))
+        Text(
+            text = card.platforms.joinToString(" "),
+            style = getTypography().subtitle1,
+            color = secondaryText,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.width(cardWidth).padding(start = tiny, end = tiny),
+        )
     }
 }
 
 private const val CARD_WIDTH_FACTOR = 0.6f
 
 data class MiniGameCard(
+    val id: Int,
     val title: String,
-    val backgroundImage: String,
+    val backgroundImageUrl: String,
+    val platforms: List<String>,
 )

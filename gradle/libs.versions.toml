@@ -1,13 +1,13 @@
 [versions]
-gradle = "8.1.4"
-kotlin = "2.0.20"
+gradle = "8.7.3"
+kotlin = "2.1.0"
 compose-plugin = "1.6.11"
-ktlint = "12.1.1"
+ktlint = "12.1.2"
 detekt = "1.23.6"
 ktor = "2.3.12"
 activity-compose = "1.9.3"
-compose = "1.7.5"
-coil3 = "3.0.0-alpha06"
+compose = "1.7.6"
+coil3 = "3.0.4"
 buildkonfig = "0.15.2"
 
 [libraries]
@@ -19,10 +19,10 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = 
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
-compose-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.8.3" }
+compose-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.8.4" }
 
 # compose navigation
-compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version = "2.8.0-alpha10" }
+compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version = "2.8.0-alpha11" }
 
 # ktor
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -42,7 +42,7 @@ kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core",
 # coil
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
 coil-compose-core = { module = "io.coil-kt.coil3:coil-compose-core", version.ref = "coil3" }
-coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor", version.ref = "coil3" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor", version = "3.0.0-alpha08" }
 coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 
 # logger

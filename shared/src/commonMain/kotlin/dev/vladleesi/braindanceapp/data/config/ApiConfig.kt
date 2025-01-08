@@ -7,5 +7,6 @@ object ApiConfig {
         const val KEY = "key"
         const val DISCOVER = "discover"
         const val PAGE_SIZE = "page_size"
+        const val YEAR = "year"
     }
 }

@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.ic_search
 import dev.vladleesi.braindanceapp.ui.style.getTypography
-import dev.vladleesi.braindanceapp.ui.style.hint_text
+import dev.vladleesi.braindanceapp.ui.style.hintText
 import dev.vladleesi.braindanceapp.ui.style.secondary
 import dev.vladleesi.braindanceapp.ui.style.white
 import org.jetbrains.compose.resources.painterResource
@@ -41,7 +41,7 @@ fun SearchBar(modifier: Modifier = Modifier) {
         colors =
             TextFieldDefaults.textFieldColors(
                 backgroundColor = secondary,
-                cursorColor = hint_text,
+                cursorColor = hintText,
                 textColor = white,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,

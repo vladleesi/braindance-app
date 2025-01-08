@@ -5,19 +5,21 @@ import androidx.compose.material.lightColors
 import androidx.compose.ui.graphics.Color
 
 val white = Color(0xFFEFEFEF)
+val overlayBlack = Color(0x80000000)
 val background = Color(0xFF171717)
-val secondary_text = Color(0xFF969696)
-val hint_text = Color(0xFF363638)
+val secondaryText = Color(0xFF969696)
+val hintText = Color(0xFF363638)
 val secondary = Color(0xFF2F2F2F)
-val secondary_variant = Color(0xFF2D3037)
+val secondaryVariant = Color(0xFF2D3037)
 val error = Color(0xFFEA5A4A)
+val accent = Color(0xFF00BFFF) // TODO: Change color
 
 // TODO: Needs to check all colors
 val DarkColors =
     darkColors(
         primary = background,
         secondary = secondary,
-        secondaryVariant = secondary_variant,
+        secondaryVariant = secondaryVariant,
         background = background,
         surface = background,
         error = error,
