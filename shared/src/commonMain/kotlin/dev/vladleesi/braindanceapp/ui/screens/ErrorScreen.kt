@@ -32,9 +32,9 @@ fun ErrorScreen(
 ) {
     Box(
         modifier =
-        modifier
-            .fillMaxSize()
-            .padding(medium),
+            modifier
+                .fillMaxSize()
+                .padding(medium),
         contentAlignment = Alignment.Center,
     ) {
         Column(

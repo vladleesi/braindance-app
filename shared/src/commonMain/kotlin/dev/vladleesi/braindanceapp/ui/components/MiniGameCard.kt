@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
-import dev.vladleesi.braindanceapp.routes.Route
+import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.style.getTypography
@@ -44,8 +44,8 @@ fun MiniGameCardComponent(
             backgroundColor = secondaryVariant,
             onClick = {
                 navHostController.navigate(
-                    route = Route.GameDetailsRoute,
-                    arguments = mapOf(Route.GameDetailsRoute.Params.GAME_ID to card.id.toString()),
+                    route = GameDetailsRoute,
+                    arguments = mapOf(GameDetailsRoute.Params.GAME_ID to card.id.toString()),
                 )
             },
         ) {

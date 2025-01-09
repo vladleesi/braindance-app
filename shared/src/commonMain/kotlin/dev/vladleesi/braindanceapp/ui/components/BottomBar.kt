@@ -14,7 +14,11 @@ import dev.vladleesi.braindanceapp.resources.ic_collections
 import dev.vladleesi.braindanceapp.resources.ic_home
 import dev.vladleesi.braindanceapp.resources.ic_news
 import dev.vladleesi.braindanceapp.resources.ic_profile
-import dev.vladleesi.braindanceapp.routes.Route
+import dev.vladleesi.braindanceapp.routes.CalendarRoute
+import dev.vladleesi.braindanceapp.routes.CollectionsRoute
+import dev.vladleesi.braindanceapp.routes.HomeRoute
+import dev.vladleesi.braindanceapp.routes.NewsRoute
+import dev.vladleesi.braindanceapp.routes.ProfileRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.secondaryText
@@ -44,7 +48,7 @@ fun BottomBar(navController: NavHostController) {
                         // avoid building up a large stack of destination
                         // on the back stack as users select items
                         navController.graph.startDestinationRoute?.let {
-                            popUpTo(Route.HomeRoute.name) {
+                            popUpTo(HomeRoute.name) {
                                 saveState = true
                             }
                         }
@@ -62,12 +66,12 @@ fun BottomBar(navController: NavHostController) {
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Route.HomeRoute.name) {
-        registerRoute(Route.HomeRoute)
-        registerRoute(Route.NewsRoute)
-        registerRoute(Route.CalendarRoute)
-        registerRoute(Route.CollectionsRoute)
-        registerRoute(Route.ProfileRoute)
+    NavHost(navController = navController, startDestination = HomeRoute.name) {
+        registerRoute(HomeRoute)
+        registerRoute(NewsRoute)
+        registerRoute(CalendarRoute)
+        registerRoute(CollectionsRoute)
+        registerRoute(ProfileRoute)
     }
 }
 
@@ -75,9 +79,9 @@ enum class BottomBarItem(
     val icon: DrawableResource,
     val route: String,
 ) {
-    Home(icon = Res.drawable.ic_home, route = Route.HomeRoute.name),
-    News(icon = Res.drawable.ic_news, route = Route.NewsRoute.name),
-    Calendar(icon = Res.drawable.ic_calendar, route = Route.CalendarRoute.name),
-    Collections(icon = Res.drawable.ic_collections, route = Route.CollectionsRoute.name),
-    Profile(icon = Res.drawable.ic_profile, route = Route.ProfileRoute.name),
+    Home(icon = Res.drawable.ic_home, route = HomeRoute.name),
+    News(icon = Res.drawable.ic_news, route = NewsRoute.name),
+    Calendar(icon = Res.drawable.ic_calendar, route = CalendarRoute.name),
+    Collections(icon = Res.drawable.ic_collections, route = CollectionsRoute.name),
+    Profile(icon = Res.drawable.ic_profile, route = ProfileRoute.name),
 }

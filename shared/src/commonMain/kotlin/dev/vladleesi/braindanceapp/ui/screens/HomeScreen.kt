@@ -20,7 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.vladleesi.braindanceapp.routes.Route
+import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardListComponent
 import dev.vladleesi.braindanceapp.ui.style.large
@@ -37,7 +37,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         composable(HOME_INNER_ROUTE) {
             HomeScreen(modifier = modifier, navHostController = childNavController)
         }
-        registerRoute(Route.GameDetailsRoute)
+        registerRoute(GameDetailsRoute)
     }
 }
 

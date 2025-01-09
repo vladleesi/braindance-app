@@ -30,7 +30,7 @@ import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.back_button_content_description
 import dev.vladleesi.braindanceapp.resources.ic_arrow_back
-import dev.vladleesi.braindanceapp.routes.Route
+import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
@@ -55,7 +55,7 @@ fun GameDetailsScreen(
     var isInitialized by rememberSaveable { mutableStateOf(false) }
 
     val gameId by rememberSaveable {
-        mutableStateOf(arguments?.getString(Route.GameDetailsRoute.Params.GAME_ID))
+        mutableStateOf(arguments?.getString(GameDetailsRoute.Params.GAME_ID))
     }
     val state by viewModel.gameDetailsState.collectAsState()
 
