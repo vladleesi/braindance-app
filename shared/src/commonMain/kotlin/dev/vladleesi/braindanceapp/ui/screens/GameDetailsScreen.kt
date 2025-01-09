@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.core.bundle.Bundle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.back_button_content_description
@@ -48,9 +49,12 @@ import dev.vladleesi.braindanceapp.utils.withCircleRippleEffect
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
+private const val IMAGE_HEIGHT_FACTOR = 0.6f
+
 @Composable
 fun GameDetailsScreen(
     arguments: Bundle?,
+    navHostController: NavHostController?,
     modifier: Modifier = Modifier,
     viewModel: GameDetailsViewModel = viewModel { GameDetailsViewModel() },
 ) {
@@ -78,7 +82,7 @@ fun GameDetailsScreen(
             GlobalLoading(modifier = modifier)
 
         is GameDetailsState.Success ->
-            GameDetailsScreen(state = currentState, modifier = modifier)
+            GameDetailsScreen(state = currentState, modifier = modifier, navHostController = navHostController)
     }
 }
 
@@ -86,6 +90,7 @@ fun GameDetailsScreen(
 private fun GameDetailsScreen(
     state: GameDetailsState.Success,
     modifier: Modifier,
+    navHostController: NavHostController?,
 ) {
     val imageHeight = screenSize.width.dp * IMAGE_HEIGHT_FACTOR
     Box(modifier = modifier.fillMaxWidth()) {
@@ -102,16 +107,16 @@ private fun GameDetailsScreen(
                 contentDescription = state.gameDetails.name.toContentDescription(),
             )
             Spacer(modifier = Modifier.size(medium))
-            Text(
-                text = state.gameDetails.name,
-                style = getTypography().h2,
-                modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
-            )
-            Spacer(modifier = Modifier.size(small))
             PlatformLogoList(
                 platforms = state.gameDetails.platforms,
                 imageSize = 18.dp,
                 horizontalSpacing = tiny,
+                modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
+            )
+            Spacer(modifier = Modifier.size(small))
+            Text(
+                text = state.gameDetails.name,
+                style = getTypography().h2,
                 modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
             )
             Spacer(modifier = Modifier.size(medium))
@@ -129,7 +134,7 @@ private fun GameDetailsScreen(
                     .padding(start = medium, top = medium)
                     .withCircleRippleEffect(),
             onClick = {
-                // TODO: Back
+                navHostController?.popBackStack()
             },
         ) {
             Icon(
@@ -140,5 +145,3 @@ private fun GameDetailsScreen(
         }
     }
 }
-
-private const val IMAGE_HEIGHT_FACTOR = 0.6f

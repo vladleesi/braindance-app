@@ -37,7 +37,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         composable(HOME_INNER_ROUTE) {
             HomeScreen(modifier = modifier, navHostController = childNavController)
         }
-        registerRoute(GameDetailsRoute)
+        registerRoute(route = GameDetailsRoute, navHostController = childNavController)
     }
 }
 
@@ -70,7 +70,7 @@ private fun HomeScreen(
     ) {
         Spacer(Modifier.height(medium))
         MiniGameCardList(
-            title = "Best of the year",
+            title = "Best of the year", // TODO: Move to res
             cardList = bestOfTheYear,
             navHostController = navHostController,
         )

@@ -6,4 +6,4 @@ val currentYear: Int
     get() = GMTDate().year
 
 val lastYear: Int
-    get() = GMTDate().year - 1
+    get() = GMTDate().year.dec()

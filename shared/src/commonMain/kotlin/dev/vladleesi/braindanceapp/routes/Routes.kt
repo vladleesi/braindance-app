@@ -15,15 +15,19 @@ sealed class Route {
         this::class.simpleName.orEmpty()
 
     @Composable
-    abstract fun renderContent(bundle: Bundle?)
+    abstract fun renderContent(
+        bundle: Bundle?,
+        navHostController: NavHostController?,
+    )
 }
 
 inline fun <reified T : Route> NavGraphBuilder.registerRoute(
     route: T,
     arguments: List<NamedNavArgument> = emptyList(),
+    navHostController: NavHostController? = null,
 ) {
     composable(route = route.name, arguments = arguments) { entry ->
-        route.renderContent(entry.arguments)
+        route.renderContent(entry.arguments, navHostController)
     }
 }
 

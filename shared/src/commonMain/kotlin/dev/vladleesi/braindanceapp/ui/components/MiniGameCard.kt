@@ -27,6 +27,8 @@ import dev.vladleesi.braindanceapp.ui.style.tiny
 import dev.vladleesi.braindanceapp.utils.PlatformTypeShort
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 
+private const val CARD_WIDTH_FACTOR = 0.6f
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MiniGameCard(
@@ -73,8 +75,6 @@ fun MiniGameCard(
         )
     }
 }
-
-private const val CARD_WIDTH_FACTOR = 0.6f
 
 data class MiniGameCardModel(
     val id: Int,
