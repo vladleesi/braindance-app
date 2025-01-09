@@ -22,7 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
-import dev.vladleesi.braindanceapp.ui.components.MiniGameCardListComponent
+import dev.vladleesi.braindanceapp.ui.components.MiniGameCardList
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
@@ -69,18 +69,18 @@ private fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(large),
     ) {
         Spacer(Modifier.height(medium))
-        MiniGameCardListComponent(
+        MiniGameCardList(
             title = "Best of the year",
             cardList = bestOfTheYear,
             navHostController = navHostController,
         )
-        MiniGameCardListComponent(
+        MiniGameCardList(
             title = "Popular in $lastYear",
             cardList = popularLastYear,
             navHostController = navHostController,
         )
         // TODO: Two lines with auto scroll
-        MiniGameCardListComponent(
+        MiniGameCardList(
             title = "All time top 250",
             cardList = allTimeTop,
             navHostController = navHostController,

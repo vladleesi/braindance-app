@@ -15,9 +15,9 @@ import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.small
 
 @Composable
-fun MiniGameCardListComponent(
+fun MiniGameCardList(
     title: String,
-    cardList: List<MiniGameCard>,
+    cardList: List<MiniGameCardModel>,
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
 ) {
@@ -29,7 +29,7 @@ fun MiniGameCardListComponent(
             contentPadding = PaddingValues(horizontal = medium),
         ) {
             items(cardList) { card ->
-                MiniGameCardComponent(card = card, navHostController = navHostController)
+                MiniGameCard(card = card, navHostController = navHostController)
             }
         }
     }

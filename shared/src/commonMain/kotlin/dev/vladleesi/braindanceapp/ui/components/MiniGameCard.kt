@@ -21,16 +21,16 @@ import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.micro
-import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
+import dev.vladleesi.braindanceapp.utils.PlatformTypeShort
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MiniGameCardComponent(
-    card: MiniGameCard,
+fun MiniGameCard(
+    card: MiniGameCardModel,
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
 ) {
@@ -57,18 +57,16 @@ fun MiniGameCardComponent(
             )
         }
         Spacer(Modifier.height(small))
-        Text(
-            text = card.title,
-            style = getTypography().subtitle1,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.width(cardWidth).padding(start = tiny, end = tiny),
+        PlatformLogoList(
+            platforms = card.platforms,
+            imageSize = 14.dp,
+            horizontalSpacing = tiny,
+            modifier = Modifier.width(cardWidth).padding(start = tiny),
         )
         Spacer(Modifier.height(micro))
         Text(
-            text = card.platforms.joinToString(" "),
+            text = card.title,
             style = getTypography().subtitle1,
-            color = secondaryText,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.width(cardWidth).padding(start = tiny, end = tiny),
@@ -78,9 +76,9 @@ fun MiniGameCardComponent(
 
 private const val CARD_WIDTH_FACTOR = 0.6f
 
-data class MiniGameCard(
+data class MiniGameCardModel(
     val id: Int,
     val title: String,
     val backgroundImageUrl: String,
-    val platforms: List<String>,
+    val platforms: List<PlatformTypeShort>,
 )

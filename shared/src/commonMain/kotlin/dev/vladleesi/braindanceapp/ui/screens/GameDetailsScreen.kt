@@ -34,10 +34,12 @@ import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
+import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
 import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.small
+import dev.vladleesi.braindanceapp.ui.style.tiny
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
@@ -106,9 +108,10 @@ private fun GameDetailsScreen(
                 modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
             )
             Spacer(modifier = Modifier.size(small))
-            Text(
-                text = state.gameDetails.platforms.joinToString(" • "),
-                style = getTypography().caption,
+            PlatformLogoList(
+                platforms = state.gameDetails.platforms,
+                imageSize = 18.dp,
+                horizontalSpacing = tiny,
                 modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
             )
             Spacer(modifier = Modifier.size(medium))
