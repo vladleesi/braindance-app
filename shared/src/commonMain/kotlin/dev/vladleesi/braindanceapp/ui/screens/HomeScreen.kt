@@ -70,7 +70,8 @@ private fun HomeScreen(
     ) {
         Spacer(Modifier.height(medium))
         MiniGameCardList(
-            title = "Best of the year", // TODO: Move to res
+            // TODO: Move to res
+            title = "Best of the year",
             cardList = bestOfTheYear,
             navHostController = navHostController,
         )
