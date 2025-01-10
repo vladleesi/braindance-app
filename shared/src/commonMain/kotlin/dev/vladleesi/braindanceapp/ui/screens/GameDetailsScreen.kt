@@ -137,7 +137,6 @@ private fun GameDetailsScreen(
             Spacer(modifier = Modifier.size(medium))
             ExpandableText(
                 text = state.gameDetails.descriptionRaw,
-                textStyle = getTypography().body2,
                 modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
             )
             Spacer(modifier = Modifier.size(large))

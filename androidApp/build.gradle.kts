@@ -9,6 +9,7 @@ android {
     compileSdk = 35
     defaultConfig {
         applicationId = "dev.vladleesi.braindanceapp.android"
+        targetSdk = 35
         minSdk = 24
         versionCode = 1
         versionName = "1.0"

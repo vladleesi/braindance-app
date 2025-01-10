@@ -22,9 +22,9 @@ const val DEFAULT_MINIMUM_TEXT_LINE = 4
 fun ExpandableText(
     text: String,
     collapsedMaxLines: Int = DEFAULT_MINIMUM_TEXT_LINE,
-    expandText: String = "Show more",
+    expandText: String = "Read more",
     collapseText: String = "Show less",
-    textStyle: TextStyle = getTypography().body1,
+    textStyle: TextStyle = getTypography().subtitle2,
     expandTextStyle: TextStyle = getTypography().subtitle2,
     modifier: Modifier = Modifier,
 ) {
