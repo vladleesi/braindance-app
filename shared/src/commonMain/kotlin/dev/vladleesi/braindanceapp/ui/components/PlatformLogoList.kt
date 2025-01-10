@@ -9,13 +9,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.Dp
 import dev.vladleesi.braindanceapp.ui.style.white
-import dev.vladleesi.braindanceapp.utils.PlatformTypeShort
+import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun PlatformLogoList(
-    platforms: List<PlatformTypeShort>,
+    platforms: List<ParentPlatformType>,
     modifier: Modifier = Modifier,
     imageSize: Dp,
     horizontalSpacing: Dp,

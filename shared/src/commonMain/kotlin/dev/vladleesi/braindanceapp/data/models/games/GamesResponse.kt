@@ -16,6 +16,8 @@ data class Game(
     @SerialName("background_image")
     val backgroundImageUrl: String?,
     val released: String?,
+    @SerialName("parent_platforms")
+    val parentPlatforms: List<Platform>?,
     val platforms: List<Platform>?,
 )
 

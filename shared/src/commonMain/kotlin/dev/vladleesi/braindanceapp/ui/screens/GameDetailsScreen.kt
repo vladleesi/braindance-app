@@ -1,7 +1,9 @@
 package dev.vladleesi.braindanceapp.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +38,7 @@ import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
+import dev.vladleesi.braindanceapp.ui.components.ReleaseDateLabel
 import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
@@ -107,12 +110,24 @@ private fun GameDetailsScreen(
                 contentDescription = state.gameDetails.name.toContentDescription(),
             )
             Spacer(modifier = Modifier.size(medium))
-            PlatformLogoList(
-                platforms = state.gameDetails.platforms,
-                imageSize = 18.dp,
-                horizontalSpacing = tiny,
-                modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
-            )
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = medium, end = medium),
+                horizontalArrangement = Arrangement.spacedBy(small),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                state.gameDetails.releaseDate?.let { releaseDate ->
+                    ReleaseDateLabel(releaseDate)
+                }
+                PlatformLogoList(
+                    platforms = state.gameDetails.platforms,
+                    imageSize = 18.dp,
+                    horizontalSpacing = tiny,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
             Spacer(modifier = Modifier.size(small))
             Text(
                 text = state.gameDetails.name,

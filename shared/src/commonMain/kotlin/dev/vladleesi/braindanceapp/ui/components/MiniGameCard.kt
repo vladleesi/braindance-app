@@ -24,7 +24,7 @@ import dev.vladleesi.braindanceapp.ui.style.micro
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
-import dev.vladleesi.braindanceapp.utils.PlatformTypeShort
+import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 
 private const val CARD_WIDTH_FACTOR = 0.6f
@@ -80,5 +80,5 @@ data class MiniGameCardModel(
     val id: Int,
     val title: String,
     val backgroundImageUrl: String,
-    val platforms: List<PlatformTypeShort>,
+    val platforms: List<ParentPlatformType>,
 )

@@ -4,8 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.api.remote.GameDetailsRemote
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
-import dev.vladleesi.braindanceapp.utils.PlatformTypeShort
-import dev.vladleesi.braindanceapp.utils.distinctPlatformTypes
+import dev.vladleesi.braindanceapp.utils.ParentPlatformType
+import dev.vladleesi.braindanceapp.utils.formatDate
+import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,8 +39,8 @@ class GameDetailsViewModel : ViewModel() {
                         name = result.name.orEmpty(),
                         descriptionRaw = result.descriptionRaw.orEmpty(),
                         backgroundImage = result.backgroundImage.orEmpty(),
-                        // TODO: Return icons?
-                        platforms = result.platforms.orEmpty().distinctPlatformTypes(),
+                        releaseDate = result.released.orEmpty().formatDate(),
+                        platforms = result.parentPlatforms.orEmpty().parentPlatformTypes(),
                     ),
                 ),
             )
@@ -59,5 +60,6 @@ data class GameDetails(
     val name: String,
     val descriptionRaw: String,
     val backgroundImage: String,
-    val platforms: List<PlatformTypeShort>,
+    val releaseDate: String?,
+    val platforms: List<ParentPlatformType>,
 )

@@ -49,15 +49,17 @@ private fun HomeScreen(
 ) {
     var isInitialized by rememberSaveable { mutableStateOf(false) }
 
-    val bestOfTheYear by viewModel.bestOfTheYear.collectAsState()
+    val popularThisYear by viewModel.popularThisYear.collectAsState()
     val popularLastYear by viewModel.popularLastYear.collectAsState()
     val allTimeTop by viewModel.allTimeTop.collectAsState()
 
+    // Load the screen only on first navigation
     if (isInitialized.not()) {
         LaunchedEffect(Unit) {
             isInitialized = true
-            // Load the screen only on first navigation
-            viewModel.load()
+            viewModel.loadPopularThisYear()
+            viewModel.loadPopularLastYear()
+            viewModel.loadPopularAllTime()
         }
     }
 
@@ -72,7 +74,7 @@ private fun HomeScreen(
         MiniGameCardList(
             // TODO: Move to res
             title = "Best of the year",
-            cardList = bestOfTheYear,
+            cardList = popularThisYear,
             navHostController = navHostController,
         )
         MiniGameCardList(

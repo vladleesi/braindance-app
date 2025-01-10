@@ -54,6 +54,9 @@ kotlin {
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
 
+                // Datetime
+                implementation(libs.kotlinx.datetime)
+
                 // Serialization
                 implementation(libs.kotlinx.serialization.json)
 
