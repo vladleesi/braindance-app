@@ -1,19 +1,21 @@
 package dev.vladleesi.braindanceapp.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,27 +32,22 @@ import androidx.core.bundle.Bundle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
-import dev.vladleesi.braindanceapp.resources.Res
-import dev.vladleesi.braindanceapp.resources.back_button_content_description
-import dev.vladleesi.braindanceapp.resources.ic_arrow_back
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
 import dev.vladleesi.braindanceapp.ui.components.ReleaseDateLabel
+import dev.vladleesi.braindanceapp.ui.components.TopAppBarOverlay
+import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
-import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.toContentDescription
-import dev.vladleesi.braindanceapp.utils.withCircleRippleEffect
-import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 
 private const val IMAGE_HEIGHT_FACTOR = 0.6f
 
@@ -96,7 +93,13 @@ private fun GameDetailsScreen(
     navHostController: NavHostController?,
 ) {
     val imageHeight = screenSize.width.dp * IMAGE_HEIGHT_FACTOR
-    Box(modifier = modifier.fillMaxWidth()) {
+    Box(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(background)
+                .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()),
+    ) {
         Column(
             modifier =
                 Modifier
@@ -141,21 +144,6 @@ private fun GameDetailsScreen(
             )
             Spacer(modifier = Modifier.size(large))
         }
-        IconButton(
-            modifier =
-                Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = medium, top = medium)
-                    .withCircleRippleEffect(),
-            onClick = {
-                navHostController?.popBackStack()
-            },
-        ) {
-            Icon(
-                imageVector = vectorResource(Res.drawable.ic_arrow_back),
-                tint = white,
-                contentDescription = stringResource(Res.string.back_button_content_description),
-            )
-        }
+        TopAppBarOverlay(showBackButton = true, onBackButtonPressed = { navHostController?.popBackStack() })
     }
 }

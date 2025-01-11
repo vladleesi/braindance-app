@@ -1,10 +1,16 @@
 package dev.vladleesi.braindanceapp.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -23,6 +29,8 @@ import androidx.navigation.compose.rememberNavController
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardList
+import dev.vladleesi.braindanceapp.ui.components.TopAppBarOverlay
+import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
@@ -63,31 +71,41 @@ private fun HomeScreen(
         }
     }
 
-    Column(
+    Box(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(large),
+            Modifier
+                .fillMaxSize()
+                .background(background)
+                .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()),
     ) {
-        Spacer(Modifier.height(medium))
-        MiniGameCardList(
-            // TODO: Move to res
-            title = "Best of the year",
-            cardList = popularThisYear,
-            navHostController = navHostController,
-        )
-        MiniGameCardList(
-            title = "Popular in $lastYear",
-            cardList = popularLastYear,
-            navHostController = navHostController,
-        )
-        // TODO: Two lines with auto scroll
-        MiniGameCardList(
-            title = "All time top 250",
-            cardList = allTimeTop,
-            navHostController = navHostController,
-        )
-        Spacer(Modifier.height(large))
+        Column(
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(large),
+        ) {
+            Spacer(Modifier.height(medium))
+            MiniGameCardList(
+                // TODO: Move to res
+                title = "Best of the year",
+                cardList = popularThisYear,
+                navHostController = navHostController,
+            )
+            MiniGameCardList(
+                title = "Popular in $lastYear",
+                cardList = popularLastYear,
+                navHostController = navHostController,
+            )
+            // TODO: Two lines with auto scroll
+            MiniGameCardList(
+                title = "All time top 250",
+                cardList = allTimeTop,
+                navHostController = navHostController,
+            )
+            Spacer(Modifier.height(large))
+        }
+
+        TopAppBarOverlay()
     }
 }

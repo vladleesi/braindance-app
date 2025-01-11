@@ -2,7 +2,10 @@ package dev.vladleesi.braindanceapp
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -15,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import dev.vladleesi.braindanceapp.ui.components.BottomBar
 import dev.vladleesi.braindanceapp.ui.components.NavigationGraph
 import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
+import dev.vladleesi.braindanceapp.ui.style.navBarColor
 import dev.vladleesi.braindanceapp.utils.ImageLoaderInitializer
 
 @Composable
@@ -33,16 +37,20 @@ fun BraindanceApp(modifier: Modifier = Modifier) {
             bottomBar = {
                 BottomBar(navController = navController)
             },
-            modifier =
-                modifier
-                    .fillMaxSize()
-                    .windowInsetsPadding(WindowInsets.safeDrawing),
+            modifier = modifier.fillMaxSize(),
+            backgroundColor = navBarColor,
         ) { paddingValues ->
             Column(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(paddingValues),
+                        .padding(paddingValues)
+                        .consumeWindowInsets(paddingValues)
+                        .windowInsetsPadding(
+                            WindowInsets.safeDrawing.only(
+                                WindowInsetsSides.Horizontal,
+                            ),
+                        ),
             ) {
                 NavigationGraph(navController = navController)
             }

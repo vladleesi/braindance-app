@@ -1,10 +1,12 @@
 package dev.vladleesi.braindanceapp.ui.components
 
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -28,7 +30,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun BottomBar(navController: NavHostController) {
-    BottomNavigation(backgroundColor = navBarColor) {
+    BottomNavigation(backgroundColor = navBarColor, modifier = Modifier.navigationBarsPadding()) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         BottomBarItem.entries.forEach { item ->
