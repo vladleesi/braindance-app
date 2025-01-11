@@ -20,7 +20,7 @@ import dev.vladleesi.braindanceapp.routes.HomeRoute
 import dev.vladleesi.braindanceapp.routes.NewsRoute
 import dev.vladleesi.braindanceapp.routes.ProfileRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
-import dev.vladleesi.braindanceapp.ui.style.background
+import dev.vladleesi.braindanceapp.ui.style.navBarColor
 import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.white
 import org.jetbrains.compose.resources.DrawableResource
@@ -28,7 +28,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun BottomBar(navController: NavHostController) {
-    BottomNavigation(backgroundColor = background) {
+    BottomNavigation(backgroundColor = navBarColor) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         BottomBarItem.entries.forEach { item ->

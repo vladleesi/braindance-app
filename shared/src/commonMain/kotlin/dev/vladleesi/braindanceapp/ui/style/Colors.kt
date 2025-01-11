@@ -13,6 +13,8 @@ val secondary = Color(0xFF2F2F2F)
 val secondaryVariant = Color(0xFF2D3037)
 val error = Color(0xFFEA5A4A)
 val accent = Color(0xFF00BFFF) // TODO: Change color
+val topBarColor = Color(0xFF454545)
+val navBarColor = Color(0xFF101010)
 
 // TODO: Needs to check all colors
 val DarkColors =
@@ -21,7 +23,6 @@ val DarkColors =
         secondary = secondary,
         secondaryVariant = secondaryVariant,
         background = background,
-        surface = background,
         error = error,
     )
 

@@ -31,18 +31,17 @@ fun BraindanceApp(modifier: Modifier = Modifier) {
     BraindanceTheme {
         Scaffold(
             bottomBar = {
-                BottomBar(
-                    navController = navController,
-                )
+                BottomBar(navController = navController)
             },
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.safeDrawing),
         ) { paddingValues ->
             Column(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .windowInsetsPadding(WindowInsets.safeDrawing),
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
             ) {
                 NavigationGraph(navController = navController)
             }
