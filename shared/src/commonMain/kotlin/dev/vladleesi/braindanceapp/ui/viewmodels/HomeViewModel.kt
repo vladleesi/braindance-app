@@ -3,6 +3,7 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.api.remote.CompilationRemote
+import dev.vladleesi.braindanceapp.data.models.games.Game
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardModel
 import dev.vladleesi.braindanceapp.utils.currentYear
@@ -30,6 +31,9 @@ class HomeViewModel : ViewModel() {
     private val _allTimeTop = MutableStateFlow<List<MiniGameCardModel>>(emptyList())
     val allTimeTop: StateFlow<List<MiniGameCardModel>> = _allTimeTop.asStateFlow()
 
+    private val _thisWeekReleases = MutableStateFlow<List<MiniGameCardModel>>(emptyList())
+    val thisWeekReleases: StateFlow<List<MiniGameCardModel>> = _thisWeekReleases.asStateFlow()
+
     // TODO: Move to global coroutine config
     private val handler =
         CoroutineExceptionHandler { _, exception ->
@@ -40,14 +44,7 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch(handler) {
             val result = homeRepo.bestOfTheYear(pageSize = pageSize, year = currentYear)
             _popularThisYear.emit(
-                result.results.orEmpty().map {
-                    MiniGameCardModel(
-                        id = it.id.orZero(),
-                        title = it.name.orEmpty(),
-                        backgroundImageUrl = it.backgroundImageUrl.orEmpty(),
-                        platforms = it.parentPlatforms.orEmpty().parentPlatformTypes(),
-                    )
-                },
+                result.results.orEmpty().mapperMiniGameCardModel(),
             )
         }
     }
@@ -56,14 +53,7 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch(handler) {
             val result = homeRepo.bestOfTheYear(pageSize = pageSize, year = lastYear)
             _popularLastYear.emit(
-                result.results.orEmpty().map {
-                    MiniGameCardModel(
-                        id = it.id.orZero(),
-                        title = it.name.orEmpty(),
-                        backgroundImageUrl = it.backgroundImageUrl.orEmpty(),
-                        platforms = it.parentPlatforms.orEmpty().parentPlatformTypes(),
-                    )
-                },
+                result.results.orEmpty().mapperMiniGameCardModel(),
             )
         }
     }
@@ -72,17 +62,29 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch(handler) {
             val result = homeRepo.popular(pageSize = pageSize)
             _allTimeTop.emit(
-                result.results.orEmpty().map {
-                    MiniGameCardModel(
-                        id = it.id.orZero(),
-                        title = it.name.orEmpty(),
-                        backgroundImageUrl = it.backgroundImageUrl.orEmpty(),
-                        platforms = it.parentPlatforms.orEmpty().parentPlatformTypes(),
-                    )
-                },
+                result.results.orEmpty().mapperMiniGameCardModel(),
             )
         }
     }
+
+    fun loadThisWeekReleases(pageSize: Int = PAGE_SIZE) {
+        viewModelScope.launch(handler) {
+            val result = homeRepo.thisWeekReleases(pageSize = pageSize)
+            _thisWeekReleases.emit(
+                result.results.orEmpty().mapperMiniGameCardModel(),
+            )
+        }
+    }
+
+    private fun List<Game>.mapperMiniGameCardModel() = map { game -> game.toMiniGameCardModel() }
+
+    private fun Game.toMiniGameCardModel() =
+        MiniGameCardModel(
+            id = id.orZero(),
+            title = name.orEmpty(),
+            backgroundImageUrl = backgroundImageUrl.orEmpty(),
+            platforms = parentPlatforms.orEmpty().parentPlatformTypes(),
+        )
 
     private companion object {
         private const val PAGE_SIZE = 10

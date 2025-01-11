@@ -17,4 +17,9 @@ class HomeRepo(private val compilationRemote: CompilationRemote) {
         val response = compilationRemote.popular(pageSize)
         return response.body()
     }
+
+    suspend fun thisWeekReleases(pageSize: Int): GamesResponse {
+        val response = compilationRemote.thisWeekReleases(pageSize)
+        return response.body()
+    }
 }

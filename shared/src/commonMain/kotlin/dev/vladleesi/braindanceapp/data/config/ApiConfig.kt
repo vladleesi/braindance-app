@@ -8,5 +8,10 @@ object ApiConfig {
         const val DISCOVER = "discover"
         const val PAGE_SIZE = "page_size"
         const val YEAR = "year"
+        const val ORDERING = "ordering"
+    }
+
+    object Value {
+        const val ADDED = "added"
     }
 }

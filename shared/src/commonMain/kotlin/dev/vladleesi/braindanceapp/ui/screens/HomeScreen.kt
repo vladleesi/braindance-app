@@ -60,6 +60,7 @@ private fun HomeScreen(
     val popularThisYear by viewModel.popularThisYear.collectAsState()
     val popularLastYear by viewModel.popularLastYear.collectAsState()
     val allTimeTop by viewModel.allTimeTop.collectAsState()
+    val thisWeekReleases by viewModel.thisWeekReleases.collectAsState()
 
     // Load the screen only on first navigation
     if (isInitialized.not()) {
@@ -68,6 +69,7 @@ private fun HomeScreen(
             viewModel.loadPopularThisYear()
             viewModel.loadPopularLastYear()
             viewModel.loadPopularAllTime()
+            viewModel.loadThisWeekReleases()
         }
     }
 
@@ -101,6 +103,11 @@ private fun HomeScreen(
             MiniGameCardList(
                 title = "All time top 250",
                 cardList = allTimeTop,
+                navHostController = navHostController,
+            )
+            MiniGameCardList(
+                title = "This week releases",
+                cardList = thisWeekReleases,
                 navHostController = navHostController,
             )
             Spacer(Modifier.height(large))

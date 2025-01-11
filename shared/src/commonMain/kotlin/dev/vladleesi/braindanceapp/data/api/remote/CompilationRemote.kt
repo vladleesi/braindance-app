@@ -26,4 +26,11 @@ class CompilationRemote {
                 parameter(ApiConfig.Query.YEAR, year.toString())
             }
         }
+
+    suspend fun thisWeekReleases(pageSize: Int): HttpResponse =
+        httpClient.get("/api/games/lists/recent-games") {
+            parameter(ApiConfig.Query.DISCOVER, true.toString())
+            parameter(ApiConfig.Query.PAGE_SIZE, pageSize.toString())
+            parameter(ApiConfig.Query.ORDERING, ApiConfig.Value.ADDED)
+        }
 }
