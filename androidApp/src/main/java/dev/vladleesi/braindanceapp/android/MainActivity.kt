@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(background.toArgb()),
-            navigationBarStyle = SystemBarStyle.dark(navBarColor.toArgb())
+            navigationBarStyle = SystemBarStyle.dark(navBarColor.toArgb()),
         )
         setContent {
             BraindanceApp()

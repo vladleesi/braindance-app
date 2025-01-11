@@ -33,15 +33,16 @@ fun BraindanceApp(modifier: Modifier = Modifier) {
             bottomBar = {
                 BottomBar(navController = navController)
             },
-            modifier = modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.safeDrawing),
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.safeDrawing),
         ) { paddingValues ->
             Column(
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
             ) {
                 NavigationGraph(navController = navController)
             }
