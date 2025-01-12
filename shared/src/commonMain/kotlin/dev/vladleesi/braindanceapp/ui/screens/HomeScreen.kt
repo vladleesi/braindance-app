@@ -3,16 +3,13 @@ package dev.vladleesi.braindanceapp.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,15 +23,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dev.vladleesi.braindanceapp.resources.Res
+import dev.vladleesi.braindanceapp.resources.home_screen_all_time_top_title
+import dev.vladleesi.braindanceapp.resources.home_screen_popular_in_year_title
+import dev.vladleesi.braindanceapp.resources.home_screen_popular_this_year_title
+import dev.vladleesi.braindanceapp.resources.home_screen_this_week_release_title
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardList
-import dev.vladleesi.braindanceapp.ui.components.TopAppBarOverlay
+import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.large
-import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
 import dev.vladleesi.braindanceapp.utils.lastYear
+import org.jetbrains.compose.resources.stringResource
 
 private const val HOME_INNER_ROUTE = "HomeInnerRoute"
 
@@ -66,10 +68,7 @@ private fun HomeScreen(
     if (isInitialized.not()) {
         LaunchedEffect(Unit) {
             isInitialized = true
-            viewModel.loadPopularThisYear()
-            viewModel.loadPopularLastYear()
-            viewModel.loadPopularAllTime()
-            viewModel.loadThisWeekReleases()
+            viewModel.loadHome()
         }
     }
 
@@ -77,42 +76,44 @@ private fun HomeScreen(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(background)
-                .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()),
+                .background(background),
     ) {
-        Column(
-            modifier =
-                modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(large),
         ) {
-            Spacer(Modifier.height(medium))
-            MiniGameCardList(
-                // TODO: Move to res
-                title = "Best of the year",
-                cardList = popularThisYear,
-                navHostController = navHostController,
-            )
-            MiniGameCardList(
-                title = "Popular in $lastYear",
-                cardList = popularLastYear,
-                navHostController = navHostController,
-            )
-            // TODO: Two lines with auto scroll
-            MiniGameCardList(
-                title = "All time top 250",
-                cardList = allTimeTop,
-                navHostController = navHostController,
-            )
-            MiniGameCardList(
-                title = "This week releases",
-                cardList = thisWeekReleases,
-                navHostController = navHostController,
-            )
-            Spacer(Modifier.height(large))
+            item { Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars)) }
+            item {
+                MiniGameCardList(
+                    title = stringResource(Res.string.home_screen_popular_this_year_title),
+                    cardList = popularThisYear,
+                    navHostController = navHostController,
+                )
+            }
+            item {
+                MiniGameCardList(
+                    title = stringResource(Res.string.home_screen_popular_in_year_title, lastYear),
+                    cardList = popularLastYear,
+                    navHostController = navHostController,
+                )
+            }
+            item {
+                // TODO: Two lines with auto scroll
+                MiniGameCardList(
+                    title = stringResource(Res.string.home_screen_all_time_top_title),
+                    cardList = allTimeTop,
+                    navHostController = navHostController,
+                )
+            }
+            item {
+                MiniGameCardList(
+                    title = stringResource(Res.string.home_screen_this_week_release_title),
+                    cardList = thisWeekReleases,
+                    navHostController = navHostController,
+                )
+            }
+            item { Spacer(Modifier.height(large)) }
         }
-
-        TopAppBarOverlay()
+        StatusBarOverlay()
     }
 }

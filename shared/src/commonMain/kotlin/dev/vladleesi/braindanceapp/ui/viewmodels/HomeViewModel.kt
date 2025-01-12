@@ -40,7 +40,14 @@ class HomeViewModel : ViewModel() {
             Napier.e(message = exception.message.orEmpty(), throwable = exception)
         }
 
-    fun loadPopularThisYear(pageSize: Int = PAGE_SIZE) {
+    fun loadHome() {
+        loadPopularThisYear()
+        loadPopularLastYear()
+        loadPopularAllTime()
+        loadThisWeekReleases()
+    }
+
+    private fun loadPopularThisYear(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
             val result = homeRepo.bestOfTheYear(pageSize = pageSize, year = currentYear)
             _popularThisYear.emit(
@@ -49,7 +56,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadPopularLastYear(pageSize: Int = PAGE_SIZE) {
+    private fun loadPopularLastYear(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
             val result = homeRepo.bestOfTheYear(pageSize = pageSize, year = lastYear)
             _popularLastYear.emit(
@@ -58,7 +65,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadPopularAllTime(pageSize: Int = PAGE_SIZE) {
+    private fun loadPopularAllTime(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
             val result = homeRepo.popular(pageSize = pageSize)
             _allTimeTop.emit(
@@ -67,7 +74,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun loadThisWeekReleases(pageSize: Int = PAGE_SIZE) {
+    private fun loadThisWeekReleases(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
             val result = homeRepo.thisWeekReleases(pageSize = pageSize)
             _thisWeekReleases.emit(

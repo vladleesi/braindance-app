@@ -41,6 +41,13 @@ fun getTypography() =
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 22.sp,
             ),
+        h3 =
+            TextStyle(
+                color = white,
+                fontFamily = getFonts(),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+            ),
         body1 =
             TextStyle(
                 color = white,
