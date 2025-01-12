@@ -3,7 +3,6 @@ package dev.vladleesi.braindanceapp.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -14,8 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,12 +37,14 @@ import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
 import dev.vladleesi.braindanceapp.ui.components.ReleaseDateLabel
 import dev.vladleesi.braindanceapp.ui.components.TopAppBarOverlay
+import dev.vladleesi.braindanceapp.ui.components.storeButtonsItem
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
+import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.toContentDescription
@@ -100,50 +100,79 @@ private fun GameDetailsScreen(
                 .background(background)
                 .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()),
     ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            AsyncImage(
-                modifier = Modifier.fillMaxWidth().height(imageHeight),
-                model = state.gameDetails.backgroundImage,
-                contentScale = ContentScale.Crop,
-                contentDescription = state.gameDetails.name.toContentDescription(),
-            )
-            Spacer(modifier = Modifier.size(medium))
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(start = medium, end = medium),
-                horizontalArrangement = Arrangement.spacedBy(small),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                state.gameDetails.releaseDate?.let { releaseDate ->
-                    ReleaseDateLabel(releaseDate)
-                }
-                PlatformLogoList(
-                    platforms = state.gameDetails.platforms,
-                    imageSize = 18.dp,
-                    horizontalSpacing = tiny,
-                    modifier = Modifier.fillMaxWidth(),
+            item {
+                AsyncImage(
+                    modifier = Modifier.fillMaxWidth().height(imageHeight),
+                    model = state.gameDetails.backgroundImage,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = state.gameDetails.name.toContentDescription(),
                 )
             }
-            Spacer(modifier = Modifier.size(small))
-            Text(
-                text = state.gameDetails.name,
-                style = getTypography().h2,
-                modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
-            )
-            Spacer(modifier = Modifier.size(medium))
-            ExpandableText(
-                text = state.gameDetails.descriptionRaw,
-                modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
-            )
-            Spacer(modifier = Modifier.size(large))
+            item {
+                Spacer(modifier = Modifier.size(medium))
+            }
+            item {
+                GameDetailsInfo(gameDetails = state.gameDetails)
+            }
+            item {
+                Spacer(modifier = Modifier.size(small))
+            }
+            item {
+                Text(
+                    text = state.gameDetails.name,
+                    style = getTypography().h2,
+                    modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.size(medium))
+            }
+            item {
+                ExpandableText(
+                    text = state.gameDetails.descriptionRaw,
+                    modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
+                )
+            }
+            item {
+                Spacer(modifier = Modifier.size(large))
+            }
+            item {
+                Text(
+                    text = "Where to buy",
+                    style = getTypography().h3,
+                    modifier = Modifier.padding(start = medium, end = medium),
+                )
+            }
+            storeButtonsItem(state.gameDetails.stores)
+            item {
+                Spacer(modifier = Modifier.size(large))
+            }
         }
         TopAppBarOverlay(showBackButton = true, onBackButtonPressed = { navHostController?.popBackStack() })
+    }
+}
+
+@Composable
+private fun GameDetailsInfo(gameDetails: GameDetails) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(start = medium, end = medium),
+        horizontalArrangement = Arrangement.spacedBy(small),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        gameDetails.releaseDate?.let { releaseDate ->
+            ReleaseDateLabel(releaseDate)
+        }
+        PlatformLogoList(
+            platforms = gameDetails.platforms,
+            imageSize = 18.dp,
+            horizontalSpacing = tiny,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
