@@ -30,9 +30,12 @@ import androidx.core.bundle.Bundle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import dev.vladleesi.braindanceapp.resources.Res
+import dev.vladleesi.braindanceapp.resources.game_details_screen_where_to_buy
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
+import dev.vladleesi.braindanceapp.ui.components.GenreTags
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
 import dev.vladleesi.braindanceapp.ui.components.ReleaseDateLabel
@@ -48,6 +51,7 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.toContentDescription
+import org.jetbrains.compose.resources.stringResource
 
 private const val IMAGE_HEIGHT_FACTOR = 0.6f
 
@@ -128,6 +132,9 @@ private fun GameDetailsScreen(
                 )
             }
             item {
+                GenreTags(state.gameDetails.genres, onClick = {})
+            }
+            item {
                 Spacer(modifier = Modifier.size(medium))
             }
             item {
@@ -141,7 +148,7 @@ private fun GameDetailsScreen(
             }
             item {
                 Text(
-                    text = "Where to buy",
+                    text = stringResource(Res.string.game_details_screen_where_to_buy),
                     style = getTypography().h3,
                     modifier = Modifier.padding(start = medium, end = medium),
                 )

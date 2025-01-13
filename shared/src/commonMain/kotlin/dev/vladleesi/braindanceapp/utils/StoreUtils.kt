@@ -23,23 +23,39 @@ import dev.vladleesi.braindanceapp.utils.StoreType.Unknown
 import dev.vladleesi.braindanceapp.utils.StoreType.XboxStore
 import org.jetbrains.compose.resources.DrawableResource
 
-fun List<StoreDetails>.storeTypes(): List<Pair<StoreType, String>> {
+fun List<StoreDetails>.storeTypes(): List<StoreTypeModel> {
     return this.map { it.storeType() }
 }
 
-fun StoreDetails.storeType(): Pair<StoreType, String> {
-    return when {
-        url.contains("playstation.com", ignoreCase = true) -> PlayStationStore to url
-        url.contains("microsoft.com", ignoreCase = true) -> MicrosoftStore to url
-        url.contains("xbox.com", ignoreCase = true) -> XboxStore to url
-        url.contains("apple.com", ignoreCase = true) -> AppStore to url
-        url.contains("nintendo.com", ignoreCase = true) -> NintendoStore to url
-        url.contains("google.com", ignoreCase = true) -> GooglePlay to url
-        url.contains("steampowered.com", ignoreCase = true) -> Steam to url
-        url.contains("gog.com", ignoreCase = true) -> GOG to url
-        url.contains("epicgames.com", ignoreCase = true) -> EpicGamesStore to url
-        else -> Unknown to url
-    }
+/**
+ * Determines the store type based on the URL and returns a [StoreTypeModel].
+ */
+fun StoreDetails.storeType(): StoreTypeModel {
+    val storeMappings =
+        mapOf(
+            "playstation.com" to PlayStationStore,
+            "microsoft.com" to MicrosoftStore,
+            "xbox.com" to XboxStore,
+            "apple.com" to AppStore,
+            "nintendo.com" to NintendoStore,
+            "google.com" to GooglePlay,
+            "steampowered.com" to Steam,
+            "gog.com" to GOG,
+            "epicgames.com" to EpicGamesStore,
+        )
+
+    val matchingEntry = storeMappings.entries.firstOrNull { url.contains(it.key, ignoreCase = true) }
+    val store = matchingEntry?.value ?: Unknown
+
+    return store.toStoreModel(url)
+}
+
+private fun StoreType.toStoreModel(url: String): StoreTypeModel {
+    return StoreTypeModel(
+        name = this.storeName,
+        image = this.image,
+        url = url,
+    )
 }
 
 enum class StoreType(val storeName: String, val image: DrawableResource?) {
@@ -54,3 +70,9 @@ enum class StoreType(val storeName: String, val image: DrawableResource?) {
     EpicGamesStore("Epic Games", Res.drawable.ic_store_logo_epic_games),
     Unknown("Unknown", null),
 }
+
+data class StoreTypeModel(
+    val name: String,
+    val image: DrawableResource?,
+    val url: String,
+)

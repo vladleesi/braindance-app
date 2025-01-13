@@ -12,4 +12,7 @@
     <string name="error_screen_title">Oops!</string>
     <string name="error_screen_error_message">Something went wrong. Please try again.</string>
     <string name="error_screen_retry_button_text">Retry</string>
+
+    <!-- Game details screen -->
+    <string name="game_details_screen_where_to_buy">Where to buy</string>
 </resources>

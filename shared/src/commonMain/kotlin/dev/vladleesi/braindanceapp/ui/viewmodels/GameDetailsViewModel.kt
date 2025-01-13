@@ -7,8 +7,9 @@ import dev.vladleesi.braindanceapp.data.api.remote.StoresRemote
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
 import dev.vladleesi.braindanceapp.data.repository.StoresRepo
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
-import dev.vladleesi.braindanceapp.utils.StoreType
+import dev.vladleesi.braindanceapp.utils.StoreTypeModel
 import dev.vladleesi.braindanceapp.utils.formatDate
+import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import dev.vladleesi.braindanceapp.utils.storeTypes
 import io.github.aakira.napier.Napier
@@ -50,6 +51,14 @@ class GameDetailsViewModel : ViewModel() {
                         releaseDate = result.released.orEmpty().formatDate(),
                         platforms = result.parentPlatforms.orEmpty().parentPlatformTypes(),
                         stores = stores.results.orEmpty().storeTypes(),
+                        genres =
+                            result.genres.orEmpty().map { genre ->
+                                GenreTag(
+                                    id = genre.id.orZero(),
+                                    slug = genre.slug.orEmpty(),
+                                    name = genre.name.orEmpty(),
+                                )
+                            },
                     ),
                 ),
             )
@@ -71,5 +80,12 @@ data class GameDetails(
     val backgroundImage: String,
     val releaseDate: String?,
     val platforms: List<ParentPlatformType>,
-    val stores: List<Pair<StoreType, String>>,
+    val stores: List<StoreTypeModel>,
+    val genres: List<GenreTag>,
+)
+
+data class GenreTag(
+    val id: Int,
+    val slug: String,
+    val name: String,
 )

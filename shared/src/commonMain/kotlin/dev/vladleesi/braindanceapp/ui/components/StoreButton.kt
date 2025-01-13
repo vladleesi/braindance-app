@@ -26,14 +26,14 @@ import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.white
-import dev.vladleesi.braindanceapp.utils.StoreType
+import dev.vladleesi.braindanceapp.utils.StoreTypeModel
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 
 private const val MAX_BUTTONS_PER_ROW = 2
 
-fun LazyListScope.storeButtonsItem(storeList: List<Pair<StoreType, String>>) {
+fun LazyListScope.storeButtonsItem(storeList: List<StoreTypeModel>) {
     items(storeList.chunked(MAX_BUTTONS_PER_ROW)) { chunk ->
         StoreButtonsRow(chunk)
     }
@@ -68,7 +68,7 @@ fun StoreButton(
 }
 
 @Composable
-private fun StoreButtonsRow(storeList: List<Pair<StoreType, String>>) {
+private fun StoreButtonsRow(storeList: List<StoreTypeModel>) {
     Spacer(modifier = Modifier.size(small))
     Row(
         modifier =
@@ -77,11 +77,11 @@ private fun StoreButtonsRow(storeList: List<Pair<StoreType, String>>) {
                 .padding(horizontal = medium),
         horizontalArrangement = Arrangement.spacedBy(small),
     ) {
-        storeList.forEach { (store, url) ->
+        storeList.forEach { store ->
             StoreButton(
-                store = store.storeName,
+                store = store.name,
                 image = store.image,
-                url = url,
+                url = store.url,
             )
         }
     }
