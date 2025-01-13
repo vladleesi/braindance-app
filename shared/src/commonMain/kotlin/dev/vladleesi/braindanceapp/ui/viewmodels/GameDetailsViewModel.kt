@@ -28,17 +28,14 @@ class GameDetailsViewModel : ViewModel() {
     private val _gameDetailsState = MutableStateFlow<GameDetailsState>(GameDetailsState.Loading)
     val gameDetailsState: StateFlow<GameDetailsState> = _gameDetailsState.asStateFlow()
 
-    // TODO: Move to global coroutine config
     private val handler =
         CoroutineExceptionHandler { _, exception ->
             Napier.e(message = exception.message.orEmpty(), throwable = exception)
-            // TODO: Handle error in background thread
             _gameDetailsState.value = GameDetailsState.Error(exception.message.orEmpty())
         }
 
     fun loadGameDetails(gameId: String?) {
         viewModelScope.launch(handler) {
-            // TODO: Add dispatcher
             val result = gameDetailsRepo.gameDetails(gameId.orEmpty())
             // TODO: Make the second request async
             val stores = storesRepo.stores(gameId.orEmpty())

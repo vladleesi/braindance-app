@@ -30,8 +30,6 @@ import androidx.core.bundle.Bundle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
-import dev.vladleesi.braindanceapp.resources.Res
-import dev.vladleesi.braindanceapp.resources.game_details_screen_where_to_buy
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
@@ -40,7 +38,7 @@ import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
 import dev.vladleesi.braindanceapp.ui.components.ReleaseDateLabel
 import dev.vladleesi.braindanceapp.ui.components.TopAppBarOverlay
-import dev.vladleesi.braindanceapp.ui.components.storeButtonsItem
+import dev.vladleesi.braindanceapp.ui.components.storesBlockItem
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.large
@@ -51,7 +49,6 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.toContentDescription
-import org.jetbrains.compose.resources.stringResource
 
 private const val IMAGE_HEIGHT_FACTOR = 0.6f
 
@@ -146,14 +143,7 @@ private fun GameDetailsScreen(
             item {
                 Spacer(modifier = Modifier.size(large))
             }
-            item {
-                Text(
-                    text = stringResource(Res.string.game_details_screen_where_to_buy),
-                    style = getTypography().h3,
-                    modifier = Modifier.padding(start = medium, end = medium),
-                )
-            }
-            storeButtonsItem(state.gameDetails.stores)
+            storesBlockItem(state.gameDetails.stores)
             item {
                 Spacer(modifier = Modifier.size(large))
             }

@@ -34,7 +34,6 @@ class HomeViewModel : ViewModel() {
     private val _thisWeekReleases = MutableStateFlow<List<MiniGameCardModel>>(emptyList())
     val thisWeekReleases: StateFlow<List<MiniGameCardModel>> = _thisWeekReleases.asStateFlow()
 
-    // TODO: Move to global coroutine config
     private val handler =
         CoroutineExceptionHandler { _, exception ->
             Napier.e(message = exception.message.orEmpty(), throwable = exception)

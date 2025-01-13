@@ -21,6 +21,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.unit.dp
+import dev.vladleesi.braindanceapp.resources.Res
+import dev.vladleesi.braindanceapp.resources.game_details_screen_where_to_buy
 import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
@@ -29,13 +31,23 @@ import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.utils.StoreTypeModel
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 private const val MAX_BUTTONS_PER_ROW = 2
 
-fun LazyListScope.storeButtonsItem(storeList: List<StoreTypeModel>) {
-    items(storeList.chunked(MAX_BUTTONS_PER_ROW)) { chunk ->
-        StoreButtonsRow(chunk)
+fun LazyListScope.storesBlockItem(stores: List<StoreTypeModel>) {
+    if (stores.isNotEmpty()) {
+        item {
+            Text(
+                text = stringResource(Res.string.game_details_screen_where_to_buy),
+                style = getTypography().h3,
+                modifier = Modifier.padding(start = medium, end = medium),
+            )
+        }
+        items(stores.chunked(MAX_BUTTONS_PER_ROW)) { chunk ->
+            StoreButtonsRow(chunk)
+        }
     }
 }
 
