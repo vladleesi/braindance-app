@@ -1,16 +1,19 @@
 package dev.vladleesi.braindanceapp.ui.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -21,13 +24,15 @@ import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.micro
-import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
+import dev.vladleesi.braindanceapp.ui.style.miniGameCardHeight
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
+import dev.vladleesi.braindanceapp.utils.shimmerEffect
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 
 private const val CARD_WIDTH_FACTOR = 0.6f
+private const val CARD_SHIMMER_WIDTH_FACTOR = 0.75f
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -41,9 +46,8 @@ fun MiniGameCard(
         Card(
             modifier =
                 Modifier
-                    .height(128.dp)
+                    .height(miniGameCardHeight)
                     .width(cardWidth),
-            backgroundColor = secondaryVariant,
             onClick = {
                 navHostController.navigate(
                     route = GameDetailsRoute,
@@ -72,6 +76,39 @@ fun MiniGameCard(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.width(cardWidth).padding(start = tiny, end = tiny),
+        )
+    }
+}
+
+@Composable
+fun MiniGameCardSkeleton(modifier: Modifier = Modifier) {
+    val cardWidth = screenSize.width.dp * CARD_WIDTH_FACTOR
+    Column(modifier = modifier) {
+        Box(
+            modifier =
+                Modifier
+                    .height(miniGameCardHeight)
+                    .width(cardWidth)
+                    .clip(RoundedCornerShape(small))
+                    .shimmerEffect(),
+        )
+        Spacer(Modifier.height(small))
+        Box(
+            modifier =
+                Modifier
+                    .height(20.dp)
+                    .width(cardWidth / 2)
+                    .padding(start = tiny, end = tiny)
+                    .shimmerEffect(),
+        )
+        Spacer(Modifier.height(micro))
+        Box(
+            modifier =
+                Modifier
+                    .height(14.dp)
+                    .width(cardWidth * CARD_SHIMMER_WIDTH_FACTOR)
+                    .padding(start = tiny, end = tiny)
+                    .shimmerEffect(),
         )
     }
 }

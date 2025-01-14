@@ -86,14 +86,14 @@ private fun HomeScreen(
             item {
                 MiniGameCardList(
                     title = stringResource(Res.string.home_screen_popular_this_year_title),
-                    cardList = popularThisYear,
+                    state = popularThisYear,
                     navHostController = navHostController,
                 )
             }
             item {
                 MiniGameCardList(
                     title = stringResource(Res.string.home_screen_popular_in_year_title, lastYear),
-                    cardList = popularLastYear,
+                    state = popularLastYear,
                     navHostController = navHostController,
                 )
             }
@@ -101,14 +101,14 @@ private fun HomeScreen(
                 // TODO: Two lines with auto scroll
                 MiniGameCardList(
                     title = stringResource(Res.string.home_screen_all_time_top_title),
-                    cardList = allTimeTop,
+                    state = allTimeTop,
                     navHostController = navHostController,
                 )
             }
             item {
                 MiniGameCardList(
                     title = stringResource(Res.string.home_screen_this_week_release_title),
-                    cardList = thisWeekReleases,
+                    state = thisWeekReleases,
                     navHostController = navHostController,
                 )
             }

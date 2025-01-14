@@ -39,6 +39,7 @@ fun HttpClientConfig<*>.engineConfig() {
         request {
             timeout {
                 requestTimeoutMillis = TIMEOUT_SECONDS
+                socketTimeoutMillis = TIMEOUT_SECONDS
             }
             retry {
                 retryOnExceptionOrServerErrors(maxRetries = MAX_RETRIES)

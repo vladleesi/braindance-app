@@ -22,17 +22,17 @@ class HomeViewModel : ViewModel() {
     // TODO: Move to DI
     private val homeRepo = HomeRepo(CompilationRemote())
 
-    private val _popularThisYear = MutableStateFlow<List<MiniGameCardModel>>(emptyList())
-    val popularThisYear: StateFlow<List<MiniGameCardModel>> = _popularThisYear.asStateFlow()
+    private val _popularThisYear = MutableStateFlow<HomeState>(HomeState.Loading)
+    val popularThisYear: StateFlow<HomeState> = _popularThisYear.asStateFlow()
 
-    private val _popularLastYear = MutableStateFlow<List<MiniGameCardModel>>(emptyList())
-    val popularLastYear: StateFlow<List<MiniGameCardModel>> = _popularLastYear.asStateFlow()
+    private val _popularLastYear = MutableStateFlow<HomeState>(HomeState.Loading)
+    val popularLastYear: StateFlow<HomeState> = _popularLastYear.asStateFlow()
 
-    private val _allTimeTop = MutableStateFlow<List<MiniGameCardModel>>(emptyList())
-    val allTimeTop: StateFlow<List<MiniGameCardModel>> = _allTimeTop.asStateFlow()
+    private val _allTimeTop = MutableStateFlow<HomeState>(HomeState.Loading)
+    val allTimeTop: StateFlow<HomeState> = _allTimeTop.asStateFlow()
 
-    private val _thisWeekReleases = MutableStateFlow<List<MiniGameCardModel>>(emptyList())
-    val thisWeekReleases: StateFlow<List<MiniGameCardModel>> = _thisWeekReleases.asStateFlow()
+    private val _thisWeekReleases = MutableStateFlow<HomeState>(HomeState.Loading)
+    val thisWeekReleases: StateFlow<HomeState> = _thisWeekReleases.asStateFlow()
 
     private val handler =
         CoroutineExceptionHandler { _, exception ->
@@ -48,37 +48,65 @@ class HomeViewModel : ViewModel() {
 
     private fun loadPopularThisYear(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
-            val result = homeRepo.bestOfTheYear(pageSize = pageSize, year = currentYear)
-            _popularThisYear.emit(
-                result.results.orEmpty().mapperMiniGameCardModel(),
-            )
+            runCatching {
+                homeRepo.bestOfTheYear(pageSize = pageSize, year = currentYear)
+            }
+                .onSuccess { result ->
+                    _popularThisYear.emit(
+                        HomeState.Success(result.results.orEmpty().mapperMiniGameCardModel()),
+                    )
+                }
+                .onFailure { throwable ->
+                    _popularThisYear.emit(HomeState.Error(throwable.message.orEmpty()))
+                }
         }
     }
 
     private fun loadPopularLastYear(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
-            val result = homeRepo.bestOfTheYear(pageSize = pageSize, year = lastYear)
-            _popularLastYear.emit(
-                result.results.orEmpty().mapperMiniGameCardModel(),
-            )
+            runCatching {
+                homeRepo.bestOfTheYear(pageSize = pageSize, year = lastYear)
+            }
+                .onSuccess { result ->
+                    _popularLastYear.emit(
+                        HomeState.Success(result.results.orEmpty().mapperMiniGameCardModel()),
+                    )
+                }
+                .onFailure { throwable ->
+                    _popularLastYear.emit(HomeState.Error(throwable.message.orEmpty()))
+                }
         }
     }
 
     private fun loadPopularAllTime(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
-            val result = homeRepo.popular(pageSize = pageSize)
-            _allTimeTop.emit(
-                result.results.orEmpty().mapperMiniGameCardModel(),
-            )
+            runCatching {
+                homeRepo.popular(pageSize = pageSize)
+            }
+                .onSuccess { result ->
+                    _allTimeTop.emit(
+                        HomeState.Success(result.results.orEmpty().mapperMiniGameCardModel()),
+                    )
+                }
+                .onFailure { throwable ->
+                    _allTimeTop.emit(HomeState.Error(throwable.message.orEmpty()))
+                }
         }
     }
 
     private fun loadThisWeekReleases(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
-            val result = homeRepo.thisWeekReleases(pageSize = pageSize)
-            _thisWeekReleases.emit(
-                result.results.orEmpty().mapperMiniGameCardModel(),
-            )
+            runCatching {
+                homeRepo.thisWeekReleases(pageSize = pageSize)
+            }
+                .onSuccess { result ->
+                    _thisWeekReleases.emit(
+                        HomeState.Success(result.results.orEmpty().mapperMiniGameCardModel()),
+                    )
+                }
+                .onFailure { throwable ->
+                    _thisWeekReleases.emit(HomeState.Error(throwable.message.orEmpty()))
+                }
         }
     }
 
@@ -95,4 +123,12 @@ class HomeViewModel : ViewModel() {
     private companion object {
         private const val PAGE_SIZE = 10
     }
+}
+
+sealed interface HomeState {
+    data object Loading : HomeState
+
+    data class Success(val games: List<MiniGameCardModel>) : HomeState
+
+    data class Error(val message: String) : HomeState
 }
