@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,7 +41,6 @@ import dev.vladleesi.braindanceapp.ui.components.ReleaseDateLabel
 import dev.vladleesi.braindanceapp.ui.components.TopAppBarOverlay
 import dev.vladleesi.braindanceapp.ui.components.storesBlockItem
 import dev.vladleesi.braindanceapp.ui.style.background
-import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.small
@@ -124,7 +124,7 @@ private fun GameDetailsScreen(
             item {
                 Text(
                     text = state.gameDetails.name,
-                    style = getTypography().h2,
+                    style = MaterialTheme.typography.h2,
                     modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
                 )
             }

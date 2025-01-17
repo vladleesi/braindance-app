@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +24,6 @@ import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.unit.dp
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.game_details_screen_where_to_buy
-import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.small
@@ -41,7 +41,7 @@ fun LazyListScope.storesBlockItem(stores: List<StoreTypeModel>) {
         item {
             Text(
                 text = stringResource(Res.string.game_details_screen_where_to_buy),
-                style = getTypography().h3,
+                style = MaterialTheme.typography.h3,
                 modifier = Modifier.padding(start = medium, end = medium),
             )
         }
@@ -65,7 +65,7 @@ fun StoreButton(
         onClick = { uriHandler.openUri(url) },
     ) {
         Row(Modifier.align(Alignment.CenterVertically)) {
-            Text(text = store, style = getTypography().subtitle1)
+            Text(text = store, style = MaterialTheme.typography.subtitle1)
             if (image != null) {
                 Spacer(Modifier.width(small))
                 Image(

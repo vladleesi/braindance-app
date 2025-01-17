@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,7 +17,6 @@ import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.error_screen_error_message
 import dev.vladleesi.braindanceapp.resources.error_screen_retry_button_text
 import dev.vladleesi.braindanceapp.resources.error_screen_title
-import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.small
 import org.jetbrains.compose.resources.stringResource
@@ -42,20 +42,20 @@ fun ErrorScreen(
         ) {
             Text(
                 text = title,
-                style = getTypography().h1,
+                style = MaterialTheme.typography.h1,
                 modifier = Modifier.padding(bottom = small),
             )
 
             Text(
                 text = errorMessage,
-                style = getTypography().body1,
+                style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(horizontal = medium, vertical = small),
             )
 
             Spacer(modifier = Modifier.height(medium))
 
             Button(onClick = onRetry) {
-                Text(text = retryButtonText, style = getTypography().button)
+                Text(text = retryButtonText, style = MaterialTheme.typography.button)
             }
         }
     }

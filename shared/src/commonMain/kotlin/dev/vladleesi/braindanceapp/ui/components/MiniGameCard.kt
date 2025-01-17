@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,12 +18,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
-import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
-import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.system.screenSize
-import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.micro
 import dev.vladleesi.braindanceapp.ui.style.miniGameCardHeight
 import dev.vladleesi.braindanceapp.ui.style.small
@@ -39,7 +36,7 @@ private const val CARD_SHIMMER_WIDTH_FACTOR = 0.75f
 fun MiniGameCard(
     card: MiniGameCardModel,
     modifier: Modifier = Modifier,
-    navHostController: NavHostController,
+    onCardClicked: (id: Int) -> Unit,
 ) {
     val cardWidth = screenSize.width.dp * CARD_WIDTH_FACTOR
     Column(modifier = modifier.fillMaxSize()) {
@@ -48,12 +45,7 @@ fun MiniGameCard(
                 Modifier
                     .height(miniGameCardHeight)
                     .width(cardWidth),
-            onClick = {
-                navHostController.navigate(
-                    route = GameDetailsRoute,
-                    arguments = mapOf(GameDetailsRoute.Params.GAME_ID to card.id.toString()),
-                )
-            },
+            onClick = { onCardClicked(card.id) },
         ) {
             AsyncImage(
                 modifier = Modifier.fillMaxSize(),
@@ -72,7 +64,7 @@ fun MiniGameCard(
         Spacer(Modifier.height(micro))
         Text(
             text = card.title,
-            style = getTypography().subtitle1,
+            style = MaterialTheme.typography.subtitle1,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.width(cardWidth).padding(start = tiny, end = tiny),

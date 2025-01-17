@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
@@ -13,7 +14,6 @@ import dev.vladleesi.braindanceapp.BraindanceApp
 import dev.vladleesi.braindanceapp.Greeting
 import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.ui.style.background
-import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.navBarColor
 
 class MainActivity : ComponentActivity() {
@@ -33,6 +33,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     BraindanceTheme {
-        Text(text = Greeting().greet(), style = getTypography().h1)
+        Text(text = Greeting().greet(), style = MaterialTheme.typography.h1)
     }
 }

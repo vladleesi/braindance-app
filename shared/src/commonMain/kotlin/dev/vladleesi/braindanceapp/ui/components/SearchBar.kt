@@ -3,6 +3,7 @@ package dev.vladleesi.braindanceapp.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -15,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.ic_search
-import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.hintText
 import dev.vladleesi.braindanceapp.ui.style.secondary
 import dev.vladleesi.braindanceapp.ui.style.white
@@ -34,7 +34,7 @@ fun SearchBar(modifier: Modifier = Modifier) {
         placeholder = {
             Text(
                 text = "Search for games",
-                style = getTypography().body2,
+                style = MaterialTheme.typography.body2,
             )
         },
         shape = CircleShape,

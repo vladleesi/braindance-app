@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import dev.vladleesi.braindanceapp.ui.style.getTypography
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.tiny
@@ -27,7 +27,7 @@ fun GenreTags(
     modifier: Modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(tiny),
     backgroundColor: Color = secondaryVariant,
-    textStyle: TextStyle = getTypography().caption,
+    textStyle: TextStyle = MaterialTheme.typography.caption,
     textColor: Color = white,
 ) {
     Row(
