@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
@@ -35,6 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
+import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.system.toPx
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
@@ -52,6 +57,7 @@ import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith90Alpha
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
+import dev.vladleesi.braindanceapp.ui.style.topBarHeight
 import dev.vladleesi.braindanceapp.ui.style.topBarHeightWithInsets
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
@@ -59,7 +65,8 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 
-private const val IMAGE_HEIGHT_FACTOR = 0.6f
+private const val IMAGE_HEIGHT_FACTOR = (9f / 16f)
+private const val IMAGE_WIDTH_FACTOR_LARGE_SCREEN = 0.3f
 
 @Composable
 fun GameDetailsScreen(
@@ -102,11 +109,10 @@ private fun GameDetailsScreen(
     modifier: Modifier,
     navHostController: NavHostController?,
 ) {
-    val imageHeight = screenSize.width.dp * IMAGE_HEIGHT_FACTOR
-
     val lazyListState = rememberLazyListState()
     val (topBarColor, backButtonColor, topBarTitleColor) =
         calculateScrollTopBarColors(lazyListState = lazyListState)
+    val isLargeDevice = isLargeDevice()
 
     Box(
         modifier =
@@ -119,29 +125,11 @@ private fun GameDetailsScreen(
             modifier = modifier.fillMaxSize(),
         ) {
             item { SpacerStatusBarInsets() }
-            item {
-                AsyncImage(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(imageHeight),
-                    model = state.gameDetails.backgroundImage,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = state.gameDetails.name.toContentDescription(),
-                )
+            if (isLargeDevice) {
+                gameInfoHeaderLargeScreen(state)
+            } else {
+                gameInfoHeaderSmallScreen(state)
             }
-            item { Spacer(modifier = Modifier.size(medium)) }
-            item { GameDetailsInfo(gameDetails = state.gameDetails) }
-            item { Spacer(modifier = Modifier.size(small)) }
-            item {
-                Text(
-                    text = state.gameDetails.name,
-                    style = MaterialTheme.typography.h2,
-                    modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
-                )
-            }
-            item { GenreTags(state.gameDetails.genres, onClick = {}) }
-            item { Spacer(modifier = Modifier.size(medium)) }
             item {
                 ExpandableText(
                     text = state.gameDetails.descriptionRaw,
@@ -214,4 +202,65 @@ private fun calculateScrollTopBarColors(lazyListState: LazyListState): Triple<Co
         lerp(targetColor, Color.Transparent, fraction),
         lerp(Color.Transparent, white, fraction),
     )
+}
+
+private fun LazyListScope.gameInfoHeaderLargeScreen(state: GameDetailsState.Success) =
+    item {
+        val imageWidth = screenSize.width.dp * IMAGE_WIDTH_FACTOR_LARGE_SCREEN
+        val imageHeight = imageWidth * IMAGE_HEIGHT_FACTOR
+        Row(
+            modifier =
+                Modifier
+                    .padding(horizontal = medium)
+                    .padding(top = topBarHeight, bottom = medium),
+        ) {
+            AsyncImage(
+                modifier =
+                    Modifier
+                        .width(imageWidth)
+                        .height(imageHeight)
+                        .clip(RoundedCornerShape(small)),
+                model = state.gameDetails.backgroundImage,
+                contentScale = ContentScale.Crop,
+                contentDescription = state.gameDetails.name.toContentDescription(),
+            )
+            Spacer(modifier = Modifier.size(medium))
+            Column {
+                GameDetailsInfo(gameDetails = state.gameDetails)
+                Spacer(modifier = Modifier.size(small))
+                Text(
+                    text = state.gameDetails.name,
+                    style = MaterialTheme.typography.h2,
+                    modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
+                )
+                GenreTags(state.gameDetails.genres, onClick = {})
+            }
+        }
+    }
+
+private fun LazyListScope.gameInfoHeaderSmallScreen(state: GameDetailsState.Success) {
+    item {
+        val imageHeight = screenSize.width.dp * IMAGE_HEIGHT_FACTOR
+        AsyncImage(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(imageHeight),
+            model = state.gameDetails.backgroundImage,
+            contentScale = ContentScale.Crop,
+            contentDescription = state.gameDetails.name.toContentDescription(),
+        )
+    }
+    item { Spacer(modifier = Modifier.size(medium)) }
+    item { GameDetailsInfo(gameDetails = state.gameDetails) }
+    item { Spacer(modifier = Modifier.size(small)) }
+    item {
+        Text(
+            text = state.gameDetails.name,
+            style = MaterialTheme.typography.h2,
+            modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
+        )
+    }
+    item { GenreTags(state.gameDetails.genres, onClick = {}) }
+    item { Spacer(modifier = Modifier.size(medium)) }
 }

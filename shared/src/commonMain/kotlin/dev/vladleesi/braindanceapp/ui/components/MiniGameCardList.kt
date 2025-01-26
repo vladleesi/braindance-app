@@ -16,7 +16,7 @@ import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeState
 
-private const val MINI_GAME_CARD_SKELETON_COUNT = 3
+private const val MINI_GAME_CARD_SKELETON_COUNT = 4
 
 @Composable
 fun MiniGameCardList(
