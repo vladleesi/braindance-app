@@ -9,4 +9,5 @@ val medium = 16.dp
 val large = 32.dp
 val extraLarge = 64.dp
 
-val miniGameCardHeight = 128.dp
+val miniGameCardHeight = 144.dp
+val miniGameCardWidth = 256.dp

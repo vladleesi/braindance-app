@@ -19,16 +19,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.ui.style.micro
 import dev.vladleesi.braindanceapp.ui.style.miniGameCardHeight
+import dev.vladleesi.braindanceapp.ui.style.miniGameCardWidth
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.shimmerEffect
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 
-private const val CARD_WIDTH_FACTOR = 0.6f
 private const val CARD_SHIMMER_WIDTH_FACTOR = 0.75f
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -38,13 +37,12 @@ fun MiniGameCard(
     modifier: Modifier = Modifier,
     onCardClicked: (id: Int) -> Unit,
 ) {
-    val cardWidth = screenSize.width.dp * CARD_WIDTH_FACTOR
     Column(modifier = modifier.fillMaxSize()) {
         Card(
             modifier =
                 Modifier
                     .height(miniGameCardHeight)
-                    .width(cardWidth),
+                    .width(miniGameCardWidth),
             onClick = { onCardClicked(card.id) },
         ) {
             AsyncImage(
@@ -59,7 +57,7 @@ fun MiniGameCard(
             platforms = card.platforms,
             imageSize = 14.dp,
             horizontalSpacing = tiny,
-            modifier = Modifier.width(cardWidth).padding(start = tiny),
+            modifier = Modifier.width(miniGameCardWidth).padding(start = tiny),
         )
         Spacer(Modifier.height(micro))
         Text(
@@ -67,20 +65,19 @@ fun MiniGameCard(
             style = MaterialTheme.typography.subtitle1,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.width(cardWidth).padding(start = tiny, end = tiny),
+            modifier = Modifier.width(miniGameCardWidth).padding(start = tiny, end = tiny),
         )
     }
 }
 
 @Composable
 fun MiniGameCardSkeleton(modifier: Modifier = Modifier) {
-    val cardWidth = screenSize.width.dp * CARD_WIDTH_FACTOR
     Column(modifier = modifier) {
         Box(
             modifier =
                 Modifier
                     .height(miniGameCardHeight)
-                    .width(cardWidth)
+                    .width(miniGameCardWidth)
                     .clip(RoundedCornerShape(small))
                     .shimmerEffect(),
         )
@@ -89,7 +86,7 @@ fun MiniGameCardSkeleton(modifier: Modifier = Modifier) {
             modifier =
                 Modifier
                     .height(20.dp)
-                    .width(cardWidth / 2)
+                    .width(miniGameCardWidth / 2)
                     .padding(start = tiny, end = tiny)
                     .shimmerEffect(),
         )
@@ -98,7 +95,7 @@ fun MiniGameCardSkeleton(modifier: Modifier = Modifier) {
             modifier =
                 Modifier
                     .height(14.dp)
-                    .width(cardWidth * CARD_SHIMMER_WIDTH_FACTOR)
+                    .width(miniGameCardWidth * CARD_SHIMMER_WIDTH_FACTOR)
                     .padding(start = tiny, end = tiny)
                     .shimmerEffect(),
         )
