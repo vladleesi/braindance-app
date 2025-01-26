@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import dev.vladleesi.braindanceapp.ui.style.accent
 import dev.vladleesi.braindanceapp.ui.style.tiny
 
-const val DEFAULT_MINIMUM_TEXT_LINE = 4
+const val DEFAULT_MINIMUM_TEXT_LINE = 3
 
 @Composable
 fun ExpandableText(
@@ -24,8 +24,8 @@ fun ExpandableText(
     collapsedMaxLines: Int = DEFAULT_MINIMUM_TEXT_LINE,
     expandText: String = "Read more",
     collapseText: String = "Show less",
-    textStyle: TextStyle = MaterialTheme.typography.subtitle2,
-    expandTextStyle: TextStyle = MaterialTheme.typography.subtitle2,
+    textStyle: TextStyle = MaterialTheme.typography.body2,
+    expandTextStyle: TextStyle = MaterialTheme.typography.body2,
     modifier: Modifier = Modifier,
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }

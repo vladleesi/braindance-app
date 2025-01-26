@@ -3,17 +3,17 @@ package dev.vladleesi.braindanceapp.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,10 +21,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.core.bundle.Bundle
@@ -33,18 +36,24 @@ import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.screenSize
+import dev.vladleesi.braindanceapp.system.toPx
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GenreTags
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
 import dev.vladleesi.braindanceapp.ui.components.ReleaseDateLabel
-import dev.vladleesi.braindanceapp.ui.components.TopAppBarOverlay
+import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
+import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
+import dev.vladleesi.braindanceapp.ui.components.TopAppBar
 import dev.vladleesi.braindanceapp.ui.components.storesBlockItem
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
+import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith90Alpha
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
+import dev.vladleesi.braindanceapp.ui.style.topBarHeightWithInsets
+import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
@@ -94,33 +103,36 @@ private fun GameDetailsScreen(
     navHostController: NavHostController?,
 ) {
     val imageHeight = screenSize.width.dp * IMAGE_HEIGHT_FACTOR
+
+    val lazyListState = rememberLazyListState()
+    val (topBarColor, backButtonColor, topBarTitleColor) =
+        calculateScrollTopBarColors(lazyListState = lazyListState)
+
     Box(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(background)
-                .padding(top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()),
+                .background(background),
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            state = lazyListState,
+            modifier = modifier.fillMaxSize(),
         ) {
+            item { SpacerStatusBarInsets() }
             item {
                 AsyncImage(
-                    modifier = Modifier.fillMaxWidth().height(imageHeight),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(imageHeight),
                     model = state.gameDetails.backgroundImage,
                     contentScale = ContentScale.Crop,
                     contentDescription = state.gameDetails.name.toContentDescription(),
                 )
             }
-            item {
-                Spacer(modifier = Modifier.size(medium))
-            }
-            item {
-                GameDetailsInfo(gameDetails = state.gameDetails)
-            }
-            item {
-                Spacer(modifier = Modifier.size(small))
-            }
+            item { Spacer(modifier = Modifier.size(medium)) }
+            item { GameDetailsInfo(gameDetails = state.gameDetails) }
+            item { Spacer(modifier = Modifier.size(small)) }
             item {
                 Text(
                     text = state.gameDetails.name,
@@ -128,27 +140,29 @@ private fun GameDetailsScreen(
                     modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
                 )
             }
-            item {
-                GenreTags(state.gameDetails.genres, onClick = {})
-            }
-            item {
-                Spacer(modifier = Modifier.size(medium))
-            }
+            item { GenreTags(state.gameDetails.genres, onClick = {}) }
+            item { Spacer(modifier = Modifier.size(medium)) }
             item {
                 ExpandableText(
                     text = state.gameDetails.descriptionRaw,
                     modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
                 )
             }
-            item {
-                Spacer(modifier = Modifier.size(large))
-            }
+            item { Spacer(modifier = Modifier.size(large)) }
             storesBlockItem(state.gameDetails.stores)
-            item {
-                Spacer(modifier = Modifier.size(large))
-            }
+            item { Spacer(modifier = Modifier.size(large)) }
         }
-        TopAppBarOverlay(showBackButton = true, onBackButtonPressed = { navHostController?.popBackStack() })
+        Column {
+            StatusBarOverlay()
+            TopAppBar(
+                tabBarColor = topBarColor,
+                titleColor = topBarTitleColor,
+                showBackButton = true,
+                backButtonBackgroundColor = backButtonColor,
+                onBackButtonPressed = { navHostController?.popBackStack() },
+                title = state.gameDetails.name,
+            )
+        }
     }
 }
 
@@ -172,4 +186,32 @@ private fun GameDetailsInfo(gameDetails: GameDetails) {
             modifier = Modifier.fillMaxWidth(),
         )
     }
+}
+
+@Composable
+private fun calculateScrollTopBarColors(lazyListState: LazyListState): Triple<Color, Color, Color> {
+    val targetColor = overlayBlackWith90Alpha
+    val maxScrollOffsetPx = topBarHeightWithInsets.toPx()
+    var firstOffset by remember { mutableStateOf(0f) }
+
+    val combinedOffset =
+        remember(
+            lazyListState.firstVisibleItemIndex,
+            lazyListState.firstVisibleItemScrollOffset,
+        ) {
+            val scrollOffset = lazyListState.firstVisibleItemScrollOffset.toFloat()
+            when (lazyListState.firstVisibleItemIndex) {
+                0 -> scrollOffset.also { firstOffset = scrollOffset }
+                1 -> scrollOffset + firstOffset
+                else -> maxScrollOffsetPx
+            }
+        }
+
+    val fraction = (combinedOffset / maxScrollOffsetPx).coerceIn(0f, 1f)
+
+    return Triple(
+        lerp(Color.Transparent, targetColor, fraction),
+        lerp(targetColor, Color.Transparent, fraction),
+        lerp(Color.Transparent, white, fraction),
+    )
 }

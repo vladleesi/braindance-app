@@ -18,7 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import dev.vladleesi.braindanceapp.ui.components.BottomBar
 import dev.vladleesi.braindanceapp.ui.components.NavigationGraph
 import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
-import dev.vladleesi.braindanceapp.ui.style.navBarColor
+import dev.vladleesi.braindanceapp.ui.style.navBar
 import dev.vladleesi.braindanceapp.utils.ImageLoaderInitializer
 
 @Composable
@@ -38,7 +38,7 @@ fun BraindanceApp(modifier: Modifier = Modifier) {
                 BottomBar(navController = navController)
             },
             modifier = modifier.fillMaxSize(),
-            backgroundColor = navBarColor,
+            backgroundColor = navBar,
         ) { paddingValues ->
             Column(
                 modifier =

@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import dev.vladleesi.braindanceapp.ui.style.secondary
-import dev.vladleesi.braindanceapp.ui.style.topBarColor
+import dev.vladleesi.braindanceapp.ui.style.shimmer
 
 private const val SHIMMER_DURATION = 1500
 
@@ -42,7 +42,7 @@ fun Modifier.shimmerEffect(): Modifier =
                     colors =
                         listOf(
                             secondary,
-                            topBarColor,
+                            shimmer,
                             secondary,
                         ),
                     start = Offset(startOffsetX, 0f),

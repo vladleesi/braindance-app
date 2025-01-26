@@ -21,6 +21,8 @@ import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.small
 import org.jetbrains.compose.resources.stringResource
 
+private const val MAX_ERROR_MESSAGE_LINES = 10
+
 @Composable
 fun ErrorScreen(
     title: String = stringResource(Res.string.error_screen_title),
@@ -48,7 +50,8 @@ fun ErrorScreen(
 
             Text(
                 text = errorMessage,
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.caption,
+                maxLines = MAX_ERROR_MESSAGE_LINES,
                 modifier = Modifier.padding(horizontal = medium, vertical = small),
             )
 

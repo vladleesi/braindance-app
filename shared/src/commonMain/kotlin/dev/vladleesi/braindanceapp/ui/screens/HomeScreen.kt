@@ -4,11 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +28,7 @@ import dev.vladleesi.braindanceapp.resources.home_screen_this_week_release_title
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardList
+import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.large
@@ -82,7 +80,7 @@ private fun HomeScreen(
             modifier = modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(large),
         ) {
-            item { Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars)) }
+            item { SpacerStatusBarInsets() }
             item {
                 MiniGameCardList(
                     title = stringResource(Res.string.home_screen_popular_this_year_title),
