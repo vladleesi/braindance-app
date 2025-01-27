@@ -36,6 +36,7 @@ class GameDetailsViewModel : ViewModel() {
 
     fun loadGameDetails(gameId: String?) {
         viewModelScope.launch(handler) {
+            _gameDetailsState.emit(GameDetailsState.Loading)
             val result = gameDetailsRepo.gameDetails(gameId.orEmpty())
             // TODO: Make the second request async
             val stores = storesRepo.stores(gameId.orEmpty())
