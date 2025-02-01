@@ -58,7 +58,7 @@ private fun buildTypography(fonts: FontFamily): Typography {
                 color = white,
                 fontFamily = fonts,
                 fontWeight = FontWeight.SemiBold,
-                fontSize = 40.sp,
+                fontSize = 32.sp,
             ),
         h2 =
             TextStyle(

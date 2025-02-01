@@ -11,10 +11,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
-import dev.vladleesi.braindanceapp.ui.style.accent
+import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.tiny
+import dev.vladleesi.braindanceapp.ui.style.white
 
 const val DEFAULT_MINIMUM_TEXT_LINE = 3
 
@@ -25,7 +27,9 @@ fun ExpandableText(
     expandText: String = "Read more",
     collapseText: String = "Show less",
     textStyle: TextStyle = MaterialTheme.typography.body2,
+    textColor: Color = white,
     expandTextStyle: TextStyle = MaterialTheme.typography.body2,
+    expandTextColor: Color = secondaryText,
     modifier: Modifier = Modifier,
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -35,6 +39,7 @@ fun ExpandableText(
         Text(
             text = text,
             style = textStyle,
+            color = textColor,
             maxLines = if (isExpanded) Int.MAX_VALUE else collapsedMaxLines,
             overflow = if (isExpanded) TextOverflow.Visible else TextOverflow.Ellipsis,
             onTextLayout = { textLayoutResult ->
@@ -47,7 +52,7 @@ fun ExpandableText(
             Text(
                 text = if (isExpanded) collapseText else expandText,
                 style = expandTextStyle,
-                color = accent,
+                color = expandTextColor,
                 modifier =
                     Modifier
                         .clickable { isExpanded = !isExpanded }

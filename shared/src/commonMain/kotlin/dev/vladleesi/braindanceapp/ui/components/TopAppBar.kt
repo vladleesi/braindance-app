@@ -20,7 +20,7 @@ import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.back_button_content_description
 import dev.vladleesi.braindanceapp.resources.ic_arrow_back
 import dev.vladleesi.braindanceapp.ui.style.medium
-import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith90Alpha
+import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith70Alpha
 import dev.vladleesi.braindanceapp.ui.style.topBarHeight
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.utils.withCircleRippleEffect
@@ -34,10 +34,10 @@ fun TopAppBar(
     title: String = "",
     subtitle: String = "",
     titleColor: Color = white,
-    tabBarColor: Color = overlayBlackWith90Alpha,
+    tabBarColor: Color = overlayBlackWith70Alpha,
     backButtonIcon: DrawableResource = Res.drawable.ic_arrow_back,
     showBackButton: Boolean = false,
-    backButtonBackgroundColor: Color = overlayBlackWith90Alpha,
+    backButtonBackgroundColor: Color = overlayBlackWith70Alpha,
     backButtonColor: Color = white,
     onBackButtonPressed: () -> Unit = {},
 ) {

@@ -1,20 +1,30 @@
 package dev.vladleesi.braindanceapp.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeState
+import dev.vladleesi.braindanceapp.utils.shimmerEffect
 
 private const val MINI_GAME_CARD_SKELETON_COUNT = 4
 
@@ -52,7 +62,30 @@ private fun MiniGameCardListSkeleton(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        StaticText(text = title, modifier = Modifier.padding(horizontal = medium), style = MaterialTheme.typography.h2)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            StaticText(
+                text = title,
+                modifier =
+                    Modifier
+                        .padding(horizontal = medium)
+                        .align(Alignment.CenterStart),
+                style = MaterialTheme.typography.h2,
+            )
+            Button(
+                onClick = {},
+                modifier = Modifier.align(Alignment.CenterEnd),
+            ) {
+                Text(
+                    text = "",
+                    style = MaterialTheme.typography.subtitle2,
+                    modifier =
+                        Modifier
+                            .width(64.dp)
+                            .clip(RoundedCornerShape(small))
+                            .shimmerEffect(),
+                )
+            }
+        }
         LazyRow(
             modifier = Modifier.padding(top = small),
             horizontalArrangement = Arrangement.spacedBy(small),
@@ -80,7 +113,25 @@ private fun MiniGameCardList(
         )
     }
     Column(modifier = modifier) {
-        StaticText(text = title, modifier = Modifier.padding(horizontal = medium), style = MaterialTheme.typography.h2)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            StaticText(
+                text = title,
+                modifier =
+                    Modifier
+                        .padding(horizontal = medium)
+                        .align(Alignment.CenterStart),
+                style = MaterialTheme.typography.h2,
+            )
+            Button(
+                onClick = {},
+                modifier = Modifier.align(Alignment.CenterEnd),
+            ) {
+                Text(
+                    text = "See all",
+                    style = MaterialTheme.typography.subtitle2,
+                )
+            }
+        }
         LazyRow(
             modifier = Modifier.padding(top = small),
             horizontalArrangement = Arrangement.spacedBy(small),

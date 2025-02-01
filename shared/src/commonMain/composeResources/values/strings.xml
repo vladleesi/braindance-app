@@ -3,7 +3,7 @@
     <string name="back_button_content_description">Button: Back</string>
 
     <!-- Home screen -->
-    <string name="home_screen_popular_this_year_title">Popular this year</string>
+    <string name="home_screen_popular_this_year_title">Best of the year</string>
     <string name="home_screen_popular_in_year_title">Popular in %1$s</string>
     <string name="home_screen_all_time_top_title">All time top 250</string>
     <string name="home_screen_this_week_release_title">This week releases</string>
