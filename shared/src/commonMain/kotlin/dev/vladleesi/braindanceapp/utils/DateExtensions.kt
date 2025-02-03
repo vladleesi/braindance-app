@@ -1,8 +1,9 @@
 package dev.vladleesi.braindanceapp.utils
 
 import io.ktor.util.date.GMTDate
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Instant
 import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
 
@@ -12,10 +13,16 @@ val currentYear: Int
 val lastYear: Int
     get() = GMTDate().year.dec()
 
+val now: Long
+    get() = GMTDate().timestamp
+
+val nowUnix: Long
+    get() = now / 1000
+
 // TODO: Add reusable formats
-fun String.formatDate(): String? {
+fun Long.formatDate(): String? {
     val format =
-        LocalDate.Format {
+        DateTimeComponents.Format {
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
             dayOfMonth()
@@ -23,5 +30,5 @@ fun String.formatDate(): String? {
             char(' ')
             year()
         }
-    return runCatching { LocalDate.parse(this).format(format) }.getOrNull()
+    return runCatching { Instant.fromEpochMilliseconds(this).format(format) }.getOrNull()
 }

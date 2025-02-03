@@ -1,17 +1,15 @@
 package dev.vladleesi.braindanceapp.data.config
 
 object ApiConfig {
-    const val RAWG_HOST = "api.rawg.io"
+    const val IGDB_HOST = "api.igdb.com"
+    const val TWITCH_OAUTH_TOKEN_URL = "https://id.twitch.tv/oauth2/token"
 
-    object Query {
-        const val KEY = "key"
-        const val DISCOVER = "discover"
-        const val PAGE_SIZE = "page_size"
-        const val YEAR = "year"
-        const val ORDERING = "ordering"
+    object Headers {
+        const val CLIENT_ID = "Client-ID"
     }
 
-    object Value {
-        const val ADDED = "added"
+    object Endpoints {
+        const val GAMES = "v4/games"
+        const val POPULARITY_PRIMITIVES = "v4/popularity_primitives"
     }
 }

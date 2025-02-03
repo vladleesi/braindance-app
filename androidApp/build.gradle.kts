@@ -40,7 +40,7 @@ dependencies {
     implementation(project(":shared"))
 
     // Compose
-    implementation(libs.activity.compose)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling)
     implementation(libs.compose.ui.tooling.preview)

@@ -21,10 +21,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.vladleesi.braindanceapp.resources.Res
-import dev.vladleesi.braindanceapp.resources.home_screen_all_time_top_title
-import dev.vladleesi.braindanceapp.resources.home_screen_popular_in_year_title
-import dev.vladleesi.braindanceapp.resources.home_screen_popular_this_year_title
-import dev.vladleesi.braindanceapp.resources.home_screen_this_week_release_title
+import dev.vladleesi.braindanceapp.resources.home_screen_popular_most_anticipated
+import dev.vladleesi.braindanceapp.resources.home_screen_popular_popular_right_now
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardList
@@ -33,7 +31,6 @@ import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
-import dev.vladleesi.braindanceapp.utils.lastYear
 import org.jetbrains.compose.resources.stringResource
 
 private const val HOME_INNER_ROUTE = "HomeInnerRoute"
@@ -57,10 +54,8 @@ private fun HomeScreen(
 ) {
     var isInitialized by rememberSaveable { mutableStateOf(false) }
 
-    val popularThisYear by viewModel.popularThisYear.collectAsState()
-    val popularLastYear by viewModel.popularLastYear.collectAsState()
-    val allTimeTop by viewModel.allTimeTop.collectAsState()
-    val thisWeekReleases by viewModel.thisWeekReleases.collectAsState()
+    val mostAnticipated by viewModel.mostAnticipated.collectAsState()
+    val popularRightNow by viewModel.popularRightNow.collectAsState()
 
     // Load the screen only on first navigation
     if (isInitialized.not()) {
@@ -83,30 +78,15 @@ private fun HomeScreen(
             item { SpacerStatusBarInsets() }
             item {
                 MiniGameCardList(
-                    title = stringResource(Res.string.home_screen_popular_this_year_title),
-                    state = popularThisYear,
+                    title = stringResource(Res.string.home_screen_popular_most_anticipated),
+                    state = mostAnticipated,
                     navHostController = navHostController,
                 )
             }
             item {
                 MiniGameCardList(
-                    title = stringResource(Res.string.home_screen_popular_in_year_title, lastYear),
-                    state = popularLastYear,
-                    navHostController = navHostController,
-                )
-            }
-            item {
-                // TODO: Two lines with auto scroll
-                MiniGameCardList(
-                    title = stringResource(Res.string.home_screen_all_time_top_title),
-                    state = allTimeTop,
-                    navHostController = navHostController,
-                )
-            }
-            item {
-                MiniGameCardList(
-                    title = stringResource(Res.string.home_screen_this_week_release_title),
-                    state = thisWeekReleases,
+                    title = stringResource(Res.string.home_screen_popular_popular_right_now),
+                    state = popularRightNow,
                     navHostController = navHostController,
                 )
             }

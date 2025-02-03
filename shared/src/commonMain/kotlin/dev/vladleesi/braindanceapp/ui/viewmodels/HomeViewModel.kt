@@ -2,14 +2,15 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.vladleesi.braindanceapp.data.api.remote.CompilationRemote
-import dev.vladleesi.braindanceapp.data.models.games.Game
+import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
+import dev.vladleesi.braindanceapp.data.models.games.GameItem
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardModel
-import dev.vladleesi.braindanceapp.utils.currentYear
-import dev.vladleesi.braindanceapp.utils.lastYear
+import dev.vladleesi.braindanceapp.utils.CoverSize
+import dev.vladleesi.braindanceapp.utils.nowUnix
 import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
+import dev.vladleesi.braindanceapp.utils.toCoverUrl
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,19 +21,13 @@ import kotlinx.coroutines.launch
 class HomeViewModel : ViewModel() {
     @Suppress("ForbiddenComment")
     // TODO: Move to DI
-    private val homeRepo = HomeRepo(CompilationRemote())
+    private val homeRepo = HomeRepo(GamesRemote())
 
-    private val _popularThisYear = MutableStateFlow<HomeState>(HomeState.Loading)
-    val popularThisYear: StateFlow<HomeState> = _popularThisYear.asStateFlow()
+    private val _mostAnticipated = MutableStateFlow<HomeState>(HomeState.Loading)
+    val mostAnticipated: StateFlow<HomeState> = _mostAnticipated.asStateFlow()
 
-    private val _popularLastYear = MutableStateFlow<HomeState>(HomeState.Loading)
-    val popularLastYear: StateFlow<HomeState> = _popularLastYear.asStateFlow()
-
-    private val _allTimeTop = MutableStateFlow<HomeState>(HomeState.Loading)
-    val allTimeTop: StateFlow<HomeState> = _allTimeTop.asStateFlow()
-
-    private val _thisWeekReleases = MutableStateFlow<HomeState>(HomeState.Loading)
-    val thisWeekReleases: StateFlow<HomeState> = _thisWeekReleases.asStateFlow()
+    private val _popularRightNow = MutableStateFlow<HomeState>(HomeState.Loading)
+    val popularRightNow: StateFlow<HomeState> = _popularRightNow.asStateFlow()
 
     private val handler =
         CoroutineExceptionHandler { _, exception ->
@@ -40,88 +35,52 @@ class HomeViewModel : ViewModel() {
         }
 
     fun loadHome() {
-        loadPopularThisYear()
-        loadPopularLastYear()
-        loadPopularAllTime()
-        loadThisWeekReleases()
+        loadMostAnticipated()
+        loadPopularRightNow()
     }
 
-    private fun loadPopularThisYear(pageSize: Int = PAGE_SIZE) {
+    private fun loadMostAnticipated(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
             runCatching {
-                homeRepo.bestOfTheYear(pageSize = pageSize, year = currentYear)
+                val gameItems = homeRepo.mostAnticipated(pageSize = pageSize, currentTimestamp = nowUnix)
+                gameItems.orEmpty().mapperMiniGameCardModel()
             }
                 .onSuccess { result ->
-                    _popularThisYear.emit(
-                        HomeState.Success(result.results.orEmpty().mapperMiniGameCardModel()),
-                    )
+                    _mostAnticipated.emit(HomeState.Success(result))
                 }
                 .onFailure { throwable ->
-                    _popularThisYear.emit(HomeState.Error(throwable.message.orEmpty()))
+                    _mostAnticipated.emit(HomeState.Error(throwable.message.orEmpty()))
                 }
         }
     }
 
-    private fun loadPopularLastYear(pageSize: Int = PAGE_SIZE) {
+    private fun loadPopularRightNow(pageSize: Int = PAGE_SIZE) {
         viewModelScope.launch(handler) {
             runCatching {
-                homeRepo.bestOfTheYear(pageSize = pageSize, year = lastYear)
+                val gameItems = homeRepo.popularRightNow(pageSize = pageSize)
+                gameItems.orEmpty().mapperMiniGameCardModel()
             }
                 .onSuccess { result ->
-                    _popularLastYear.emit(
-                        HomeState.Success(result.results.orEmpty().mapperMiniGameCardModel()),
-                    )
+                    _popularRightNow.emit(HomeState.Success(result))
                 }
                 .onFailure { throwable ->
-                    _popularLastYear.emit(HomeState.Error(throwable.message.orEmpty()))
+                    _popularRightNow.emit(HomeState.Error(throwable.message.orEmpty()))
                 }
         }
     }
 
-    private fun loadPopularAllTime(pageSize: Int = PAGE_SIZE) {
-        viewModelScope.launch(handler) {
-            runCatching {
-                homeRepo.popular(pageSize = pageSize)
-            }
-                .onSuccess { result ->
-                    _allTimeTop.emit(
-                        HomeState.Success(result.results.orEmpty().mapperMiniGameCardModel()),
-                    )
-                }
-                .onFailure { throwable ->
-                    _allTimeTop.emit(HomeState.Error(throwable.message.orEmpty()))
-                }
-        }
-    }
+    private fun List<GameItem>.mapperMiniGameCardModel() = map { gameItem -> gameItem.toMiniGameCardModel() }
 
-    private fun loadThisWeekReleases(pageSize: Int = PAGE_SIZE) {
-        viewModelScope.launch(handler) {
-            runCatching {
-                homeRepo.thisWeekReleases(pageSize = pageSize)
-            }
-                .onSuccess { result ->
-                    _thisWeekReleases.emit(
-                        HomeState.Success(result.results.orEmpty().mapperMiniGameCardModel()),
-                    )
-                }
-                .onFailure { throwable ->
-                    _thisWeekReleases.emit(HomeState.Error(throwable.message.orEmpty()))
-                }
-        }
-    }
-
-    private fun List<Game>.mapperMiniGameCardModel() = map { game -> game.toMiniGameCardModel() }
-
-    private fun Game.toMiniGameCardModel() =
+    private fun GameItem.toMiniGameCardModel() =
         MiniGameCardModel(
             id = id.orZero(),
             title = name.orEmpty(),
-            backgroundImageUrl = backgroundImageUrl.orEmpty(),
-            platforms = parentPlatforms.orEmpty().parentPlatformTypes(),
+            backgroundImageUrl = cover?.url?.toCoverUrl(CoverSize.P_1080).orEmpty(),
+            platforms = platforms.orEmpty().parentPlatformTypes(),
         )
 
     private companion object {
-        private const val PAGE_SIZE = 10
+        private const val PAGE_SIZE = 15
     }
 }
 

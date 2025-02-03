@@ -40,24 +40,24 @@ import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.isLargeDevice
-import dev.vladleesi.braindanceapp.system.screenSize
 import dev.vladleesi.braindanceapp.system.toPx
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GenreTags
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
 import dev.vladleesi.braindanceapp.ui.components.ReleaseDateLabel
-import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
+import dev.vladleesi.braindanceapp.ui.components.SpacerTopBarWithStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.components.TopAppBar
 import dev.vladleesi.braindanceapp.ui.components.storesBlockItem
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
+import dev.vladleesi.braindanceapp.ui.style.miniGameCardHeight
+import dev.vladleesi.braindanceapp.ui.style.miniGameCardWidth
 import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith70Alpha
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
-import dev.vladleesi.braindanceapp.ui.style.topBarHeight
 import dev.vladleesi.braindanceapp.ui.style.topBarHeightWithInsets
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
@@ -78,7 +78,7 @@ fun GameDetailsScreen(
     var isInitialized by rememberSaveable { mutableStateOf(false) }
 
     val gameId by rememberSaveable {
-        mutableStateOf(arguments?.getString(GameDetailsRoute.Params.GAME_ID))
+        mutableStateOf(arguments?.getString(GameDetailsRoute.Params.GAME_ID)?.toIntOrNull())
     }
     val state by viewModel.gameDetailsState.collectAsState()
 
@@ -124,24 +124,26 @@ private fun GameDetailsScreen(
             state = lazyListState,
             modifier = modifier.fillMaxSize(),
         ) {
-            item { SpacerStatusBarInsets() }
+            item { SpacerTopBarWithStatusBarInsets() }
             if (isLargeDevice) {
                 gameInfoHeaderLargeScreen(state)
             } else {
                 gameInfoHeaderSmallScreen(state)
             }
-            item {
-                ExpandableText(
-                    text = state.gameDetails.descriptionRaw,
-                    modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
-                )
+            if (state.gameDetails.storyline.isNotEmpty()) {
+                item {
+                    ExpandableText(
+                        text = state.gameDetails.storyline,
+                        modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
+                    )
+                }
+                item { Spacer(modifier = Modifier.size(large)) }
             }
-            item { Spacer(modifier = Modifier.size(large)) }
             storesBlockItem(state.gameDetails.stores)
             item { Spacer(modifier = Modifier.size(large)) }
         }
         Column {
-            StatusBarOverlay()
+            StatusBarOverlay(backgroundColor = topBarColor)
             TopAppBar(
                 tabBarColor = topBarColor,
                 titleColor = topBarTitleColor,
@@ -206,21 +208,19 @@ private fun calculateScrollTopBarColors(lazyListState: LazyListState): Triple<Co
 
 private fun LazyListScope.gameInfoHeaderLargeScreen(state: GameDetailsState.Success) =
     item {
-        val imageWidth = screenSize.width.dp * IMAGE_WIDTH_FACTOR_LARGE_SCREEN
-        val imageHeight = imageWidth * IMAGE_HEIGHT_FACTOR
         Row(
             modifier =
                 Modifier
                     .padding(horizontal = medium)
-                    .padding(top = topBarHeight, bottom = medium),
+                    .padding(bottom = medium),
         ) {
             AsyncImage(
                 modifier =
                     Modifier
-                        .width(imageWidth)
-                        .height(imageHeight)
+                        .width(miniGameCardWidth)
+                        .height(miniGameCardHeight)
                         .clip(RoundedCornerShape(small)),
-                model = state.gameDetails.backgroundImage,
+                model = state.gameDetails.coverImageUrl,
                 contentScale = ContentScale.Crop,
                 contentDescription = state.gameDetails.name.toContentDescription(),
             )
@@ -240,16 +240,18 @@ private fun LazyListScope.gameInfoHeaderLargeScreen(state: GameDetailsState.Succ
 
 private fun LazyListScope.gameInfoHeaderSmallScreen(state: GameDetailsState.Success) {
     item {
-        val imageHeight = screenSize.width.dp * IMAGE_HEIGHT_FACTOR
-        AsyncImage(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(imageHeight),
-            model = state.gameDetails.backgroundImage,
-            contentScale = ContentScale.Crop,
-            contentDescription = state.gameDetails.name.toContentDescription(),
-        )
+        Box(modifier = Modifier.padding(horizontal = medium)) {
+            AsyncImage(
+                modifier =
+                    Modifier
+                        .width(miniGameCardWidth)
+                        .height(miniGameCardHeight)
+                        .clip(RoundedCornerShape(small)),
+                model = state.gameDetails.coverImageUrl,
+                contentScale = ContentScale.Crop,
+                contentDescription = state.gameDetails.name.toContentDescription(),
+            )
+        }
     }
     item { Spacer(modifier = Modifier.size(medium)) }
     item { GameDetailsInfo(gameDetails = state.gameDetails) }

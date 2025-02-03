@@ -13,11 +13,11 @@ import dev.vladleesi.braindanceapp.resources.ic_platform_logo_xbox
 import org.jetbrains.compose.resources.DrawableResource
 
 fun List<Platform>.parentPlatformTypes(): List<ParentPlatformType> {
-    return this.map { it.parentPlatformType() }
+    return this.map { it.parentPlatformType() }.distinct()
 }
 
 fun Platform.parentPlatformType(): ParentPlatformType {
-    val platformName = this.details?.name ?: return ParentPlatformType.Other
+    val platformName = this.name ?: return ParentPlatformType.Other
     return when {
         platformName.contains("PlayStation", ignoreCase = true) -> ParentPlatformType.PlayStation
         platformName.contains("Xbox", ignoreCase = true) -> ParentPlatformType.Xbox

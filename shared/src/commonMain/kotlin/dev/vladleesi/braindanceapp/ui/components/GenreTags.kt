@@ -23,7 +23,7 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.GenreTag
 @Composable
 fun GenreTags(
     genres: List<GenreTag>,
-    onClick: (String) -> Unit,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(tiny),
     backgroundColor: Color = secondaryVariant,
@@ -38,7 +38,7 @@ fun GenreTags(
             Chip(
                 colors = ChipDefaults.chipColors(backgroundColor = backgroundColor),
                 onClick = {
-                    onClick.invoke(genre.slug)
+                    onClick.invoke(genre.id)
                 },
             ) {
                 Text(

@@ -2,16 +2,18 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.vladleesi.braindanceapp.data.api.remote.GameDetailsRemote
+import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
 import dev.vladleesi.braindanceapp.data.api.remote.StoresRemote
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
 import dev.vladleesi.braindanceapp.data.repository.StoresRepo
+import dev.vladleesi.braindanceapp.utils.CoverSize
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.StoreTypeModel
 import dev.vladleesi.braindanceapp.utils.formatDate
 import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import dev.vladleesi.braindanceapp.utils.storeTypes
+import dev.vladleesi.braindanceapp.utils.toCoverUrl
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +24,7 @@ import kotlinx.coroutines.launch
 class GameDetailsViewModel : ViewModel() {
     @Suppress("ForbiddenComment")
     // TODO: Move to DI
-    private val gameDetailsRepo = GameDetailsRepo(GameDetailsRemote())
+    private val gameDetailsRepo = GameDetailsRepo(GamesRemote())
     private val storesRepo = StoresRepo(StoresRemote())
 
     private val _gameDetailsState = MutableStateFlow<GameDetailsState>(GameDetailsState.Loading)
@@ -34,31 +36,28 @@ class GameDetailsViewModel : ViewModel() {
             _gameDetailsState.value = GameDetailsState.Error(exception.message.orEmpty())
         }
 
-    fun loadGameDetails(gameId: String?) {
+    fun loadGameDetails(gameId: Int?) {
         viewModelScope.launch(handler) {
             _gameDetailsState.emit(GameDetailsState.Loading)
-            val result = gameDetailsRepo.gameDetails(gameId.orEmpty())
-            // TODO: Make the second request async
-            val stores = storesRepo.stores(gameId.orEmpty())
+            val gameItem = gameDetailsRepo.gameDetails(gameId.orZero())?.firstOrNull()
+            val gameDetails =
+                GameDetails(
+                    name = gameItem?.name.orEmpty(),
+                    storyline = gameItem?.storyline.orEmpty(),
+                    coverImageUrl = gameItem?.cover?.url?.toCoverUrl(CoverSize.ORIGINAL).orEmpty(),
+                    releaseDate = gameItem?.firstReleaseDate?.formatDate(),
+                    platforms = gameItem?.platforms.orEmpty().parentPlatformTypes(),
+                    stores = gameItem?.websites.orEmpty().storeTypes(),
+                    genres =
+                        gameItem?.genres.orEmpty().map { genre ->
+                            GenreTag(
+                                id = genre.id.orZero(),
+                                name = genre.name.orEmpty(),
+                            )
+                        },
+                )
             _gameDetailsState.emit(
-                GameDetailsState.Success(
-                    GameDetails(
-                        name = result.name.orEmpty(),
-                        descriptionRaw = result.descriptionRaw.orEmpty(),
-                        backgroundImage = result.backgroundImage.orEmpty(),
-                        releaseDate = result.released.orEmpty().formatDate(),
-                        platforms = result.parentPlatforms.orEmpty().parentPlatformTypes(),
-                        stores = stores.results.orEmpty().storeTypes(),
-                        genres =
-                            result.genres.orEmpty().map { genre ->
-                                GenreTag(
-                                    id = genre.id.orZero(),
-                                    slug = genre.slug.orEmpty(),
-                                    name = genre.name.orEmpty(),
-                                )
-                            },
-                    ),
-                ),
+                GameDetailsState.Success(gameDetails),
             )
         }
     }
@@ -74,8 +73,8 @@ sealed class GameDetailsState {
 
 data class GameDetails(
     val name: String,
-    val descriptionRaw: String,
-    val backgroundImage: String,
+    val storyline: String,
+    val coverImageUrl: String,
     val releaseDate: String?,
     val platforms: List<ParentPlatformType>,
     val stores: List<StoreTypeModel>,
@@ -84,6 +83,5 @@ data class GameDetails(
 
 data class GenreTag(
     val id: Int,
-    val slug: String,
     val name: String,
 )
