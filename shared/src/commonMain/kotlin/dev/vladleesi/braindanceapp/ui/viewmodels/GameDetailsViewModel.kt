@@ -43,6 +43,7 @@ class GameDetailsViewModel : ViewModel() {
             val gameDetails =
                 GameDetails(
                     name = gameItem?.name.orEmpty(),
+                    summary = gameItem?.summary.orEmpty(),
                     storyline = gameItem?.storyline.orEmpty(),
                     coverImageUrl = gameItem?.cover?.url?.toCoverUrl(CoverSize.ORIGINAL).orEmpty(),
                     releaseDate = gameItem?.firstReleaseDate?.formatDate(),
@@ -73,6 +74,7 @@ sealed class GameDetailsState {
 
 data class GameDetails(
     val name: String,
+    val summary: String,
     val storyline: String,
     val coverImageUrl: String,
     val releaseDate: String?,

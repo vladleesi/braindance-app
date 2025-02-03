@@ -16,6 +16,7 @@ data class GameItem(
     @SerialName("similar_games")
     val similarGames: List<SimilarGame>?,
     val websites: List<Websites>?,
+    val summary: String?,
     val storyline: String?,
     val videos: List<Video>?,
 )

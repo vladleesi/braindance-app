@@ -130,10 +130,10 @@ private fun GameDetailsScreen(
             } else {
                 gameInfoHeaderSmallScreen(state)
             }
-            if (state.gameDetails.storyline.isNotEmpty()) {
+            if (state.gameDetails.summary.isNotEmpty()) {
                 item {
                     ExpandableText(
-                        text = state.gameDetails.storyline,
+                        text = state.gameDetails.summary,
                         modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
                     )
                 }

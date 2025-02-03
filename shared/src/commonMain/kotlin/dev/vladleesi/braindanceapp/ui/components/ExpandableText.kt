@@ -18,7 +18,7 @@ import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.tiny
 import dev.vladleesi.braindanceapp.ui.style.white
 
-const val DEFAULT_MINIMUM_TEXT_LINE = 3
+const val DEFAULT_MINIMUM_TEXT_LINE = 4
 
 @Composable
 fun ExpandableText(
