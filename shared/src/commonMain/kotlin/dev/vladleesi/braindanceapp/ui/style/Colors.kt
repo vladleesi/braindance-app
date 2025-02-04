@@ -27,6 +27,7 @@ val DarkColors =
         primary = background,
         secondary = secondary,
         secondaryVariant = secondaryVariant,
+        background = navBar,
         error = error,
     )
 
