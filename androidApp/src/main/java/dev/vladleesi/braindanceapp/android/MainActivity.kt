@@ -15,15 +15,15 @@ import dev.vladleesi.braindanceapp.Greeting
 import dev.vladleesi.braindanceapp.system.ContextProvider
 import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.ui.style.navBar
-import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith70Alpha
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(overlayBlackWith70Alpha.toArgb()),
+            statusBarStyle = SystemBarStyle.dark(navBar.toArgb()),
             navigationBarStyle = SystemBarStyle.dark(navBar.toArgb()),
         )
+
         ContextProvider.setContextProvider { baseContext }
         setContent {
             BraindanceApp()

@@ -55,7 +55,7 @@ import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.medium
 import dev.vladleesi.braindanceapp.ui.style.miniGameCardHeight
 import dev.vladleesi.braindanceapp.ui.style.miniGameCardWidth
-import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith70Alpha
+import dev.vladleesi.braindanceapp.ui.style.navBar
 import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.tiny
 import dev.vladleesi.braindanceapp.ui.style.topBarHeightWithInsets
@@ -180,7 +180,7 @@ private fun GameDetailsInfo(gameDetails: GameDetails) {
 
 @Composable
 private fun calculateScrollTopBarColors(lazyListState: LazyListState): Triple<Color, Color, Color> {
-    val targetColor = overlayBlackWith70Alpha
+    val targetColor = navBar
     val maxScrollOffsetPx = topBarHeightWithInsets.toPx()
     var firstOffset by remember { mutableStateOf(0f) }
 

@@ -1,5 +1,6 @@
 package dev.vladleesi.braindanceapp.ui.components
 
+import Search
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
@@ -14,15 +15,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import dev.vladleesi.braindanceapp.resources.Res
-import dev.vladleesi.braindanceapp.resources.ic_search
-import dev.vladleesi.braindanceapp.ui.style.hintText
 import dev.vladleesi.braindanceapp.ui.style.secondary
 import dev.vladleesi.braindanceapp.ui.style.white
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier) {
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    placeholder: String = "Search for games",
+) {
     var query by rememberSaveable { mutableStateOf("") }
     TextField(
         value = query,
@@ -33,7 +33,7 @@ fun SearchBar(modifier: Modifier = Modifier) {
         singleLine = true,
         placeholder = {
             Text(
-                text = "Search for games",
+                text = placeholder,
                 style = MaterialTheme.typography.body2,
             )
         },
@@ -41,14 +41,14 @@ fun SearchBar(modifier: Modifier = Modifier) {
         colors =
             TextFieldDefaults.textFieldColors(
                 backgroundColor = secondary,
-                cursorColor = hintText,
+                cursorColor = white,
                 textColor = white,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
             ),
         leadingIcon = {
             Icon(
-                painter = painterResource(resource = Res.drawable.ic_search),
+                imageVector = Search,
                 contentDescription = null,
             )
         },

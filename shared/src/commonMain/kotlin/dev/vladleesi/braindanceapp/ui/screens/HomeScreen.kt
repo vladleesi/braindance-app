@@ -30,6 +30,7 @@ import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.large
+import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith80Alpha
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
 import org.jetbrains.compose.resources.stringResource
 
@@ -92,6 +93,6 @@ private fun HomeScreen(
             }
             item { Spacer(Modifier.height(large)) }
         }
-        StatusBarOverlay()
+        StatusBarOverlay(backgroundColor = overlayBlackWith80Alpha)
     }
 }
