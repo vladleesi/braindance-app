@@ -3,16 +3,14 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
-import dev.vladleesi.braindanceapp.data.api.remote.StoresRemote
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
-import dev.vladleesi.braindanceapp.data.repository.StoresRepo
 import dev.vladleesi.braindanceapp.utils.CoverSize
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.StoreTypeModel
 import dev.vladleesi.braindanceapp.utils.formatDate
+import dev.vladleesi.braindanceapp.utils.getMergedStoresType
 import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
-import dev.vladleesi.braindanceapp.utils.storeTypes
 import dev.vladleesi.braindanceapp.utils.toCoverUrl
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -25,7 +23,6 @@ class GameDetailsViewModel : ViewModel() {
     @Suppress("ForbiddenComment")
     // TODO: Move to DI
     private val gameDetailsRepo = GameDetailsRepo(GamesRemote())
-    private val storesRepo = StoresRepo(StoresRemote())
 
     private val _gameDetailsState = MutableStateFlow<GameDetailsState>(GameDetailsState.Loading)
     val gameDetailsState: StateFlow<GameDetailsState> = _gameDetailsState.asStateFlow()
@@ -48,7 +45,11 @@ class GameDetailsViewModel : ViewModel() {
                     coverImageUrl = gameItem?.cover?.url?.toCoverUrl(CoverSize.ORIGINAL).orEmpty(),
                     releaseDate = gameItem?.firstReleaseDate?.formatDate(),
                     platforms = gameItem?.platforms.orEmpty().parentPlatformTypes(),
-                    stores = gameItem?.websites.orEmpty().storeTypes(),
+                    stores =
+                        getMergedStoresType(
+                            externalGames = gameItem?.externalGames.orEmpty(),
+                            websites = gameItem?.websites.orEmpty(),
+                        ),
                     genres =
                         gameItem?.genres.orEmpty().map { genre ->
                             GenreTag(

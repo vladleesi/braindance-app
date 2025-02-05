@@ -13,7 +13,8 @@ class GameDetailsRepo(private val gamesRemote: GamesRemote) {
                     listOf(
                         "name", "cover.url", "similar_games.name", "similar_games.cover.url",
                         "videos.video_id", "genres.name", "summary", "storyline", "platforms.name",
-                        "websites.url", "screenshots.animated", "screenshots.url",
+                        "websites.url", "websites.category", "screenshots.animated", "screenshots.url",
+                        "external_games.category", "external_games.url",
                     )
                 where = listOf("id = $gameId")
             }

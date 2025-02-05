@@ -11,10 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -53,15 +53,14 @@ private fun HomeScreen(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
 ) {
-    var isInitialized by rememberSaveable { mutableStateOf(false) }
-
     val mostAnticipated by viewModel.mostAnticipated.collectAsState()
     val popularRightNow by viewModel.popularRightNow.collectAsState()
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     // Load the screen only on first navigation
-    if (isInitialized.not()) {
-        LaunchedEffect(Unit) {
-            isInitialized = true
+    LaunchedEffect(lifecycleOwner.lifecycle) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.loadHome()
         }
     }

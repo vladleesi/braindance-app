@@ -15,6 +15,8 @@ data class GameItem(
     val screenshots: List<Screenshot>?,
     @SerialName("similar_games")
     val similarGames: List<SimilarGame>?,
+    @SerialName("external_games")
+    val externalGames: List<ExternalGames>?,
     val websites: List<Websites>?,
     val summary: String?,
     val storyline: String?,
