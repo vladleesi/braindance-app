@@ -12,9 +12,8 @@ Braindance is a versatile game-tracking application that allows users to search,
 Braindance is a multiplatform application that is available for Android and iOS. It is built using the [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html) (KMP).
 
 ## Setup Instructions
-
-1. Go to the [IGDB API docs](https://api-docs.igdb.com/#getting-started), look at **Account Creation** section, and follow the instructions to get your CLIENT_ID and CLIENT_SECRET.
-2. Open `local.properties` file located in the root directory of your project and add these lines:
+1. Check the [IGDB API docs](https://api-docs.igdb.com/#getting-started) for steps to get your CLIENT_ID and CLIENT_SECRET.
+2. Open `local.properties` from your project root directory and add these lines:
 ```
 CLIENT_ID=YOUR_CLIENT_ID
 CLIENT_SECRET=YOUR_CLIENT_SECRET
