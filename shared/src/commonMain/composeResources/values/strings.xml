@@ -4,6 +4,7 @@
 
     <!-- Home screen -->
     <string name="home_screen_popular_most_anticipated">Most Anticipated</string>
+    <string name="home_screen_popular_latest_giveaways">Latest Giveaways</string>
     <string name="home_screen_popular_popular_right_now">Popular Right Now</string>
 
     <!-- Error screen -->

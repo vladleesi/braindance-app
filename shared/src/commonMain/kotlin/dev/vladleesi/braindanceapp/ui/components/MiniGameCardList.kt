@@ -21,8 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.navigate
-import dev.vladleesi.braindanceapp.ui.style.medium
-import dev.vladleesi.braindanceapp.ui.style.small
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeState
 import dev.vladleesi.braindanceapp.utils.shimmerEffect
 
@@ -42,10 +41,10 @@ fun MiniGameCardList(
                 modifier = modifier,
             )
 
-        is HomeState.Success ->
+        is HomeState.Success<*> ->
             MiniGameCardList(
                 title = title,
-                games = state.games,
+                games = state.entities.filterIsInstance<MiniGameCardModel>(),
                 modifier = modifier,
                 navHostController = navHostController,
             )
@@ -67,7 +66,7 @@ private fun MiniGameCardListSkeleton(
                 text = title,
                 modifier =
                     Modifier
-                        .padding(horizontal = medium)
+                        .padding(horizontal = Dimens.medium)
                         .align(Alignment.CenterStart),
                 style = MaterialTheme.typography.h2,
             )
@@ -81,16 +80,16 @@ private fun MiniGameCardListSkeleton(
                     modifier =
                         Modifier
                             .width(64.dp)
-                            .clip(RoundedCornerShape(small))
+                            .clip(RoundedCornerShape(Dimens.small))
                             .shimmerEffect(),
                 )
             }
         }
         LazyRow(
-            modifier = Modifier.padding(top = small),
-            horizontalArrangement = Arrangement.spacedBy(small),
+            modifier = Modifier.padding(top = Dimens.small),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.small),
             userScrollEnabled = false,
-            contentPadding = PaddingValues(horizontal = medium),
+            contentPadding = PaddingValues(horizontal = Dimens.medium),
         ) {
             items(MINI_GAME_CARD_SKELETON_COUNT) {
                 MiniGameCardSkeleton()
@@ -118,7 +117,7 @@ private fun MiniGameCardList(
                 text = title,
                 modifier =
                     Modifier
-                        .padding(horizontal = medium)
+                        .padding(horizontal = Dimens.medium)
                         .align(Alignment.CenterStart),
                 style = MaterialTheme.typography.h2,
             )
@@ -133,9 +132,9 @@ private fun MiniGameCardList(
             }
         }
         LazyRow(
-            modifier = Modifier.padding(top = small),
-            horizontalArrangement = Arrangement.spacedBy(small),
-            contentPadding = PaddingValues(horizontal = medium),
+            modifier = Modifier.padding(top = Dimens.small),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.small),
+            contentPadding = PaddingValues(horizontal = Dimens.medium),
         ) {
             items(games, key = { it.id }, contentType = { it }) { card ->
                 MiniGameCard(card = card, onCardClicked = onCardClicked)

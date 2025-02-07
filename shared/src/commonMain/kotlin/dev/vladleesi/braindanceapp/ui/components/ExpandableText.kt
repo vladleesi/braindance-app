@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.secondaryText
-import dev.vladleesi.braindanceapp.ui.style.tiny
 import dev.vladleesi.braindanceapp.ui.style.white
 
 const val DEFAULT_MINIMUM_TEXT_LINE = 4
@@ -56,7 +56,7 @@ fun ExpandableText(
                 modifier =
                     Modifier
                         .clickable { isExpanded = !isExpanded }
-                        .padding(top = tiny),
+                        .padding(top = Dimens.tiny),
             )
         }
     }

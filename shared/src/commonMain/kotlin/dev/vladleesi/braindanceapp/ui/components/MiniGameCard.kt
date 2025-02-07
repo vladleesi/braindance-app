@@ -13,14 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
-import dev.vladleesi.braindanceapp.ui.style.miniGameCardHeight
-import dev.vladleesi.braindanceapp.ui.style.miniGameCardWidth
-import dev.vladleesi.braindanceapp.ui.style.small
+import dev.vladleesi.braindanceapp.ui.style.Dimens
+import dev.vladleesi.braindanceapp.ui.viewmodels.HomeStateEntity
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.shimmerEffect
 import dev.vladleesi.braindanceapp.utils.toContentDescription
-
-private const val CARD_SHIMMER_WIDTH_FACTOR = 0.75f
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -33,8 +30,8 @@ fun MiniGameCard(
         Card(
             modifier =
                 Modifier
-                    .height(miniGameCardHeight)
-                    .width(miniGameCardWidth),
+                    .height(Dimens.miniGameCardHeight)
+                    .width(Dimens.miniGameCardWidth),
             onClick = { onCardClicked(card.id) },
         ) {
             AsyncImage(
@@ -53,9 +50,9 @@ fun MiniGameCardSkeleton(modifier: Modifier = Modifier) {
         Box(
             modifier =
                 Modifier
-                    .height(miniGameCardHeight)
-                    .width(miniGameCardWidth)
-                    .clip(RoundedCornerShape(small))
+                    .height(Dimens.miniGameCardHeight)
+                    .width(Dimens.miniGameCardWidth)
+                    .clip(RoundedCornerShape(Dimens.small))
                     .shimmerEffect(),
         )
     }
@@ -66,4 +63,4 @@ data class MiniGameCardModel(
     val title: String,
     val backgroundImageUrl: String,
     val platforms: List<ParentPlatformType>,
-)
+) : HomeStateEntity

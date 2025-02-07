@@ -2,11 +2,17 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.vladleesi.braindanceapp.data.api.remote.GamerPowerRemote
 import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
 import dev.vladleesi.braindanceapp.data.models.games.GameItem
+import dev.vladleesi.braindanceapp.data.models.games.Platform
+import dev.vladleesi.braindanceapp.data.models.giveaways.GiveawayResponse
+import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardModel
+import dev.vladleesi.braindanceapp.ui.components.giveaways.GiveawayItemModel
 import dev.vladleesi.braindanceapp.utils.CoverSize
+import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.nowUnix
 import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
@@ -22,9 +28,13 @@ class HomeViewModel : ViewModel() {
     @Suppress("ForbiddenComment")
     // TODO: Move to DI
     private val homeRepo = HomeRepo(GamesRemote())
+    private val gamerPowerRepo = GamerPowerRepo(GamerPowerRemote())
 
     private val _mostAnticipated = MutableStateFlow<HomeState>(HomeState.Loading)
     val mostAnticipated: StateFlow<HomeState> = _mostAnticipated.asStateFlow()
+
+    private val _giveaways = MutableStateFlow<HomeState>(HomeState.Loading)
+    val giveaways: StateFlow<HomeState> = _giveaways.asStateFlow()
 
     private val _popularRightNow = MutableStateFlow<HomeState>(HomeState.Loading)
     val popularRightNow: StateFlow<HomeState> = _popularRightNow.asStateFlow()
@@ -36,6 +46,7 @@ class HomeViewModel : ViewModel() {
 
     fun loadHome() {
         loadMostAnticipated()
+        loadGiveaways()
         loadPopularRightNow()
     }
 
@@ -50,6 +61,21 @@ class HomeViewModel : ViewModel() {
                 }
                 .onFailure { throwable ->
                     _mostAnticipated.emit(HomeState.Error(throwable.message.orEmpty()))
+                }
+        }
+    }
+
+    private fun loadGiveaways(pageSize: Int = PAGE_SIZE) {
+        viewModelScope.launch(handler) {
+            runCatching {
+                val giveaways = gamerPowerRepo.giveaways(pageSize = pageSize)
+                giveaways.orEmpty().mapperGiveawayModel()
+            }
+                .onSuccess { result ->
+                    _giveaways.emit(HomeState.Success(result))
+                }
+                .onFailure { throwable ->
+                    _giveaways.emit(HomeState.Error(throwable.message.orEmpty()))
                 }
         }
     }
@@ -69,15 +95,31 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun List<GameItem>.mapperMiniGameCardModel() = map { gameItem -> gameItem.toMiniGameCardModel() }
+    private fun List<GameItem>.mapperMiniGameCardModel() =
+        map { item ->
+            MiniGameCardModel(
+                id = item.id.orZero(),
+                title = item.name.orEmpty(),
+                backgroundImageUrl = item.cover?.url?.toCoverUrl(CoverSize.P_1080).orEmpty(),
+                platforms = item.platforms.orEmpty().parentPlatformTypes(),
+            )
+        }
 
-    private fun GameItem.toMiniGameCardModel() =
-        MiniGameCardModel(
-            id = id.orZero(),
-            title = name.orEmpty(),
-            backgroundImageUrl = cover?.url?.toCoverUrl(CoverSize.P_1080).orEmpty(),
-            platforms = platforms.orEmpty().parentPlatformTypes(),
-        )
+    private fun List<GiveawayResponse>.mapperGiveawayModel() =
+        map { item ->
+            GiveawayItemModel(
+                id = item.id.orZero(),
+                title = item.title.orEmpty(),
+                image = item.image.orEmpty(),
+                worth = item.worth.takeIf { it != "N/A" }.orEmpty(),
+                // TODO: Convert
+                endDate = item.endDate.orEmpty(),
+                platforms = item.platforms?.giveawayPlatformMapper().orEmpty(),
+            )
+        }
+
+    private fun String.giveawayPlatformMapper(): List<ParentPlatformType> =
+        split(", ").map { Platform(null, it) }.parentPlatformTypes()
 
     private companion object {
         private const val PAGE_SIZE = 15
@@ -87,7 +129,9 @@ class HomeViewModel : ViewModel() {
 sealed interface HomeState {
     data object Loading : HomeState
 
-    data class Success(val games: List<MiniGameCardModel>) : HomeState
+    data class Success<T : HomeStateEntity>(val entities: List<T>) : HomeState
 
     data class Error(val message: String) : HomeState
 }
+
+interface HomeStateEntity

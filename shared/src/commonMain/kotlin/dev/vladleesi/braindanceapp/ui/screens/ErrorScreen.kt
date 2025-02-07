@@ -17,8 +17,7 @@ import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.error_screen_error_message
 import dev.vladleesi.braindanceapp.resources.error_screen_retry_button_text
 import dev.vladleesi.braindanceapp.resources.error_screen_title
-import dev.vladleesi.braindanceapp.ui.style.medium
-import dev.vladleesi.braindanceapp.ui.style.small
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import org.jetbrains.compose.resources.stringResource
 
 private const val MAX_ERROR_MESSAGE_LINES = 10
@@ -35,7 +34,7 @@ fun ErrorScreen(
         modifier =
             modifier
                 .fillMaxSize()
-                .padding(medium),
+                .padding(Dimens.medium),
         contentAlignment = Alignment.Center,
     ) {
         Column(
@@ -45,17 +44,17 @@ fun ErrorScreen(
             Text(
                 text = title,
                 style = MaterialTheme.typography.h1,
-                modifier = Modifier.padding(bottom = small),
+                modifier = Modifier.padding(bottom = Dimens.small),
             )
 
             Text(
                 text = errorMessage,
                 style = MaterialTheme.typography.caption,
                 maxLines = MAX_ERROR_MESSAGE_LINES,
-                modifier = Modifier.padding(horizontal = medium, vertical = small),
+                modifier = Modifier.padding(horizontal = Dimens.medium, vertical = Dimens.small),
             )
 
-            Spacer(modifier = Modifier.height(medium))
+            Spacer(modifier = Modifier.height(Dimens.medium))
 
             Button(onClick = onRetry) {
                 Text(text = retryButtonText, style = MaterialTheme.typography.button)

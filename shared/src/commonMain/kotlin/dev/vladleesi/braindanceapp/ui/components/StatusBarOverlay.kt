@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.navBar
-import dev.vladleesi.braindanceapp.ui.style.statusBarInsets
 
 @Composable
 fun StatusBarOverlay(
@@ -18,7 +18,7 @@ fun StatusBarOverlay(
     Box(
         modifier
             .fillMaxWidth()
-            .height(statusBarInsets)
+            .height(Dimens.statusBarInsets)
             .background(backgroundColor),
     )
 }

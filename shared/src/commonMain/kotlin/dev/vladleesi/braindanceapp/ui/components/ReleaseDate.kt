@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
-import dev.vladleesi.braindanceapp.ui.style.small
 import dev.vladleesi.braindanceapp.ui.style.white
 
 @Composable
@@ -23,8 +23,8 @@ fun ReleaseDateLabel(
     backgroundColor: Color = white,
     textColor: Color = background,
     textStyle: TextStyle = MaterialTheme.typography.subtitle1,
-    shape: Shape = RoundedCornerShape(small),
-    paddingValues: PaddingValues = PaddingValues(start = small, end = small),
+    shape: Shape = RoundedCornerShape(Dimens.small),
+    paddingValues: PaddingValues = PaddingValues(start = Dimens.small, end = Dimens.small),
 ) {
     Box(
         modifier =

@@ -21,9 +21,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.back_button_content_description
-import dev.vladleesi.braindanceapp.ui.style.medium
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.navBar
-import dev.vladleesi.braindanceapp.ui.style.topBarHeight
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.utils.withCircleRippleEffect
 import org.jetbrains.compose.resources.stringResource
@@ -45,7 +44,7 @@ fun TopAppBar(
         modifier =
             modifier
                 .fillMaxWidth()
-                .height(topBarHeight)
+                .height(Dimens.topBarHeight)
                 .background(tabBarColor),
     ) {
         if (showBackButton) {
@@ -53,7 +52,7 @@ fun TopAppBar(
                 modifier =
                     Modifier
                         .align(Alignment.CenterStart)
-                        .padding(start = medium)
+                        .padding(start = Dimens.medium)
                         .withCircleRippleEffect(backButtonBackgroundColor),
                 onClick = (onBackButtonPressed),
             ) {

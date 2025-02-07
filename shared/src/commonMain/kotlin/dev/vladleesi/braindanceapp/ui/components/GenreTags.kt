@@ -13,9 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import dev.vladleesi.braindanceapp.ui.style.medium
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
-import dev.vladleesi.braindanceapp.ui.style.tiny
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GenreTag
 
@@ -24,8 +23,8 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.GenreTag
 fun GenreTags(
     genres: List<GenreTag>,
     onClick: (Int) -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(tiny),
+    modifier: Modifier = Modifier.fillMaxWidth().padding(start = Dimens.medium, end = Dimens.medium),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(Dimens.tiny),
     backgroundColor: Color = secondaryVariant,
     textStyle: TextStyle = MaterialTheme.typography.caption,
     textColor: Color = white,

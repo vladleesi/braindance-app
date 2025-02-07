@@ -50,15 +50,9 @@ import dev.vladleesi.braindanceapp.ui.components.SpacerTopBarWithStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.components.TopAppBar
 import dev.vladleesi.braindanceapp.ui.components.storesBlockItem
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
-import dev.vladleesi.braindanceapp.ui.style.large
-import dev.vladleesi.braindanceapp.ui.style.medium
-import dev.vladleesi.braindanceapp.ui.style.miniGameCardHeight
-import dev.vladleesi.braindanceapp.ui.style.miniGameCardWidth
 import dev.vladleesi.braindanceapp.ui.style.navBar
-import dev.vladleesi.braindanceapp.ui.style.small
-import dev.vladleesi.braindanceapp.ui.style.tiny
-import dev.vladleesi.braindanceapp.ui.style.topBarHeightWithInsets
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
@@ -134,13 +128,13 @@ private fun GameDetailsScreen(
                 item {
                     ExpandableText(
                         text = state.gameDetails.summary,
-                        modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
+                        modifier = Modifier.fillMaxWidth().padding(start = Dimens.medium, end = Dimens.medium),
                     )
                 }
-                item { Spacer(modifier = Modifier.size(large)) }
+                item { Spacer(modifier = Modifier.size(Dimens.large)) }
             }
             storesBlockItem(state.gameDetails.stores)
-            item { Spacer(modifier = Modifier.size(large)) }
+            item { Spacer(modifier = Modifier.size(Dimens.large)) }
         }
         Column {
             StatusBarOverlay(backgroundColor = topBarColor)
@@ -162,8 +156,8 @@ private fun GameDetailsInfo(gameDetails: GameDetails) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(start = medium, end = medium),
-        horizontalArrangement = Arrangement.spacedBy(small),
+                .padding(start = Dimens.medium, end = Dimens.medium),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         gameDetails.releaseDate?.let { releaseDate ->
@@ -172,7 +166,7 @@ private fun GameDetailsInfo(gameDetails: GameDetails) {
         PlatformLogoList(
             platforms = gameDetails.platforms,
             imageSize = 18.dp,
-            horizontalSpacing = tiny,
+            horizontalSpacing = Dimens.tiny,
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -181,7 +175,7 @@ private fun GameDetailsInfo(gameDetails: GameDetails) {
 @Composable
 private fun calculateScrollTopBarColors(lazyListState: LazyListState): Triple<Color, Color, Color> {
     val targetColor = navBar
-    val maxScrollOffsetPx = topBarHeightWithInsets.toPx()
+    val maxScrollOffsetPx = Dimens.topBarHeightWithInsets.toPx()
     var firstOffset by remember { mutableStateOf(0f) }
 
     val combinedOffset =
@@ -211,27 +205,27 @@ private fun LazyListScope.gameInfoHeaderLargeScreen(state: GameDetailsState.Succ
         Row(
             modifier =
                 Modifier
-                    .padding(horizontal = medium)
-                    .padding(bottom = medium),
+                    .padding(horizontal = Dimens.medium)
+                    .padding(bottom = Dimens.medium),
         ) {
             AsyncImage(
                 modifier =
                     Modifier
-                        .width(miniGameCardWidth)
-                        .height(miniGameCardHeight)
-                        .clip(RoundedCornerShape(small)),
+                        .width(Dimens.miniGameCardWidth)
+                        .height(Dimens.miniGameCardHeight)
+                        .clip(RoundedCornerShape(Dimens.small)),
                 model = state.gameDetails.coverImageUrl,
                 contentScale = ContentScale.Crop,
                 contentDescription = state.gameDetails.name.toContentDescription(),
             )
-            Spacer(modifier = Modifier.size(medium))
+            Spacer(modifier = Modifier.size(Dimens.medium))
             Column {
                 GameDetailsInfo(gameDetails = state.gameDetails)
-                Spacer(modifier = Modifier.size(small))
+                Spacer(modifier = Modifier.size(Dimens.small))
                 Text(
                     text = state.gameDetails.name,
                     style = MaterialTheme.typography.h2,
-                    modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
+                    modifier = Modifier.fillMaxWidth().padding(start = Dimens.medium, end = Dimens.medium),
                 )
                 GenreTags(state.gameDetails.genres, onClick = {})
             }
@@ -240,29 +234,29 @@ private fun LazyListScope.gameInfoHeaderLargeScreen(state: GameDetailsState.Succ
 
 private fun LazyListScope.gameInfoHeaderSmallScreen(state: GameDetailsState.Success) {
     item {
-        Box(modifier = Modifier.padding(horizontal = medium)) {
+        Box(modifier = Modifier.padding(horizontal = Dimens.medium)) {
             AsyncImage(
                 modifier =
                     Modifier
-                        .width(miniGameCardWidth)
-                        .height(miniGameCardHeight)
-                        .clip(RoundedCornerShape(small)),
+                        .width(Dimens.miniGameCardWidth)
+                        .height(Dimens.miniGameCardHeight)
+                        .clip(RoundedCornerShape(Dimens.small)),
                 model = state.gameDetails.coverImageUrl,
                 contentScale = ContentScale.Crop,
                 contentDescription = state.gameDetails.name.toContentDescription(),
             )
         }
     }
-    item { Spacer(modifier = Modifier.size(medium)) }
+    item { Spacer(modifier = Modifier.size(Dimens.medium)) }
     item { GameDetailsInfo(gameDetails = state.gameDetails) }
-    item { Spacer(modifier = Modifier.size(small)) }
+    item { Spacer(modifier = Modifier.size(Dimens.small)) }
     item {
         Text(
             text = state.gameDetails.name,
             style = MaterialTheme.typography.h2,
-            modifier = Modifier.fillMaxWidth().padding(start = medium, end = medium),
+            modifier = Modifier.fillMaxWidth().padding(start = Dimens.medium, end = Dimens.medium),
         )
     }
     item { GenreTags(state.gameDetails.genres, onClick = {}) }
-    item { Spacer(modifier = Modifier.size(medium)) }
+    item { Spacer(modifier = Modifier.size(Dimens.medium)) }
 }

@@ -7,14 +7,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import dev.vladleesi.braindanceapp.ui.components.SpacerTopBarWithStatusBarInsets
-import dev.vladleesi.braindanceapp.ui.style.medium
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 
 @Composable
 fun NewsScreen(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         SpacerTopBarWithStatusBarInsets()
         Text(
-            modifier = Modifier.padding(horizontal = medium),
+            modifier = Modifier.padding(horizontal = Dimens.medium),
             text = "News Screen",
             style = MaterialTheme.typography.h2,
         )

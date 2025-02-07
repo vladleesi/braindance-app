@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.vladleesi.braindanceapp.resources.Res
+import dev.vladleesi.braindanceapp.resources.home_screen_popular_latest_giveaways
 import dev.vladleesi.braindanceapp.resources.home_screen_popular_most_anticipated
 import dev.vladleesi.braindanceapp.resources.home_screen_popular_popular_right_now
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
@@ -28,8 +29,9 @@ import dev.vladleesi.braindanceapp.routes.registerRoute
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardList
 import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
+import dev.vladleesi.braindanceapp.ui.components.giveaways.GiveawaysList
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
-import dev.vladleesi.braindanceapp.ui.style.large
 import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith80Alpha
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
 import org.jetbrains.compose.resources.stringResource
@@ -54,6 +56,7 @@ private fun HomeScreen(
     navHostController: NavHostController,
 ) {
     val mostAnticipated by viewModel.mostAnticipated.collectAsState()
+    val giveaways by viewModel.giveaways.collectAsState()
     val popularRightNow by viewModel.popularRightNow.collectAsState()
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -73,7 +76,7 @@ private fun HomeScreen(
     ) {
         LazyColumn(
             modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(large),
+            verticalArrangement = Arrangement.spacedBy(Dimens.large),
         ) {
             item { SpacerStatusBarInsets() }
             item {
@@ -84,13 +87,20 @@ private fun HomeScreen(
                 )
             }
             item {
+                GiveawaysList(
+                    title = stringResource(Res.string.home_screen_popular_latest_giveaways),
+                    state = giveaways,
+                    navHostController = navHostController,
+                )
+            }
+            item {
                 MiniGameCardList(
                     title = stringResource(Res.string.home_screen_popular_popular_right_now),
                     state = popularRightNow,
                     navHostController = navHostController,
                 )
             }
-            item { Spacer(Modifier.height(large)) }
+            item { Spacer(Modifier.height(Dimens.large)) }
         }
         StatusBarOverlay(backgroundColor = overlayBlackWith80Alpha)
     }

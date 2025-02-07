@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.vladleesi.braindanceapp.ui.style.tiny
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.white
 
 @Composable
@@ -23,7 +23,7 @@ fun GlobalLoading(modifier: Modifier = Modifier) {
                     .size(64.dp)
                     .align(Alignment.Center),
             color = white,
-            strokeWidth = tiny,
+            strokeWidth = Dimens.tiny,
         )
     }
 }

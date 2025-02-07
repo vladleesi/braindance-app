@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import dev.vladleesi.braindanceapp.ui.style.topBarHeightWithInsets
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 
 @Composable
 fun SpacerStatusBarInsets() {
@@ -23,5 +23,5 @@ fun SpacerNavigationBarInsets() {
 
 @Composable
 fun SpacerTopBarWithStatusBarInsets() {
-    Spacer(Modifier.height(topBarHeightWithInsets))
+    Spacer(Modifier.height(Dimens.topBarHeightWithInsets))
 }

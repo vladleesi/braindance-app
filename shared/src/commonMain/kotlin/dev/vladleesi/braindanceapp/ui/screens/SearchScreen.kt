@@ -6,12 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import dev.vladleesi.braindanceapp.ui.components.SearchBar
 import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
-import dev.vladleesi.braindanceapp.ui.style.medium
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         SpacerStatusBarInsets()
-        SearchBar(modifier = Modifier.padding(horizontal = medium).padding(top = medium))
+        SearchBar(modifier = Modifier.padding(horizontal = Dimens.medium).padding(top = Dimens.medium))
     }
 }
