@@ -16,5 +16,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "braindance-app"
-include(":androidApp")
 include(":shared")

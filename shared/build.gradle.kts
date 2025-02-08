@@ -4,11 +4,11 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("multiplatform")
-    id("com.android.library")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
     kotlin("plugin.serialization")
     id("com.codingfeline.buildkonfig")
+    id("com.android.application")
 }
 
 kotlin {
@@ -80,10 +80,17 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                // Compose
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.ui.tooling)
+                implementation(libs.compose.ui.tooling.preview)
                 // Network
                 implementation(libs.ktor.client.okhttp)
                 // Security
                 implementation(libs.androidx.security.crypto.ktx)
+                // Koin
+                implementation(libs.koin.android)
                 // Tests
                 implementation(libs.androidx.tests.runner)
                 implementation(libs.androidx.tests.ext.junit)
@@ -125,8 +132,29 @@ android {
     namespace = "dev.vladleesi.braindanceapp"
     compileSdk = 35
     defaultConfig {
+        applicationId = "dev.vladleesi.braindanceapp"
+        targetSdk = 35
         minSdk = 24
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        versionCode = 1
+        // TODO: Change to current version
+        versionName = "1.0"
+    }
+    buildFeatures {
+        compose = true
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+    buildTypes {
+        debug {
+            versionNameSuffix = "-debug"
+        }
+        release {
+            isMinifyEnabled = false
+            versionNameSuffix = "-release"
+        }
     }
     testOptions {
         unitTests {
