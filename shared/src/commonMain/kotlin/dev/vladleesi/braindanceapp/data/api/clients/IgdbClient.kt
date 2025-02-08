@@ -1,11 +1,8 @@
-package dev.vladleesi.braindanceapp.data.api.client
+package dev.vladleesi.braindanceapp.data.api.clients
 
 import dev.vladleesi.braindanceapp.BuildKonfig
-import dev.vladleesi.braindanceapp.data.api.engineConfig
-import dev.vladleesi.braindanceapp.data.api.errorHandlerConfig
+import dev.vladleesi.braindanceapp.data.api.defaultConfig
 import dev.vladleesi.braindanceapp.data.api.initNapier
-import dev.vladleesi.braindanceapp.data.api.jsonConfig
-import dev.vladleesi.braindanceapp.data.api.loggerConfig
 import dev.vladleesi.braindanceapp.data.api.remote.AuthRemote
 import dev.vladleesi.braindanceapp.data.config.ApiConfig
 import dev.vladleesi.braindanceapp.data.models.token.TwitchTokenResponse
@@ -22,16 +19,16 @@ import io.ktor.http.ContentType
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 
-val igdbHttpClient =
-    HttpClient {
-        expectSuccess = true
-        engineConfig()
-        authConfig()
-        loggerConfig()
-        jsonConfig()
-        errorHandlerConfig()
+object IgdbClient {
+    fun build(
+        authRemote: AuthRemote,
+        tokenStorage: TokenStorage,
+    ) = HttpClient {
+        authConfig(authRemote, tokenStorage)
+        defaultConfig()
         defaultRequestConfig()
     }.also { initNapier() }
+}
 
 private fun HttpClientConfig<*>.defaultRequestConfig() {
     defaultRequest {
@@ -44,12 +41,12 @@ private fun HttpClientConfig<*>.defaultRequestConfig() {
     }
 }
 
-private fun HttpClientConfig<*>.authConfig() {
-    install(Auth) {
+private fun HttpClientConfig<*>.authConfig(
+    authRemote: AuthRemote,
+    tokenStorage: TokenStorage,
+) {
+    Auth {
         bearer {
-            // TODO: Move to DI
-            val authRemote = AuthRemote()
-            val tokenStorage = TokenStorage()
             loadTokens {
                 BearerTokens(accessToken = tokenStorage.getToken().orEmpty(), refreshToken = "")
             }

@@ -2,7 +2,6 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
 import dev.vladleesi.braindanceapp.utils.CoverSize
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
@@ -19,11 +18,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class GameDetailsViewModel : ViewModel() {
-    @Suppress("ForbiddenComment")
-    // TODO: Move to DI
-    private val gameDetailsRepo = GameDetailsRepo(GamesRemote())
-
+class GameDetailsViewModel(
+    private val gameDetailsRepo: GameDetailsRepo,
+) : ViewModel() {
     private val _gameDetailsState = MutableStateFlow<GameDetailsState>(GameDetailsState.Loading)
     val gameDetailsState: StateFlow<GameDetailsState> = _gameDetailsState.asStateFlow()
 

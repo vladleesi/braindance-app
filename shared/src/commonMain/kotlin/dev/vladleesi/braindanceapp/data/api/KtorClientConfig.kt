@@ -17,7 +17,19 @@ import kotlinx.serialization.json.Json
 private const val TIMEOUT_SECONDS = 5000L
 private const val MAX_RETRIES = 5
 
-fun HttpClientConfig<*>.engineConfig() {
+fun HttpClientConfig<*>.defaultConfig() {
+    expectSuccess = true
+    engineConfig()
+    loggerConfig()
+    jsonConfig()
+    errorHandlerConfig()
+}
+
+fun initNapier() {
+    Napier.base(DebugAntilog())
+}
+
+private fun HttpClientConfig<*>.engineConfig() {
     engine {
         request {
             timeout {
@@ -31,8 +43,8 @@ fun HttpClientConfig<*>.engineConfig() {
     }
 }
 
-fun HttpClientConfig<*>.loggerConfig() {
-    install(Logging) {
+private fun HttpClientConfig<*>.loggerConfig() {
+    Logging {
         level = LogLevel.ALL
         logger =
             object : Logger {
@@ -43,7 +55,7 @@ fun HttpClientConfig<*>.loggerConfig() {
     }
 }
 
-fun HttpClientConfig<*>.jsonConfig() {
+private fun HttpClientConfig<*>.jsonConfig() {
     install(ContentNegotiation) {
         json(
             json =
@@ -59,15 +71,11 @@ fun HttpClientConfig<*>.jsonConfig() {
 }
 
 @Suppress("ForbiddenComment")
-fun HttpClientConfig<*>.errorHandlerConfig() {
+private fun HttpClientConfig<*>.errorHandlerConfig() {
     HttpResponseValidator {
         handleResponseExceptionWithRequest { cause, _ ->
             // TODO: Handle it inside coroutines
             throw cause
         }
     }
-}
-
-fun initNapier() {
-    Napier.base(DebugAntilog())
 }

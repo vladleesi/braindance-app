@@ -3,7 +3,6 @@ package dev.vladleesi.braindanceapp.utils
 import androidx.compose.runtime.Composable
 import coil3.ImageLoader
 import coil3.PlatformContext
-import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
@@ -13,7 +12,6 @@ import coil3.util.DebugLogger
 import okio.FileSystem
 
 object ImageLoaderInitializer {
-    @OptIn(ExperimentalCoilApi::class)
     @Composable
     fun initialize() {
         setSingletonImageLoaderFactory(::createImageLoader)

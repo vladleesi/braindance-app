@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.core.bundle.Bundle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
@@ -58,16 +57,14 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.toContentDescription
-
-private const val IMAGE_HEIGHT_FACTOR = (9f / 16f)
-private const val IMAGE_WIDTH_FACTOR_LARGE_SCREEN = 0.3f
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun GameDetailsScreen(
     arguments: Bundle?,
     navHostController: NavHostController?,
     modifier: Modifier = Modifier,
-    viewModel: GameDetailsViewModel = viewModel { GameDetailsViewModel() },
+    viewModel: GameDetailsViewModel = koinViewModel(),
 ) {
     var isInitialized by rememberSaveable { mutableStateOf(false) }
 

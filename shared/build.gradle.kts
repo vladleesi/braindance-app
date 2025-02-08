@@ -64,6 +64,13 @@ kotlin {
                 implementation(libs.logging.napier)
                 // Security
                 implementation(libs.multiplatform.settings)
+                // Koin
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose)
+                implementation(libs.koin.compose.viewmodel)
+                implementation(libs.koin.compose.viewmodel.navigation)
+                // Tests
+                implementation(libs.unit.tests.junit)
             }
         }
         val commonTest by getting {

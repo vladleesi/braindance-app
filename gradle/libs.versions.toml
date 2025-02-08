@@ -10,6 +10,7 @@ compose = "1.7.7"
 coil3 = "3.0.4"
 buildkonfig = "0.15.2"
 datetime = "0.6.1"
+koil = "4.0.2"
 
 [libraries]
 
@@ -56,6 +57,12 @@ coil-mp = { module = "io.coil-kt.coil3:coil", version.ref = "coil3" }
 
 # logger
 logging-napier = { module = "io.github.aakira:napier", version = "2.6.1" }
+
+# koin
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koil" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koil" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koil" }
+koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koil" }
 
 # tests
 unit-tests-junit = { module = "junit:junit", version = "4.13.2" }

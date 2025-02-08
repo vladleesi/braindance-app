@@ -15,43 +15,46 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import dev.vladleesi.braindanceapp.koin.koinModules
 import dev.vladleesi.braindanceapp.ui.components.BottomBar
 import dev.vladleesi.braindanceapp.ui.components.NavigationGraph
 import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.utils.ImageLoaderInitializer
+import org.koin.compose.KoinApplication
 
 @Composable
-fun BraindanceApp(modifier: Modifier = Modifier) {
-    // TODO: Refactor
-    val isInitialized = remember { mutableStateOf(false) }
-    if (!isInitialized.value) {
-        ImageLoaderInitializer.initialize()
-        isInitialized.value = true
-    }
+fun BraindanceApp(modifier: Modifier = Modifier) =
+    KoinApplication(application = { koinModules() }) {
+        // TODO: Refactor
+        val isInitialized = remember { mutableStateOf(false) }
+        if (!isInitialized.value) {
+            ImageLoaderInitializer.initialize()
+            isInitialized.value = true
+        }
 
-    val navController = rememberNavController()
+        val navController = rememberNavController()
 
-    BraindanceTheme {
-        Scaffold(
-            bottomBar = {
-                BottomBar(navController = navController)
-            },
-            modifier = modifier.fillMaxSize(),
-        ) { paddingValues ->
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .consumeWindowInsets(paddingValues)
-                        .windowInsetsPadding(
-                            WindowInsets.safeDrawing.only(
-                                WindowInsetsSides.Horizontal,
+        BraindanceTheme {
+            Scaffold(
+                bottomBar = {
+                    BottomBar(navController = navController)
+                },
+                modifier = modifier.fillMaxSize(),
+            ) { paddingValues ->
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .consumeWindowInsets(paddingValues)
+                            .windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(
+                                    WindowInsetsSides.Horizontal,
+                                ),
                             ),
-                        ),
-            ) {
-                NavigationGraph(navController = navController)
+                ) {
+                    NavigationGraph(navController = navController)
+                }
             }
         }
     }
-}

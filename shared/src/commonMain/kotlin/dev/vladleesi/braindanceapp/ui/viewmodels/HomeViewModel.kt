@@ -2,8 +2,6 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dev.vladleesi.braindanceapp.data.api.remote.GamerPowerRemote
-import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
 import dev.vladleesi.braindanceapp.data.models.games.GameItem
 import dev.vladleesi.braindanceapp.data.models.games.Platform
 import dev.vladleesi.braindanceapp.data.models.giveaways.GiveawayResponse
@@ -24,12 +22,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
-    @Suppress("ForbiddenComment")
-    // TODO: Move to DI
-    private val homeRepo = HomeRepo(GamesRemote())
-    private val gamerPowerRepo = GamerPowerRepo(GamerPowerRemote())
-
+class HomeViewModel(
+    private val homeRepo: HomeRepo,
+    private val gamerPowerRepo: GamerPowerRepo,
+) : ViewModel() {
     private val _mostAnticipated = MutableStateFlow<HomeState>(HomeState.Loading)
     val mostAnticipated: StateFlow<HomeState> = _mostAnticipated.asStateFlow()
 

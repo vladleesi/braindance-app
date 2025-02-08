@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,6 +34,7 @@ import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith80Alpha
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 private const val HOME_INNER_ROUTE = "HomeInnerRoute"
 
@@ -51,7 +51,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
 @Composable
 private fun HomeScreen(
-    viewModel: HomeViewModel = viewModel { HomeViewModel() },
+    viewModel: HomeViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
 ) {
