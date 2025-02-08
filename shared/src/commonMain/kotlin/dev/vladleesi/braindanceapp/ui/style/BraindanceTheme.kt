@@ -92,7 +92,7 @@ private fun buildTypography(fonts: FontFamily): Typography {
             TextStyle(
                 color = white,
                 fontFamily = fonts,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
             ),
         subtitle2 =

@@ -11,6 +11,7 @@ import dev.vladleesi.braindanceapp.ui.components.MiniGameCardModel
 import dev.vladleesi.braindanceapp.ui.components.giveaways.GiveawayItemModel
 import dev.vladleesi.braindanceapp.utils.CoverSize
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
+import dev.vladleesi.braindanceapp.utils.formatEndDate
 import dev.vladleesi.braindanceapp.utils.nowUnix
 import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
@@ -108,9 +109,9 @@ class HomeViewModel(
                 title = item.title.orEmpty(),
                 image = item.image.orEmpty(),
                 worth = item.worth.takeIf { it != "N/A" }.orEmpty(),
-                // TODO: Convert
-                endDate = item.endDate.orEmpty(),
+                endDate = item.endDate?.formatEndDate().orEmpty(),
                 platforms = item.platforms?.giveawayPlatformMapper().orEmpty(),
+                type = item.type.orEmpty(),
             )
         }
 

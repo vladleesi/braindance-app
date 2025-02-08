@@ -2,7 +2,6 @@ package dev.vladleesi.braindanceapp.ui.components.giveaways
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,14 +27,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.ui.style.Dimens
-import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith50Alpha
+import dev.vladleesi.braindanceapp.ui.style.background
+import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith70Alpha
+import dev.vladleesi.braindanceapp.ui.style.overlayWhiteWith80Alpha
+import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeStateEntity
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GiveawayItem(
     item: GiveawayItemModel,
@@ -43,48 +44,14 @@ fun GiveawayItem(
     onCardClicked: (id: Int) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        Card(
-            modifier =
-                Modifier
-                    .height(Dimens.giveAwayCardHeight)
-                    .width(Dimens.giveAwayCardWidth),
-            onClick = { onCardClicked(item.id) },
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                AsyncImage(
-                    modifier = Modifier.fillMaxSize(),
-                    model = item.image,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = item.title.toContentDescription(),
-                )
-                Row(
-                    modifier =
-                        Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(Dimens.tiny)
-                            .background(
-                                color = overlayBlackWith50Alpha,
-                                shape = RoundedCornerShape(Dimens.small),
-                            )
-                            .padding(Dimens.tiny),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.micro),
-                ) {
-                    item.platforms.forEach { platform ->
-                        if (platform.iconRes == null) return@forEach
-                        Image(
-                            modifier = Modifier.size(12.dp),
-                            painter = painterResource(platform.iconRes),
-                            colorFilter = ColorFilter.tint(white),
-                            contentDescription = platform.name.toContentDescription(),
-                        )
-                    }
-                }
-            }
-        }
+        GiveawayItemCard(
+            item = item,
+            onCardClicked = onCardClicked,
+        )
         Spacer(modifier = Modifier.height(Dimens.small))
         Text(
             text = item.title,
-            style = MaterialTheme.typography.caption,
+            style = MaterialTheme.typography.subtitle1,
             color = white,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -92,23 +59,94 @@ fun GiveawayItem(
         )
         Spacer(modifier = Modifier.height(Dimens.micro))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier =
-                    Modifier
-                        .border(Dimens.one, white, RoundedCornerShape(Dimens.tiny))
-                        .padding(horizontal = Dimens.tiny),
-            ) {
-                Text(
-                    text = "FREE",
-                    color = white,
-                    style = MaterialTheme.typography.caption,
-                )
-            }
+            Text(
+                text = "FREE",
+                color = white,
+                style = MaterialTheme.typography.caption,
+            )
             Spacer(modifier = Modifier.width(Dimens.tiny))
             Text(
                 text = item.worth,
-                style = MaterialTheme.typography.subtitle2,
+                style = MaterialTheme.typography.subtitle1,
+                color = secondaryText,
                 textDecoration = TextDecoration.LineThrough,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun GiveawayItemCard(
+    modifier: Modifier = Modifier,
+    item: GiveawayItemModel,
+    onCardClicked: (id: Int) -> Unit,
+) {
+    Card(
+        modifier =
+            modifier
+                .height(Dimens.giveAwayCardHeight)
+                .width(Dimens.giveAwayCardWidth),
+        onClick = { onCardClicked(item.id) },
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            AsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = item.image,
+                contentScale = ContentScale.Crop,
+                contentDescription = item.title.toContentDescription(),
+            )
+            if (item.endDate.isNotEmpty()) {
+                Text(
+                    text = item.endDate,
+                    style = MaterialTheme.typography.caption,
+                    color = white,
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopStart)
+                            .padding(Dimens.tiny)
+                            .background(
+                                color = overlayBlackWith70Alpha,
+                                shape = RoundedCornerShape(Dimens.small),
+                            )
+                            .padding(horizontal = Dimens.tiny, vertical = Dimens.micro),
+                )
+            }
+            Row(
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(Dimens.tiny)
+                        .background(
+                            color = overlayBlackWith70Alpha,
+                            shape = RoundedCornerShape(Dimens.small),
+                        )
+                        .padding(Dimens.tiny),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.micro),
+            ) {
+                item.platforms.forEach { platform ->
+                    if (platform.iconRes == null) return@forEach
+                    Image(
+                        modifier = Modifier.size(12.dp),
+                        painter = painterResource(platform.iconRes),
+                        colorFilter = ColorFilter.tint(white),
+                        contentDescription = platform.name.toContentDescription(),
+                    )
+                }
+            }
+            Text(
+                text = item.type,
+                style = MaterialTheme.typography.caption,
+                color = background,
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(Dimens.tiny)
+                        .background(
+                            color = overlayWhiteWith80Alpha,
+                            shape = RoundedCornerShape(Dimens.small),
+                        )
+                        .padding(horizontal = Dimens.tiny),
             )
         }
     }
@@ -121,4 +159,5 @@ data class GiveawayItemModel(
     val worth: String,
     val endDate: String,
     val platforms: List<ParentPlatformType>,
+    val type: String,
 ) : HomeStateEntity

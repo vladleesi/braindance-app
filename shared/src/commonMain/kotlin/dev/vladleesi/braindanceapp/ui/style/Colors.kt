@@ -5,6 +5,12 @@ import androidx.compose.material.lightColors
 import androidx.compose.ui.graphics.Color
 
 val white = Color(0xFFEFEFEF)
+val overlayWhiteWith50Alpha = Color(0x80FFFFFF)
+val overlayWhiteWith60Alpha = Color(0x99FFFFFF)
+val overlayWhiteWith70Alpha = Color(0xB2FFFFFF)
+val overlayWhiteWith80Alpha = Color(0xCCFFFFFF)
+val overlayWhiteWith90Alpha = Color(0xE6FFFFFF)
+val overlayWhiteWith95Alpha = Color(0xF2FFFFFF)
 val overlayBlackWith50Alpha = Color(0x80000000)
 val overlayBlackWith60Alpha = Color(0x99000000)
 val overlayBlackWith70Alpha = Color(0xB2000000)
