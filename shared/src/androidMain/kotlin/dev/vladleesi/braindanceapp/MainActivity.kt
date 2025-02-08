@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.android
+package dev.vladleesi.braindanceapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,9 +10,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
-import dev.vladleesi.braindanceapp.BraindanceApp
-import dev.vladleesi.braindanceapp.Greeting
-import dev.vladleesi.braindanceapp.system.ContextProvider
 import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.ui.style.navBar
 
@@ -23,8 +20,6 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(navBar.toArgb()),
             navigationBarStyle = SystemBarStyle.dark(navBar.toArgb()),
         )
-
-        ContextProvider.setContextProvider { baseContext }
         setContent {
             BraindanceApp()
         }

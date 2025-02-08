@@ -14,12 +14,21 @@ import dev.vladleesi.braindanceapp.data.token.TokenStorage
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
 import org.koin.core.KoinApplication
+import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
+import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-fun KoinApplication.koinModules() =
+fun initKoin(androidConfig: KoinAppDeclaration? = null) {
+    startKoin {
+        androidConfig?.invoke(this)
+        koinModules()
+    }
+}
+
+private fun KoinApplication.koinModules() =
     modules(remoteModule, repositoryModule, viewModelModule, tokenStorageModule, ktorClientManagerModule)
 
 private val ktorClientManagerModule =
