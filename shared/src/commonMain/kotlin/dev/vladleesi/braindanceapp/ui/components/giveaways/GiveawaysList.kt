@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
+import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeState
@@ -33,6 +35,12 @@ fun GiveawaysList(
 
         is HomeState.Success<*> -> {
             // TODO: Move this header to standalone component for reusing
+            val onCardClicked: (Int) -> Unit = { id ->
+                navHostController.navigate(
+                    route = GiveawayDetailsRoute,
+                    arguments = mapOf(GiveawayDetailsRoute.Params.GIVEAWAY_ID to id.toString()),
+                )
+            }
             Column(modifier = modifier) {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     StaticText(
@@ -65,8 +73,7 @@ fun GiveawaysList(
                     ) { item ->
                         GiveawayItem(
                             item = item,
-                            onCardClicked = { id ->
-                            },
+                            onCardClicked = onCardClicked,
                         )
                     }
                 }

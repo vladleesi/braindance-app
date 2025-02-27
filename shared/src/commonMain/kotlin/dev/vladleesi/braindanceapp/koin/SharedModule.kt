@@ -12,6 +12,7 @@ import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
 import dev.vladleesi.braindanceapp.data.token.TokenStorage
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
+import dev.vladleesi.braindanceapp.ui.viewmodels.GiveawayDetailsViewModel
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -59,6 +60,7 @@ private val viewModelModule =
     module {
         viewModelOf(::HomeViewModel)
         viewModelOf(::GameDetailsViewModel)
+        viewModelOf(::GiveawayDetailsViewModel)
     }
 
 private val tokenStorageModule =

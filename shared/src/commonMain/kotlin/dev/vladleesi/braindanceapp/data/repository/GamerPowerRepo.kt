@@ -6,8 +6,13 @@ import io.ktor.client.call.body
 
 class GamerPowerRepo(private val gamerPowerRemote: GamerPowerRemote) {
     suspend fun giveaways(pageSize: Int): List<GiveawayResponse>? {
-        val result = gamerPowerRemote.giveaway()
+        val result = gamerPowerRemote.giveaways()
         // TODO: Add cache and local pagination
         return result.body<List<GiveawayResponse>?>()?.take(pageSize)
+    }
+
+    suspend fun giveaway(id: Int): GiveawayResponse? {
+        val result = gamerPowerRemote.giveaway(id)
+        return result.body<GiveawayResponse?>()
     }
 }

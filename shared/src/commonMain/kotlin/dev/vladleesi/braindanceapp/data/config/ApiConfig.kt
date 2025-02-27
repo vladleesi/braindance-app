@@ -15,6 +15,12 @@ object ApiConfig {
     object Externals {
         object Twitch {
             const val OAUTH_TOKEN_URL = "https://id.twitch.tv/oauth2/token"
+
+            object Params {
+                const val CLIENT_ID = "client_id"
+                const val CLIENT_SECRET = "client_secret"
+                const val GRANT_TYPE = "grant_type"
+            }
         }
 
         object GamerPower {
@@ -22,6 +28,11 @@ object ApiConfig {
 
             object Endpoints {
                 const val GIVEAWAYS = "api/giveaways"
+                const val GIVEAWAY = "api/giveaway"
+            }
+
+            object Params {
+                const val ID = "id"
             }
         }
     }

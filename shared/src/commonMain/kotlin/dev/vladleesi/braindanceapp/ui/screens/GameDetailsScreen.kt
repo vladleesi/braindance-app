@@ -113,7 +113,7 @@ private fun GameDetailsScreen(
     ) {
         LazyColumn(
             state = lazyListState,
-            modifier = modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
         ) {
             item { SpacerTopBarWithStatusBarInsets() }
             if (isLargeDevice) {

@@ -24,6 +24,7 @@ import dev.vladleesi.braindanceapp.resources.home_screen_popular_latest_giveaway
 import dev.vladleesi.braindanceapp.resources.home_screen_popular_most_anticipated
 import dev.vladleesi.braindanceapp.resources.home_screen_popular_popular_right_now
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
+import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
 import dev.vladleesi.braindanceapp.ui.components.MiniGameCardList
 import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
@@ -46,6 +47,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             HomeScreen(modifier = modifier, navHostController = childNavController)
         }
         registerRoute(route = GameDetailsRoute, navHostController = childNavController)
+        registerRoute(route = GiveawayDetailsRoute, navHostController = childNavController)
     }
 }
 
