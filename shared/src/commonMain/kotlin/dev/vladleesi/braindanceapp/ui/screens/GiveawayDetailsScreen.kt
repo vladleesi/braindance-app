@@ -49,7 +49,7 @@ fun GiveawayDetailsScreen(
     }
     val state by viewModel.giveawayDetailsState.collectAsState()
 
-    if (giveawayId != null && isInitialized.not()) {
+    if (giveawayId != null && !isInitialized) {
         LaunchedEffect(Unit) {
             viewModel.loadGiveawayDetails(giveawayId)
             isInitialized = true

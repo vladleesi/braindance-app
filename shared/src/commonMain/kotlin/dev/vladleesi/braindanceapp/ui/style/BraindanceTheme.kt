@@ -2,10 +2,12 @@ package dev.vladleesi.braindanceapp.ui.style
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Shapes
 import androidx.compose.material.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -24,7 +26,7 @@ fun BraindanceTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    if (darkTheme.not()) {
+    if (!darkTheme) {
         // ignore by now
     }
     val shapes =
@@ -46,8 +48,15 @@ fun BraindanceTheme(
         colors = DarkColors,
         typography = buildTypography(fonts),
         shapes = shapes,
-        content = content,
-    )
+    ) {
+        CompositionLocalProvider(
+            values =
+                arrayOf(
+                    LocalTextSelectionColors provides DarkTextSelectionColors,
+                ),
+            content = content,
+        )
+    }
 }
 
 @Composable

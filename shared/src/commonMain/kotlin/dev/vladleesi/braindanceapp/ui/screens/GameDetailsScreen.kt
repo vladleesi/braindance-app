@@ -73,7 +73,7 @@ fun GameDetailsScreen(
     }
     val state by viewModel.gameDetailsState.collectAsState()
 
-    if (gameId != null && isInitialized.not()) {
+    if (gameId != null && !isInitialized) {
         LaunchedEffect(Unit) {
             viewModel.loadGameDetails(gameId)
             isInitialized = true

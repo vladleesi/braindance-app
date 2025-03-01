@@ -1,10 +1,13 @@
 package dev.vladleesi.braindanceapp.ui.style
 
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.ui.graphics.Color
 
 val white = Color(0xFFEFEFEF)
+val overlayWhiteWith40Alpha = Color(0x66FFFFFF)
+val overlayWhiteWith45Alpha = Color(0x73FFFFFF)
 val overlayWhiteWith50Alpha = Color(0x80FFFFFF)
 val overlayWhiteWith60Alpha = Color(0x99FFFFFF)
 val overlayWhiteWith70Alpha = Color(0xB2FFFFFF)
@@ -35,6 +38,12 @@ val DarkColors =
         secondaryVariant = secondaryVariant,
         background = navBar,
         error = error,
+    )
+
+val DarkTextSelectionColors =
+    TextSelectionColors(
+        handleColor = white,
+        backgroundColor = overlayWhiteWith45Alpha,
     )
 
 // TODO: Needs to implement?

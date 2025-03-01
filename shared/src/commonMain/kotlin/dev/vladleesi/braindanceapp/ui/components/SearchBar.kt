@@ -1,9 +1,9 @@
 package dev.vladleesi.braindanceapp.ui.components
 
-import Search
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import dev.vladleesi.braindanceapp.ui.style.secondary
 import dev.vladleesi.braindanceapp.ui.style.white
 
@@ -22,15 +23,20 @@ import dev.vladleesi.braindanceapp.ui.style.white
 fun SearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = "Search for games",
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    onQueryChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     TextField(
         value = query,
         onValueChange = { value ->
             query = value
-            // view model call
+            onQueryChange(value)
         },
         singleLine = true,
+        textStyle = MaterialTheme.typography.body1,
         placeholder = {
             Text(
                 text = placeholder,
@@ -42,16 +48,21 @@ fun SearchBar(
             TextFieldDefaults.textFieldColors(
                 backgroundColor = secondary,
                 cursorColor = white,
+                leadingIconColor = white,
                 textColor = white,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
             ),
-        leadingIcon = {
-            Icon(
-                imageVector = Search,
-                contentDescription = null,
-            )
-        },
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        keyboardOptions =
+            KeyboardOptions(
+                imeAction = ImeAction.Search,
+            ),
+        keyboardActions =
+            KeyboardActions(
+                onSearch = { onSearch(query) },
+            ),
         modifier = modifier.fillMaxWidth(),
     )
 }

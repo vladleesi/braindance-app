@@ -22,6 +22,7 @@ import dev.vladleesi.braindanceapp.routes.HomeRoute
 import dev.vladleesi.braindanceapp.routes.NewsRoute
 import dev.vladleesi.braindanceapp.routes.ProfileRoute
 import dev.vladleesi.braindanceapp.routes.SearchRoute
+import dev.vladleesi.braindanceapp.routes.SearchRoute.SEARCH_TAB_RESELECTED
 import dev.vladleesi.braindanceapp.routes.registerRoute
 import dev.vladleesi.braindanceapp.ui.style.navBar
 import dev.vladleesi.braindanceapp.ui.style.secondaryText
@@ -47,23 +48,7 @@ fun BottomBar(navController: NavHostController) {
                 selected = currentRoute == item.route,
                 selectedContentColor = white,
                 unselectedContentColor = secondaryText,
-                onClick = {
-                    navController.navigate(item.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destination
-                        // on the back stack as users select items
-                        navController.graph.startDestinationRoute?.let {
-                            popUpTo(HomeRoute.name) {
-                                saveState = true
-                            }
-                        }
-                        // Avoid multiple copies of the same destination
-                        // when reselecting the same item
-                        launchSingleTop = true
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
-                    }
-                },
+                onClick = { navController.navigateToRoute(item.route, currentRoute) },
             )
         }
     }
@@ -74,9 +59,36 @@ fun NavigationGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = HomeRoute.name) {
         registerRoute(HomeRoute)
         registerRoute(NewsRoute)
-        registerRoute(SearchRoute)
+        registerRoute(SearchRoute, navHostController = navController)
         registerRoute(CollectionsRoute)
         registerRoute(ProfileRoute)
+    }
+}
+
+private fun NavHostController.navigateToRoute(
+    route: String,
+    currentRoute: String?,
+) {
+    if (currentRoute == route && currentRoute == SearchRoute.name) {
+        // Handle second click on search item
+        this@navigateToRoute.currentBackStackEntry?.savedStateHandle?.set(SEARCH_TAB_RESELECTED, true)
+        return // Prevent unnecessary navigation
+    }
+
+    this@navigateToRoute.navigate(route) {
+        // Pop up to the start destination of the graph to
+        // avoid building up a large stack of destination
+        // on the back stack as users select items
+        this@navigateToRoute.graph.startDestinationRoute?.let {
+            popUpTo(HomeRoute.name) {
+                saveState = true
+            }
+        }
+        // Avoid multiple copies of the same destination
+        // when reselecting the same item
+        launchSingleTop = true
+        // Restore state when reselecting a previously selected item
+        restoreState = true
     }
 }
 
