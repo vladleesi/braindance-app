@@ -20,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
@@ -34,6 +35,7 @@ import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeStateEntity
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
+import dev.vladleesi.braindanceapp.utils.shimmerEffect
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.painterResource
 
@@ -149,6 +151,40 @@ private fun GiveawayItemCard(
                         .padding(horizontal = Dimens.tiny),
             )
         }
+    }
+}
+
+@Composable
+fun GiveawayItemSkeleton(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        Box(
+            modifier =
+                Modifier
+                    .height(Dimens.giveAwayCardHeight)
+                    .width(Dimens.giveAwayCardWidth)
+                    .clip(RoundedCornerShape(Dimens.small))
+                    .shimmerEffect(),
+        )
+        Spacer(modifier = Modifier.height(Dimens.small))
+        Text(
+            text = "",
+            style = MaterialTheme.typography.subtitle1,
+            modifier =
+                Modifier
+                    .width(Dimens.giveAwayCardWidth)
+                    .clip(RoundedCornerShape(Dimens.small))
+                    .shimmerEffect(),
+        )
+        Spacer(modifier = Modifier.height(Dimens.micro))
+        Text(
+            text = "",
+            style = MaterialTheme.typography.caption,
+            modifier =
+                Modifier
+                    .width(128.dp)
+                    .clip(RoundedCornerShape(Dimens.small))
+                    .shimmerEffect(),
+        )
     }
 }
 

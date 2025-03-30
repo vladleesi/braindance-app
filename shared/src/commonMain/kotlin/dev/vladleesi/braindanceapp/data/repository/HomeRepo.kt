@@ -47,9 +47,7 @@ class HomeRepo(private val gamesRemote: GamesRemote) {
         }
 
         val gameIdsCondition =
-            popularityResponses.joinToString(" ${RequestBody.Where.OR.operator} ") {
-                "id = ${it.gameId}"
-            }
+            "id = (${popularityResponses.joinToString { it.gameId.toString() }})"
 
         return gamesRemote.games(
             requestBody =
