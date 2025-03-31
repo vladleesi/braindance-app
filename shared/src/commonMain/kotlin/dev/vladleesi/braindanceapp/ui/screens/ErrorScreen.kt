@@ -30,6 +30,7 @@ fun ErrorScreen(
     modifier: Modifier = Modifier,
     onRetry: () -> Unit,
 ) {
+    // TODO: Add back button
     Box(
         modifier =
             modifier

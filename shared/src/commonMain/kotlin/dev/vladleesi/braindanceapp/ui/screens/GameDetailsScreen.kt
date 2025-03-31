@@ -41,14 +41,14 @@ import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.system.toPx
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
-import dev.vladleesi.braindanceapp.ui.components.GenreTags
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
-import dev.vladleesi.braindanceapp.ui.components.ReleaseDateLabel
 import dev.vladleesi.braindanceapp.ui.components.SpacerTopBarWithStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.components.TopAppBar
-import dev.vladleesi.braindanceapp.ui.components.storesBlockItem
+import dev.vladleesi.braindanceapp.ui.components.details.GenreTags
+import dev.vladleesi.braindanceapp.ui.components.details.ReleaseDateLabel
+import dev.vladleesi.braindanceapp.ui.components.details.storesBlockItem
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.navBar

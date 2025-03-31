@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.ui.components
+package dev.vladleesi.braindanceapp.ui.components.details
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

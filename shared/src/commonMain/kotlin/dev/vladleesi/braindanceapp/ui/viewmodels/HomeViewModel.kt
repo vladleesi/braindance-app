@@ -7,8 +7,8 @@ import dev.vladleesi.braindanceapp.data.models.games.Platform
 import dev.vladleesi.braindanceapp.data.models.giveaways.GiveawayResponse
 import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
-import dev.vladleesi.braindanceapp.ui.components.MiniGameCardModel
 import dev.vladleesi.braindanceapp.ui.components.giveaways.GiveawayItemModel
+import dev.vladleesi.braindanceapp.ui.components.home.MiniGameCardModel
 import dev.vladleesi.braindanceapp.utils.CoverSize
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.formatEndDate

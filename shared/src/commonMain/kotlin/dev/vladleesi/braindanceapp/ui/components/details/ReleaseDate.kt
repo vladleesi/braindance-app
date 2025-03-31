@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.ui.components
+package dev.vladleesi.braindanceapp.ui.components.details
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

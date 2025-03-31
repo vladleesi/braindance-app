@@ -1,4 +1,4 @@
-package dev.vladleesi.braindanceapp.ui.components
+package dev.vladleesi.braindanceapp.ui.components.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.navigate
+import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeState
 import dev.vladleesi.braindanceapp.utils.shimmerEffect

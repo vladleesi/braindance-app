@@ -26,10 +26,10 @@ import dev.vladleesi.braindanceapp.resources.home_screen_popular_popular_right_n
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
 import dev.vladleesi.braindanceapp.routes.registerRoute
-import dev.vladleesi.braindanceapp.ui.components.MiniGameCardList
 import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.components.giveaways.GiveawaysList
+import dev.vladleesi.braindanceapp.ui.components.home.MiniGameCardList
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith80Alpha
