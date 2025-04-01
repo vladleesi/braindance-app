@@ -27,6 +27,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import dev.vladleesi.braindanceapp.resources.Res
+import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_free
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.overlayBlackWith70Alpha
@@ -38,6 +40,7 @@ import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.shimmerEffect
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun GiveawayItem(
@@ -62,7 +65,7 @@ fun GiveawayItem(
         Spacer(modifier = Modifier.height(Dimens.micro))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "FREE",
+                text = stringResource(Res.string.giveaway_details_screen_free),
                 color = white,
                 style = MaterialTheme.typography.caption,
             )
@@ -129,7 +132,7 @@ private fun GiveawayItemCard(
                 item.platforms.forEach { platform ->
                     if (platform.iconRes == null) return@forEach
                     Image(
-                        modifier = Modifier.size(12.dp),
+                        modifier = Modifier.size(Dimens.compact),
                         painter = painterResource(platform.iconRes),
                         colorFilter = ColorFilter.tint(white),
                         contentDescription = platform.name.toContentDescription(),

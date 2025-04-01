@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -24,14 +23,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.core.bundle.Bundle
@@ -39,7 +35,6 @@ import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.isLargeDevice
-import dev.vladleesi.braindanceapp.system.toPx
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
@@ -51,11 +46,10 @@ import dev.vladleesi.braindanceapp.ui.components.details.ReleaseDateLabel
 import dev.vladleesi.braindanceapp.ui.components.details.storesBlockItem
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
-import dev.vladleesi.braindanceapp.ui.style.navBar
-import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
+import dev.vladleesi.braindanceapp.utils.calculateScrollTopBarColors
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -102,7 +96,7 @@ private fun GameDetailsScreen(
 ) {
     val lazyListState = rememberLazyListState()
     val (topBarColor, backButtonColor, topBarTitleColor) =
-        calculateScrollTopBarColors(lazyListState = lazyListState)
+        lazyListState.calculateScrollTopBarColors()
     val isLargeDevice = isLargeDevice()
 
     Box(
@@ -167,34 +161,6 @@ private fun GameDetailsInfo(gameDetails: GameDetails) {
             modifier = Modifier.fillMaxWidth(),
         )
     }
-}
-
-@Composable
-private fun calculateScrollTopBarColors(lazyListState: LazyListState): Triple<Color, Color, Color> {
-    val targetColor = navBar
-    val maxScrollOffsetPx = Dimens.topBarHeightWithInsets.toPx()
-    var firstOffset by remember { mutableStateOf(0f) }
-
-    val combinedOffset =
-        remember(
-            lazyListState.firstVisibleItemIndex,
-            lazyListState.firstVisibleItemScrollOffset,
-        ) {
-            val scrollOffset = lazyListState.firstVisibleItemScrollOffset.toFloat()
-            when (lazyListState.firstVisibleItemIndex) {
-                0 -> scrollOffset.also { firstOffset = scrollOffset }
-                1 -> scrollOffset + firstOffset
-                else -> maxScrollOffsetPx
-            }
-        }
-
-    val fraction = (combinedOffset / maxScrollOffsetPx).coerceIn(0f, 1f)
-
-    return Triple(
-        lerp(Color.Transparent, targetColor, fraction),
-        lerp(targetColor, Color.Transparent, fraction),
-        lerp(Color.Transparent, white, fraction),
-    )
 }
 
 private fun LazyListScope.gameInfoHeaderLargeScreen(state: GameDetailsState.Success) =

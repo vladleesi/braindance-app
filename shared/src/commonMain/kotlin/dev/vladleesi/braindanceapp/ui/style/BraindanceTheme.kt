@@ -11,7 +11,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.poppins_bold
@@ -31,9 +30,9 @@ fun BraindanceTheme(
     }
     val shapes =
         Shapes(
-            small = RoundedCornerShape(4.dp),
-            medium = RoundedCornerShape(8.dp),
-            large = RoundedCornerShape(12.dp),
+            small = RoundedCornerShape(Dimens.tiny),
+            medium = RoundedCornerShape(Dimens.small),
+            large = RoundedCornerShape(Dimens.compact),
         )
     val fonts =
         FontFamily(

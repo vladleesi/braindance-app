@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -35,6 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.bundle.Bundle
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import dev.vladleesi.braindanceapp.resources.Res
+import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_about
+import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_free
+import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_get_giveaway
+import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_instruction
 import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
 import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
@@ -49,7 +55,9 @@ import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GiveawayDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GiveawayDetailsViewModel
+import dev.vladleesi.braindanceapp.utils.calculateScrollTopBarColors
 import dev.vladleesi.braindanceapp.utils.toContentDescription
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -99,6 +107,9 @@ fun GiveawayDetailsScreen(
                 .fillMaxWidth()
                 .background(background),
     ) {
+        val lazyListState = rememberLazyListState()
+        val (topBarColor, backButtonColor, topBarTitleColor) =
+            lazyListState.calculateScrollTopBarColors()
         val isLargeDevice = isLargeDevice()
 
         // TODO: Rework (wip: claimed, large devices, timer, platforms, new ui model data class)
@@ -129,7 +140,7 @@ fun GiveawayDetailsScreen(
             item {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "FREE",
+                        text = stringResource(Res.string.giveaway_details_screen_free),
                         color = white,
                         style = MaterialTheme.typography.body2,
                     )
@@ -143,45 +154,51 @@ fun GiveawayDetailsScreen(
                 }
             }
             item { Spacer(Modifier.height(Dimens.small)) }
-            // TODO: Move these two items to one composable
             item {
-                Text(
-                    // TODO: Move to res
-                    text = "About this giveaway",
-                    style = MaterialTheme.typography.h3,
-                )
-            }
-            item { Spacer(Modifier.height(Dimens.micro)) }
-            item {
-                Text(
-                    text = state.giveawayDetails.description.orEmpty(),
-                    style = MaterialTheme.typography.body2,
+                SummaryText(
+                    title = stringResource(Res.string.giveaway_details_screen_about),
+                    description = state.giveawayDetails.description.orEmpty(),
                 )
             }
             item { Spacer(Modifier.height(Dimens.small)) }
             item {
-                Text(
-                    text = "Instruction",
-                    style = MaterialTheme.typography.h3,
-                )
-            }
-            item { Spacer(Modifier.height(Dimens.micro)) }
-            item {
-                Text(
-                    text = state.giveawayDetails.instructions.orEmpty(),
-                    style = MaterialTheme.typography.body2,
+                SummaryText(
+                    title = stringResource(Res.string.giveaway_details_screen_instruction),
+                    description = state.giveawayDetails.instructions.orEmpty(),
                 )
             }
             item { Spacer(Modifier.height(Dimens.medium)) }
             item { OpenGiveawayButton(url = state.giveawayDetails.openGiveawayUrl.orEmpty()) }
         }
         Column {
-            StatusBarOverlay()
+            StatusBarOverlay(backgroundColor = topBarColor)
             TopAppBar(
+                tabBarColor = topBarColor,
+                titleColor = topBarTitleColor,
                 showBackButton = true,
+                backButtonBackgroundColor = backButtonColor,
                 onBackButtonPressed = { navHostController?.popBackStack() },
             )
         }
+    }
+}
+
+@Composable
+private fun SummaryText(
+    title: String,
+    description: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.h3,
+        )
+        Spacer(Modifier.height(Dimens.micro))
+        Text(
+            text = description,
+            style = MaterialTheme.typography.body2,
+        )
     }
 }
 
@@ -198,13 +215,13 @@ private fun OpenGiveawayButton(
     ) {
         Row {
             Text(
-                text = "Get Giveaway",
+                text = stringResource(Res.string.giveaway_details_screen_get_giveaway),
                 modifier = Modifier.align(Alignment.CenterVertically),
             )
             Spacer(Modifier.width(Dimens.tiny))
             Icon(
                 imageVector = OpenInNew,
-                contentDescription = "Share",
+                contentDescription = url.toContentDescription(),
                 tint = white,
                 modifier = Modifier.align(Alignment.CenterVertically),
             )

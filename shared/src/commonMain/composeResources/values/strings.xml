@@ -14,4 +14,10 @@
 
     <!-- Game details screen -->
     <string name="game_details_screen_where_to_buy">Where to buy</string>
+
+    <!-- Giveaway details screen -->
+    <string name="giveaway_details_screen_free">FREE</string>
+    <string name="giveaway_details_screen_about">About this giveaway</string>
+    <string name="giveaway_details_screen_instruction">Instruction</string>
+    <string name="giveaway_details_screen_get_giveaway">Get Giveaway</string>
 </resources>
