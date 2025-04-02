@@ -23,6 +23,9 @@ object Dimens {
     val giveAwayCardWidth = 200.dp
     val giveAwayCardHeight = 94.dp
 
+    val giveAwayCardDetailsWidth = 300.dp
+    val giveAwayCardDetailsHeight = 141.dp
+
     val topBarHeight = 82.dp
 
     val statusBarInsets

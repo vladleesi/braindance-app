@@ -3,15 +3,14 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.models.games.GameItem
-import dev.vladleesi.braindanceapp.data.models.games.Platform
 import dev.vladleesi.braindanceapp.data.models.giveaways.GiveawayResponse
 import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
 import dev.vladleesi.braindanceapp.ui.components.giveaways.GiveawayItemModel
 import dev.vladleesi.braindanceapp.ui.components.home.MiniGameCardModel
 import dev.vladleesi.braindanceapp.utils.CoverSize
-import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.formatEndDate
+import dev.vladleesi.braindanceapp.utils.giveawayPlatforms
 import dev.vladleesi.braindanceapp.utils.nowUnix
 import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
@@ -110,13 +109,10 @@ class HomeViewModel(
                 image = item.image.orEmpty(),
                 worth = item.worth.takeIf { it != "N/A" }.orEmpty(),
                 endDate = item.endDate?.formatEndDate().orEmpty(),
-                platforms = item.platforms?.giveawayPlatformMapper().orEmpty(),
+                platforms = item.platforms?.giveawayPlatforms().orEmpty(),
                 type = item.type.orEmpty(),
             )
         }
-
-    private fun String.giveawayPlatformMapper(): List<ParentPlatformType> =
-        split(", ").map { Platform(null, it) }.parentPlatformTypes()
 
     private companion object {
         private const val PAGE_SIZE = 15

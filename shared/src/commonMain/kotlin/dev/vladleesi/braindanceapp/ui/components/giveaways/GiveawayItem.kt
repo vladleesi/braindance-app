@@ -69,13 +69,15 @@ fun GiveawayItem(
                 color = white,
                 style = MaterialTheme.typography.caption,
             )
-            Spacer(modifier = Modifier.width(Dimens.tiny))
-            Text(
-                text = item.worth,
-                style = MaterialTheme.typography.subtitle1,
-                color = secondaryText,
-                textDecoration = TextDecoration.LineThrough,
-            )
+            if (item.worth.isNotEmpty()) {
+                Spacer(modifier = Modifier.width(Dimens.tiny))
+                Text(
+                    text = item.worth,
+                    style = MaterialTheme.typography.subtitle1,
+                    color = secondaryText,
+                    textDecoration = TextDecoration.LineThrough,
+                )
+            }
         }
     }
 }

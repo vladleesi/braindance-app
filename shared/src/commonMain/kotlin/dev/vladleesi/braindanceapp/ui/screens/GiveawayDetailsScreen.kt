@@ -44,6 +44,7 @@ import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_instruction
 import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
 import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
+import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
 import dev.vladleesi.braindanceapp.ui.components.SpacerTopBarWithStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.components.TopAppBar
@@ -56,6 +57,7 @@ import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.GiveawayDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GiveawayDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.calculateScrollTopBarColors
+import dev.vladleesi.braindanceapp.utils.giveawayPlatforms
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -116,18 +118,10 @@ fun GiveawayDetailsScreen(
         LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = Dimens.medium)) {
             item { SpacerTopBarWithStatusBarInsets() }
             item {
-                Box(modifier = Modifier.padding(top = Dimens.medium)) {
-                    AsyncImage(
-                        modifier =
-                            Modifier
-                                .height(Dimens.giveAwayCardHeight)
-                                .width(Dimens.giveAwayCardWidth)
-                                .clip(RoundedCornerShape(Dimens.small)),
-                        model = state.giveawayDetails.image,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = state.giveawayDetails.title?.toContentDescription(),
-                    )
-                }
+                GiveawayDetailsImage(
+                    state = state,
+                    modifier = Modifier.padding(top = Dimens.medium),
+                )
             }
             item { Spacer(Modifier.height(Dimens.small)) }
             item {
@@ -138,22 +132,20 @@ fun GiveawayDetailsScreen(
             }
             item { Spacer(Modifier.height(Dimens.small)) }
             item {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = stringResource(Res.string.giveaway_details_screen_free),
-                        color = white,
-                        style = MaterialTheme.typography.body2,
-                    )
-                    Spacer(modifier = Modifier.width(Dimens.tiny))
-                    Text(
-                        text = state.giveawayDetails.worth.orEmpty(),
-                        style = MaterialTheme.typography.body2,
-                        color = secondaryText,
-                        textDecoration = TextDecoration.LineThrough,
+                WorthInfo(state = state)
+            }
+            val platforms = state.giveawayDetails.platforms?.giveawayPlatforms().orEmpty()
+            if (platforms.isNotEmpty()) {
+                item { Spacer(Modifier.height(Dimens.small)) }
+                item {
+                    PlatformLogoList(
+                        platforms = platforms,
+                        imageSize = 20.dp,
+                        horizontalSpacing = Dimens.small,
                     )
                 }
             }
-            item { Spacer(Modifier.height(Dimens.small)) }
+            item { Spacer(Modifier.height(Dimens.large)) }
             item {
                 SummaryText(
                     title = stringResource(Res.string.giveaway_details_screen_about),
@@ -169,6 +161,7 @@ fun GiveawayDetailsScreen(
             }
             item { Spacer(Modifier.height(Dimens.medium)) }
             item { OpenGiveawayButton(url = state.giveawayDetails.openGiveawayUrl.orEmpty()) }
+            item { Spacer(Modifier.height(Dimens.large)) }
         }
         Column {
             StatusBarOverlay(backgroundColor = topBarColor)
@@ -178,6 +171,49 @@ fun GiveawayDetailsScreen(
                 showBackButton = true,
                 backButtonBackgroundColor = backButtonColor,
                 onBackButtonPressed = { navHostController?.popBackStack() },
+            )
+        }
+    }
+}
+
+@Composable
+private fun GiveawayDetailsImage(
+    state: GiveawayDetailsState.Success,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        AsyncImage(
+            modifier =
+                Modifier
+                    .height(Dimens.giveAwayCardDetailsHeight)
+                    .width(Dimens.giveAwayCardDetailsWidth)
+                    .clip(RoundedCornerShape(Dimens.small)),
+            model = state.giveawayDetails.image,
+            contentScale = ContentScale.Crop,
+            contentDescription = state.giveawayDetails.title?.toContentDescription(),
+        )
+    }
+}
+
+@Composable
+private fun WorthInfo(
+    state: GiveawayDetailsState.Success,
+    modifier: Modifier = Modifier,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+        Text(
+            text = stringResource(Res.string.giveaway_details_screen_free),
+            color = white,
+            style = MaterialTheme.typography.body2,
+        )
+        val worth = state.giveawayDetails.worth.takeIf { it != "N/A" }.orEmpty()
+        if (worth.isNotEmpty()) {
+            Spacer(modifier = Modifier.width(Dimens.tiny))
+            Text(
+                text = worth,
+                style = MaterialTheme.typography.body2,
+                color = secondaryText,
+                textDecoration = TextDecoration.LineThrough,
             )
         }
     }

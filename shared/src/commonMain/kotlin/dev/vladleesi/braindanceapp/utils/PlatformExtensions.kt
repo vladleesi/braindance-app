@@ -31,6 +31,8 @@ fun Platform.parentPlatformType(): ParentPlatformType {
     }
 }
 
+fun String.giveawayPlatforms(): List<ParentPlatformType> = split(", ").map { Platform(null, it) }.parentPlatformTypes()
+
 enum class ParentPlatformType(val iconRes: DrawableResource?) {
     PlayStation(iconRes = Res.drawable.ic_platform_logo_playstation),
     Xbox(iconRes = Res.drawable.ic_platform_logo_xbox),
