@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -46,11 +47,13 @@ import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
 import dev.vladleesi.braindanceapp.ui.components.SpacerTopBarWithStatusBarInsets
+import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.components.TopAppBar
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.icons.OpenInNew
+import dev.vladleesi.braindanceapp.ui.style.icons.Users
 import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.white
@@ -58,6 +61,7 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.GiveawayDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GiveawayDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.calculateScrollTopBarColors
 import dev.vladleesi.braindanceapp.utils.giveawayPlatforms
+import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -133,6 +137,13 @@ fun GiveawayDetailsScreen(
             item { Spacer(Modifier.height(Dimens.small)) }
             item {
                 WorthInfo(state = state)
+            }
+            val claimed = state.giveawayDetails.users.orZero()
+            if (claimed > 0) {
+                item { Spacer(Modifier.height(Dimens.small)) }
+                item {
+                    UsersClaimed(claimed, Modifier.fillParentMaxWidth())
+                }
             }
             val platforms = state.giveawayDetails.platforms?.giveawayPlatforms().orEmpty()
             if (platforms.isNotEmpty()) {
@@ -220,13 +231,33 @@ private fun WorthInfo(
 }
 
 @Composable
+private fun UsersClaimed(
+    claimed: Int,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier) {
+        Icon(
+            imageVector = Users,
+            contentDescription = "$claimed+ users claimed this".toContentDescription(),
+            modifier = Modifier.size(20.dp),
+        )
+        Spacer(Modifier.width(Dimens.small))
+        Text(
+            text = "$claimed+ Claimed",
+            style = MaterialTheme.typography.body2,
+            color = white,
+        )
+    }
+}
+
+@Composable
 private fun SummaryText(
     title: String,
     description: String,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        Text(
+        StaticText(
             text = title,
             style = MaterialTheme.typography.h3,
         )
