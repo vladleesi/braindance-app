@@ -44,6 +44,7 @@ fun LazyListScope.storesBlockItem(stores: List<StoreTypeModel>) {
                 modifier = Modifier.padding(start = Dimens.medium, end = Dimens.medium),
             )
         }
+        // TODO: Replace to FlowRow?
         items(stores.chunked(MAX_BUTTONS_PER_ROW)) { chunk ->
             StoreButtonsRow(chunk)
         }
