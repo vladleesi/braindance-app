@@ -51,6 +51,7 @@ import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.components.TopAppBar
 import dev.vladleesi.braindanceapp.ui.style.Dimens
+import dev.vladleesi.braindanceapp.ui.style.accent
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.icons.OpenInNew
 import dev.vladleesi.braindanceapp.ui.style.icons.Users
@@ -240,10 +241,17 @@ private fun UsersClaimed(
             imageVector = Users,
             contentDescription = "$claimed+ users claimed this".toContentDescription(),
             modifier = Modifier.size(20.dp),
+            tint = accent,
         )
-        Spacer(Modifier.width(Dimens.small))
+        Spacer(Modifier.width(Dimens.tiny))
         Text(
-            text = "$claimed+ Claimed",
+            text = "$claimed+",
+            style = MaterialTheme.typography.body2,
+            color = accent,
+        )
+        Spacer(Modifier.width(Dimens.tiny))
+        Text(
+            text = "Claimed",
             style = MaterialTheme.typography.body2,
             color = white,
         )
