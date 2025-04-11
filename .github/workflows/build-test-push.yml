@@ -68,7 +68,7 @@ jobs:
 
   push-to-master:
     runs-on: ubuntu-latest
-    needs: [ build-and-test, instrument-test ]
+    needs: [ build-and-test, android-test ]
     if: success()
 
     steps:
