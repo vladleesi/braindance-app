@@ -80,7 +80,7 @@ private fun MiniGameCardListSkeleton(
                     style = MaterialTheme.typography.subtitle2,
                     modifier =
                         Modifier
-                            .width(64.dp)
+                            .width(58.dp)
                             .clip(RoundedCornerShape(Dimens.small))
                             .shimmerEffect(),
                 )
@@ -124,6 +124,7 @@ private fun MiniGameCardList(
             )
             Button(
                 onClick = {},
+                elevation = null,
                 modifier = Modifier.align(Alignment.CenterEnd),
             ) {
                 Text(

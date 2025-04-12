@@ -115,7 +115,7 @@ class HomeViewModel(
         }
 
     private companion object {
-        private const val PAGE_SIZE = 15
+        private const val PAGE_SIZE = 20
     }
 }
 

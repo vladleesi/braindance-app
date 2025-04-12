@@ -69,15 +69,13 @@ fun GiveawayItem(
                 color = white,
                 style = MaterialTheme.typography.caption,
             )
-            if (item.worth.isNotEmpty()) {
-                Spacer(modifier = Modifier.width(Dimens.tiny))
-                Text(
-                    text = item.worth,
-                    style = MaterialTheme.typography.subtitle1,
-                    color = secondaryText,
-                    textDecoration = TextDecoration.LineThrough,
-                )
-            }
+            Spacer(modifier = Modifier.width(Dimens.tiny))
+            Text(
+                text = item.worth.takeIf { item.worth.isNotEmpty() }.orEmpty(),
+                style = MaterialTheme.typography.subtitle1,
+                color = secondaryText,
+                textDecoration = TextDecoration.LineThrough,
+            )
         }
     }
 }
