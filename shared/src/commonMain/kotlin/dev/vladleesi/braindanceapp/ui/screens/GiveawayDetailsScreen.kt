@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -270,10 +271,12 @@ private fun SummaryText(
             style = MaterialTheme.typography.h3,
         )
         Spacer(Modifier.height(Dimens.micro))
-        Text(
-            text = description,
-            style = MaterialTheme.typography.body2,
-        )
+        SelectionContainer {
+            Text(
+                text = description,
+                style = MaterialTheme.typography.body2,
+            )
+        }
     }
 }
 
