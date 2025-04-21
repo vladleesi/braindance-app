@@ -36,11 +36,12 @@ fun MiniGameCard(
                 Modifier
                     .height(Dimens.miniGameCardHeight)
                     .width(Dimens.miniGameCardWidth)
+                    .clip(RoundedCornerShape(Dimens.small))
                     .clickable { onCardClicked(card.id) },
         ) {
             Image(
                 painter = imagePainter,
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(Dimens.small)),
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
                 contentDescription = card.title.toContentDescription(),
             )

@@ -95,11 +95,12 @@ private fun GiveawayItemCard(
             modifier
                 .height(Dimens.giveAwayCardHeight)
                 .width(Dimens.giveAwayCardWidth)
+                .clip(RoundedCornerShape(Dimens.small))
                 .clickable { onCardClicked(item.id) },
     ) {
         Image(
             painter = imagePainter,
-            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(Dimens.small)),
+            modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
             contentDescription = item.title.toContentDescription(),
         )
