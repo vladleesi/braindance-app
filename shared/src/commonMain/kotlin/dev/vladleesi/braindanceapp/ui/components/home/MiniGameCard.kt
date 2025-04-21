@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,11 +14,11 @@ import androidx.compose.ui.layout.ContentScale
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeStateEntity
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
+import dev.vladleesi.braindanceapp.utils.clickable
 import dev.vladleesi.braindanceapp.utils.rememberCachedImagePainter
 import dev.vladleesi.braindanceapp.utils.shimmerEffect
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MiniGameCard(
     card: MiniGameCardModel,
@@ -33,16 +31,16 @@ fun MiniGameCard(
             imageCacheKey = "mgc-${card.id}",
         )
     Column(modifier = modifier.fillMaxSize()) {
-        Card(
+        Box(
             modifier =
                 Modifier
                     .height(Dimens.miniGameCardHeight)
-                    .width(Dimens.miniGameCardWidth),
-            onClick = { onCardClicked(card.id) },
+                    .width(Dimens.miniGameCardWidth)
+                    .clickable { onCardClicked(card.id) },
         ) {
             Image(
                 painter = imagePainter,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(Dimens.small)),
                 contentScale = ContentScale.Crop,
                 contentDescription = card.title.toContentDescription(),
             )

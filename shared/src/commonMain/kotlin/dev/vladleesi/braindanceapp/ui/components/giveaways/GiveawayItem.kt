@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +34,7 @@ import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeStateEntity
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
+import dev.vladleesi.braindanceapp.utils.clickable
 import dev.vladleesi.braindanceapp.utils.rememberCachedImagePainter
 import dev.vladleesi.braindanceapp.utils.shimmerEffect
 import dev.vladleesi.braindanceapp.utils.toContentDescription
@@ -80,7 +79,6 @@ fun GiveawayItem(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun GiveawayItemCard(
     modifier: Modifier = Modifier,
@@ -92,73 +90,71 @@ private fun GiveawayItemCard(
             data = item.image,
             imageCacheKey = "mga-${item.id}",
         )
-    Card(
+    Box(
         modifier =
             modifier
                 .height(Dimens.giveAwayCardHeight)
-                .width(Dimens.giveAwayCardWidth),
-        onClick = { onCardClicked(item.id) },
+                .width(Dimens.giveAwayCardWidth)
+                .clickable { onCardClicked(item.id) },
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = imagePainter,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                contentDescription = item.title.toContentDescription(),
-            )
-            if (item.endDate.isNotEmpty()) {
-                Text(
-                    text = item.endDate,
-                    style = MaterialTheme.typography.caption,
-                    color = white,
-                    modifier =
-                        Modifier
-                            .align(Alignment.TopStart)
-                            .padding(Dimens.tiny)
-                            .background(
-                                color = overlayBlackWith70Alpha,
-                                shape = RoundedCornerShape(Dimens.small),
-                            )
-                            .padding(horizontal = Dimens.tiny, vertical = Dimens.micro),
-                )
-            }
-            Row(
+        Image(
+            painter = imagePainter,
+            modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(Dimens.small)),
+            contentScale = ContentScale.Crop,
+            contentDescription = item.title.toContentDescription(),
+        )
+        if (item.endDate.isNotEmpty()) {
+            Text(
+                text = item.endDate,
+                style = MaterialTheme.typography.caption,
+                color = white,
                 modifier =
                     Modifier
-                        .align(Alignment.TopEnd)
+                        .align(Alignment.TopStart)
                         .padding(Dimens.tiny)
                         .background(
                             color = overlayBlackWith70Alpha,
                             shape = RoundedCornerShape(Dimens.small),
                         )
-                        .padding(Dimens.tiny),
-                horizontalArrangement = Arrangement.spacedBy(Dimens.micro),
-            ) {
-                item.platforms.forEach { platform ->
-                    if (platform.iconRes == null) return@forEach
-                    Image(
-                        modifier = Modifier.size(Dimens.compact),
-                        painter = painterResource(platform.iconRes),
-                        colorFilter = ColorFilter.tint(white),
-                        contentDescription = platform.name.toContentDescription(),
-                    )
-                }
-            }
-            Text(
-                text = item.type,
-                style = MaterialTheme.typography.caption,
-                color = background,
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(Dimens.tiny)
-                        .background(
-                            color = overlayWhiteWith80Alpha,
-                            shape = RoundedCornerShape(Dimens.small),
-                        )
-                        .padding(horizontal = Dimens.tiny),
+                        .padding(horizontal = Dimens.tiny, vertical = Dimens.micro),
             )
         }
+        Row(
+            modifier =
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(Dimens.tiny)
+                    .background(
+                        color = overlayBlackWith70Alpha,
+                        shape = RoundedCornerShape(Dimens.small),
+                    )
+                    .padding(Dimens.tiny),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.micro),
+        ) {
+            item.platforms.forEach { platform ->
+                if (platform.iconRes == null) return@forEach
+                Image(
+                    modifier = Modifier.size(Dimens.compact),
+                    painter = painterResource(platform.iconRes),
+                    colorFilter = ColorFilter.tint(white),
+                    contentDescription = platform.name.toContentDescription(),
+                )
+            }
+        }
+        Text(
+            text = item.type,
+            style = MaterialTheme.typography.caption,
+            color = background,
+            modifier =
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(Dimens.tiny)
+                    .background(
+                        color = overlayWhiteWith80Alpha,
+                        shape = RoundedCornerShape(Dimens.small),
+                    )
+                    .padding(horizontal = Dimens.tiny),
+        )
     }
 }
 
