@@ -96,7 +96,7 @@ class HomeViewModel(
             MiniGameCardModel(
                 id = item.id.orZero(),
                 title = item.name.orEmpty(),
-                backgroundImageUrl = item.cover?.url?.toCoverUrl(CoverSize.P_1080).orEmpty(),
+                backgroundImageUrl = item.cover?.url?.toCoverUrl(CoverSize.P_720).orEmpty(),
                 platforms = item.platforms.orEmpty().parentPlatformTypes(),
             )
         }

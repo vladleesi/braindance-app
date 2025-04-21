@@ -1,5 +1,6 @@
 package dev.vladleesi.braindanceapp.ui.components.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,10 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeStateEntity
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
+import dev.vladleesi.braindanceapp.utils.rememberCachedImagePainter
 import dev.vladleesi.braindanceapp.utils.shimmerEffect
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 
@@ -26,6 +27,11 @@ fun MiniGameCard(
     modifier: Modifier = Modifier,
     onCardClicked: (id: Int) -> Unit,
 ) {
+    val imagePainter =
+        rememberCachedImagePainter(
+            data = card.backgroundImageUrl,
+            imageCacheKey = "mgc-${card.id}",
+        )
     Column(modifier = modifier.fillMaxSize()) {
         Card(
             modifier =
@@ -34,9 +40,9 @@ fun MiniGameCard(
                     .width(Dimens.miniGameCardWidth),
             onClick = { onCardClicked(card.id) },
         ) {
-            AsyncImage(
+            Image(
+                painter = imagePainter,
                 modifier = Modifier.fillMaxSize(),
-                model = card.backgroundImageUrl,
                 contentScale = ContentScale.Crop,
                 contentDescription = card.title.toContentDescription(),
             )

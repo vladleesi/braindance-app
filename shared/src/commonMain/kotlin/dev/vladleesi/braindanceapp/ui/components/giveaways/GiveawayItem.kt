@@ -26,7 +26,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_free
 import dev.vladleesi.braindanceapp.ui.style.Dimens
@@ -37,6 +36,7 @@ import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeStateEntity
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
+import dev.vladleesi.braindanceapp.utils.rememberCachedImagePainter
 import dev.vladleesi.braindanceapp.utils.shimmerEffect
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.painterResource
@@ -87,6 +87,11 @@ private fun GiveawayItemCard(
     item: GiveawayItemModel,
     onCardClicked: (id: Int) -> Unit,
 ) {
+    val imagePainter =
+        rememberCachedImagePainter(
+            data = item.image,
+            imageCacheKey = "mga-${item.id}",
+        )
     Card(
         modifier =
             modifier
@@ -95,9 +100,9 @@ private fun GiveawayItemCard(
         onClick = { onCardClicked(item.id) },
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
+            Image(
+                painter = imagePainter,
                 modifier = Modifier.fillMaxSize(),
-                model = item.image,
                 contentScale = ContentScale.Crop,
                 contentDescription = item.title.toContentDescription(),
             )

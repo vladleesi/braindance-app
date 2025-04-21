@@ -120,7 +120,7 @@ fun GiveawayDetailsScreen(
             lazyListState.calculateScrollTopBarColors()
         val isLargeDevice = isLargeDevice()
 
-        // TODO: Rework (wip: claimed, large devices, timer, platforms, new ui model data class)
+        // TODO: Rework (wip: large devices, timer, platforms, new ui model data class)
         LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = Dimens.medium)) {
             item { SpacerTopBarWithStatusBarInsets() }
             item {
