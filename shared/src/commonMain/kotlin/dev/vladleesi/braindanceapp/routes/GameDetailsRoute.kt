@@ -1,8 +1,8 @@
 package dev.vladleesi.braindanceapp.routes
 
 import androidx.compose.runtime.Composable
-import androidx.core.bundle.Bundle
 import androidx.navigation.NavHostController
+import androidx.savedstate.SavedState
 import dev.vladleesi.braindanceapp.ui.screens.GameDetailsScreen
 
 data object GameDetailsRoute : Route() {
@@ -11,10 +11,10 @@ data object GameDetailsRoute : Route() {
 
     @Composable
     override fun renderContent(
-        bundle: Bundle?,
+        savedState: SavedState?,
         navHostController: NavHostController?,
     ) {
-        GameDetailsScreen(bundle, navHostController)
+        GameDetailsScreen(savedState, navHostController)
     }
 
     object Params {

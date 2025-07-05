@@ -1,8 +1,6 @@
 package dev.vladleesi.braindanceapp.utils
 
 import io.ktor.util.date.GMTDate
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
@@ -11,6 +9,9 @@ import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 private const val DAYS_OF_MONTH = 30
 
@@ -27,6 +28,7 @@ val nowUnix: Long
     get() = now / 1000
 
 // TODO: Add reusable formats
+@OptIn(ExperimentalTime::class)
 fun Long.formatDate(): String? {
     val format =
         DateTimeComponents.Format {
@@ -40,6 +42,7 @@ fun Long.formatDate(): String? {
     return runCatching { Instant.fromEpochMilliseconds(this).format(format) }.getOrNull()
 }
 
+@OptIn(ExperimentalTime::class)
 fun String.formatEndDate(): String? {
     val formattedEndDate = this.replace(" ", "T")
     val endDateTime = LocalDateTime.parseOrNull(formattedEndDate) ?: return null
@@ -51,7 +54,8 @@ fun String.formatEndDate(): String? {
     return when {
         daysUntilEnd > DAYS_OF_MONTH -> null
         daysUntilEnd == DAYS_OF_MONTH -> "1 month"
-        daysUntilEnd > 0 -> "$daysUntilEnd days"
+        daysUntilEnd > 1 -> "$daysUntilEnd days"
+        daysUntilEnd == 1 -> "$daysUntilEnd day"
         else -> "Ends soon"
     }
 }

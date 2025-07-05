@@ -33,92 +33,75 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                // Compose
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.components.resources)
-                // Navigation
-                implementation(libs.compose.navigation)
-                // View Model
-                implementation(libs.compose.viewmodel)
-                // Ktor
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.auth)
-                implementation(libs.ktor.client.logging)
-                implementation(libs.ktor.client.serialization)
-                implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.serialization.kotlinx.json)
-                // Datetime
-                implementation(libs.kotlinx.datetime)
-                // Serialization
-                implementation(libs.kotlinx.serialization.json)
-                // Coroutines
-                implementation(libs.kotlinx.coroutines)
-                // Coil
-                implementation(libs.coil.compose)
-                implementation(libs.coil.network.ktor)
-                // Logger
-                implementation(libs.logging.napier)
-                // Security
-                implementation(libs.multiplatform.settings)
-                // Koin
-                implementation(libs.koin.core)
-                implementation(libs.koin.compose)
-                implementation(libs.koin.compose.viewmodel)
-                implementation(libs.koin.compose.viewmodel.navigation)
-                // Tests
-                implementation(libs.unit.tests.junit)
-            }
+        commonMain.dependencies {
+            // Compose
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.components.resources)
+            // Navigation
+            implementation(libs.compose.navigation)
+            // View Model
+            implementation(libs.compose.viewmodel)
+            implementation(libs.compose.lifecycle)
+            // Ktor
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.auth)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.serialization)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+            // Datetime
+            implementation(libs.kotlinx.datetime)
+            // Serialization
+            implementation(libs.kotlinx.serialization.json)
+            // Coroutines
+            implementation(libs.kotlinx.coroutines)
+            // Coil
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
+            // Logger
+            implementation(libs.logging.napier)
+            // Security
+            implementation(libs.multiplatform.settings)
+            // Koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.viewmodel.navigation)
+            // Tests
+            implementation(libs.unit.tests.junit)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
-        val androidMain by getting {
-            dependencies {
-                // Compose
-                implementation(libs.androidx.activity.compose)
-                implementation(libs.compose.ui)
-                implementation(libs.compose.ui.tooling)
-                implementation(libs.compose.ui.tooling.preview)
-                // Network
-                implementation(libs.ktor.client.okhttp)
-                // Security
-                implementation(libs.androidx.security.crypto.ktx)
-                // Koin
-                implementation(libs.koin.android)
-                // Tests
-                implementation(libs.androidx.tests.runner)
-                implementation(libs.androidx.tests.ext.junit)
-            }
+        androidMain.dependencies {
+            // Compose
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.ui.tooling)
+            implementation(libs.compose.ui.tooling.preview)
+            // Network
+            implementation(libs.ktor.client.okhttp)
+            // Security
+            implementation(libs.androidx.security.crypto.ktx)
+            // Koin
+            implementation(libs.koin.android)
+            // Tests
+            implementation(libs.androidx.tests.runner)
+            implementation(libs.androidx.tests.ext.junit)
         }
         val androidUnitTest by getting
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
-            dependencies {
-                // Network
-                implementation(libs.ktor.client.darwin)
-            }
+        iosMain.dependencies {
+            // Network
+            implementation(libs.ktor.client.darwin)
         }
         val iosX64Test by getting
         val iosArm64Test by getting
         val iosSimulatorArm64Test by getting
-        val iosTest by creating {
-            dependsOn(commonTest)
-            iosX64Test.dependsOn(this)
-            iosArm64Test.dependsOn(this)
-            iosSimulatorArm64Test.dependsOn(this)
-        }
     }
 }
 
@@ -130,14 +113,13 @@ compose.resources {
 
 android {
     namespace = "dev.vladleesi.braindanceapp"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "dev.vladleesi.braindanceapp"
-        targetSdk = 35
+        targetSdk = 36
         minSdk = 24
         versionCode = 1
-        // TODO: Change to current version
-        versionName = "1.0"
+        versionName = "0.2.0"
     }
     buildFeatures {
         compose = true

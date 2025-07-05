@@ -35,8 +35,9 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.core.bundle.Bundle
 import androidx.navigation.NavHostController
+import androidx.savedstate.SavedState
+import androidx.savedstate.read
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_about
@@ -70,7 +71,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun GiveawayDetailsScreen(
-    arguments: Bundle?,
+    savedState: SavedState?,
     navHostController: NavHostController?,
     modifier: Modifier = Modifier,
     viewModel: GiveawayDetailsViewModel = koinViewModel(),
@@ -78,7 +79,7 @@ fun GiveawayDetailsScreen(
     var isInitialized by rememberSaveable { mutableStateOf(false) }
 
     val giveawayId by rememberSaveable {
-        mutableStateOf(arguments?.getString(GiveawayDetailsRoute.Params.GIVEAWAY_ID)?.toIntOrNull())
+        mutableStateOf(savedState?.read { getString(GiveawayDetailsRoute.Params.GIVEAWAY_ID) }?.toIntOrNull())
     }
     val state by viewModel.giveawayDetailsState.collectAsState()
 

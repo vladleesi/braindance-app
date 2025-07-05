@@ -1,13 +1,13 @@
 package dev.vladleesi.braindanceapp.routes
 
 import androidx.compose.runtime.Composable
-import androidx.core.bundle.Bundle
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.compose.composable
+import androidx.savedstate.SavedState
 import io.github.aakira.napier.Napier
 
 sealed class Route {
@@ -16,7 +16,7 @@ sealed class Route {
 
     @Composable
     abstract fun renderContent(
-        bundle: Bundle?,
+        savedState: SavedState?,
         navHostController: NavHostController?,
     )
 }

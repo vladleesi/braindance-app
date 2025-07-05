@@ -1,6 +1,7 @@
 package dev.vladleesi.braindanceapp.data.token
 
 import android.content.Context
+import androidx.core.content.edit
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import org.koin.core.component.KoinComponent
@@ -19,7 +20,7 @@ actual class TokenStorage : KoinComponent {
     }
 
     actual fun saveToken(token: String) {
-        settings.edit().putString(TokenStorageConstants.AUTH_TOKEN_KEY, token).apply()
+        settings.edit { putString(TokenStorageConstants.AUTH_TOKEN_KEY, token) }
     }
 
     actual fun getToken(): String? {
@@ -27,6 +28,6 @@ actual class TokenStorage : KoinComponent {
     }
 
     actual fun clearToken() {
-        settings.edit().remove(TokenStorageConstants.AUTH_TOKEN_KEY).apply()
+        settings.edit { remove(TokenStorageConstants.AUTH_TOKEN_KEY) }
     }
 }
