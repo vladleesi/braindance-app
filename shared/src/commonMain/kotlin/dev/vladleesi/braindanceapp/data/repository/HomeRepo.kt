@@ -7,7 +7,9 @@ import dev.vladleesi.braindanceapp.data.models.request.PopularityPrimitives
 import dev.vladleesi.braindanceapp.data.models.request.RequestBody
 import io.ktor.client.call.body
 
-class HomeRepo(private val gamesRemote: GamesRemote) {
+class HomeRepo(
+    private val gamesRemote: GamesRemote,
+) {
     suspend fun mostAnticipated(
         pageSize: Int,
         currentTimestamp: Long,
@@ -32,15 +34,17 @@ class HomeRepo(private val gamesRemote: GamesRemote) {
 
     suspend fun popularRightNow(pageSize: Int): List<GameItem>? {
         val popularityResponses =
-            gamesRemote.popularityPrimitives(
-                requestBody =
-                    RequestBody.Builder {
-                        fields = listOf("game_id")
-                        where = listOf("popularity_type = ${PopularityPrimitives.VISITS.type}")
-                        sort = "value ${RequestBody.Sort.DESC.order}"
-                        limit = pageSize
-                    }.build(),
-            ).body<List<PopularityResponse>?>()
+            gamesRemote
+                .popularityPrimitives(
+                    requestBody =
+                        RequestBody
+                            .Builder {
+                                fields = listOf("game_id")
+                                where = listOf("popularity_type = ${PopularityPrimitives.VISITS.type}")
+                                sort = "value ${RequestBody.Sort.DESC.order}"
+                                limit = pageSize
+                            }.build(),
+                ).body<List<PopularityResponse>?>()
 
         if (popularityResponses.isNullOrEmpty()) {
             return null
@@ -49,13 +53,15 @@ class HomeRepo(private val gamesRemote: GamesRemote) {
         val gameIdsCondition =
             "id = (${popularityResponses.joinToString { it.gameId.toString() }})"
 
-        return gamesRemote.games(
-            requestBody =
-                RequestBody.Builder {
-                    fields = listOf("name", "platforms.name", "cover.url")
-                    where = listOf(gameIdsCondition)
-                    limit = pageSize
-                }.build(),
-        ).body()
+        return gamesRemote
+            .games(
+                requestBody =
+                    RequestBody
+                        .Builder {
+                            fields = listOf("name", "platforms.name", "cover.url")
+                            where = listOf(gameIdsCondition)
+                            limit = pageSize
+                        }.build(),
+            ).body()
     }
 }

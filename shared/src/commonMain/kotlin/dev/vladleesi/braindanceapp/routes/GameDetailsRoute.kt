@@ -10,7 +10,7 @@ data object GameDetailsRoute : Route() {
         get() = "${super.name}/{${Params.GAME_ID}}"
 
     @Composable
-    override fun renderContent(
+    override fun Content(
         savedState: SavedState?,
         navHostController: NavHostController?,
     ) {

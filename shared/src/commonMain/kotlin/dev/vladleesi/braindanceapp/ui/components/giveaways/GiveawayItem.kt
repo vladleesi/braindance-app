@@ -116,8 +116,7 @@ private fun GiveawayItemCard(
                         .background(
                             color = overlayBlackWith70Alpha,
                             shape = RoundedCornerShape(Dimens.small),
-                        )
-                        .padding(horizontal = Dimens.tiny, vertical = Dimens.micro),
+                        ).padding(horizontal = Dimens.tiny, vertical = Dimens.micro),
             )
         }
         Row(
@@ -128,8 +127,7 @@ private fun GiveawayItemCard(
                     .background(
                         color = overlayBlackWith70Alpha,
                         shape = RoundedCornerShape(Dimens.small),
-                    )
-                    .padding(Dimens.tiny),
+                    ).padding(Dimens.tiny),
             horizontalArrangement = Arrangement.spacedBy(Dimens.micro),
         ) {
             item.platforms.forEach { platform ->
@@ -153,8 +151,7 @@ private fun GiveawayItemCard(
                     .background(
                         color = overlayWhiteWith80Alpha,
                         shape = RoundedCornerShape(Dimens.small),
-                    )
-                    .padding(horizontal = Dimens.tiny),
+                    ).padding(horizontal = Dimens.tiny),
         )
     }
 }

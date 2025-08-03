@@ -10,6 +10,4 @@ import platform.UIKit.UIUserInterfaceIdiomPad
  * @return `true` if the device is a tablet or has a large screen, otherwise `false`.
  */
 @Composable
-actual fun isLargeDevice(): Boolean {
-    return UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad
-}
+actual fun isLargeDevice(): Boolean = UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad

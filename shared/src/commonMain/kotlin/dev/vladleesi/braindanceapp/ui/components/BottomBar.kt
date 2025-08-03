@@ -23,7 +23,7 @@ import dev.vladleesi.braindanceapp.routes.NewsRoute
 import dev.vladleesi.braindanceapp.routes.ProfileRoute
 import dev.vladleesi.braindanceapp.routes.SearchRoute
 import dev.vladleesi.braindanceapp.routes.SearchRoute.SEARCH_TAB_RESELECTED
-import dev.vladleesi.braindanceapp.routes.registerRoute
+import dev.vladleesi.braindanceapp.routes.registerMainRoute
 import dev.vladleesi.braindanceapp.ui.style.navBar
 import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.white
@@ -57,11 +57,11 @@ fun BottomBar(navController: NavHostController) {
 @Composable
 fun NavigationGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = HomeRoute.name) {
-        registerRoute(HomeRoute)
-        registerRoute(NewsRoute)
-        registerRoute(SearchRoute, navHostController = navController)
-        registerRoute(CollectionsRoute)
-        registerRoute(ProfileRoute)
+        registerMainRoute(HomeRoute)
+        registerMainRoute(NewsRoute)
+        registerMainRoute(SearchRoute, navHostController = navController)
+        registerMainRoute(CollectionsRoute)
+        registerMainRoute(ProfileRoute)
     }
 }
 

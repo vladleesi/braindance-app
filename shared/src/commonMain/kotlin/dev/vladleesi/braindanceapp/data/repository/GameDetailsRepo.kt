@@ -5,16 +5,31 @@ import dev.vladleesi.braindanceapp.data.models.games.GameItem
 import dev.vladleesi.braindanceapp.data.models.request.RequestBody
 import io.ktor.client.call.body
 
-class GameDetailsRepo(private val gamesRemote: GamesRemote) {
+class GameDetailsRepo(
+    private val gamesRemote: GamesRemote,
+) {
     suspend fun gameDetails(gameId: Int): List<GameItem>? {
         val builder =
             RequestBody.Builder {
                 fields =
                     listOf(
-                        "name", "cover.url", "similar_games.name", "similar_games.cover.url",
-                        "videos.video_id", "genres.name", "summary", "storyline", "platforms.name",
-                        "websites.url", "websites.category", "screenshots.animated", "screenshots.url",
-                        "external_games.category", "external_games.url",
+                        "name",
+                        "cover.url",
+                        "similar_games.name",
+                        "similar_games.cover.url",
+                        "videos.video_id",
+                        "genres.name",
+                        "summary",
+                        "storyline",
+                        "platforms.name",
+                        "websites.url",
+                        "websites.category",
+                        "screenshots.animated",
+                        "screenshots.url",
+                        "external_games.category",
+                        "external_games.url",
+                        "first_release_date",
+                        "release_dates.human",
                     )
                 where = listOf("id = $gameId")
             }

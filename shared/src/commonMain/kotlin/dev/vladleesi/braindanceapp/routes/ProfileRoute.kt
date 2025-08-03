@@ -7,7 +7,7 @@ import dev.vladleesi.braindanceapp.ui.screens.ProfileScreen
 
 data object ProfileRoute : Route() {
     @Composable
-    override fun renderContent(
+    override fun Content(
         savedState: SavedState?,
         navHostController: NavHostController?,
     ) {

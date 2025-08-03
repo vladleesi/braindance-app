@@ -22,9 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,18 +61,13 @@ fun GameDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: GameDetailsViewModel = koinViewModel(),
 ) {
-    var isInitialized by rememberSaveable { mutableStateOf(false) }
-
     val gameId by rememberSaveable {
         mutableStateOf(savedState?.read { getString(GameDetailsRoute.Params.GAME_ID) }?.toIntOrNull())
     }
     val state by viewModel.gameDetailsState.collectAsState()
 
-    if (gameId != null && !isInitialized) {
-        LaunchedEffect(Unit) {
-            viewModel.loadGameDetails(gameId)
-            isInitialized = true
-        }
+    LaunchedEffect(gameId) {
+        gameId?.let { viewModel.loadGameDetails(it) }
     }
 
     when (val currentState = state) {
@@ -85,7 +80,9 @@ fun GameDetailsScreen(
             GlobalLoading(modifier = modifier)
 
         is GameDetailsState.Success ->
-            GameDetailsScreen(state = currentState, modifier = modifier, navHostController = navHostController)
+            key(currentState.gameDetails.id) {
+                GameDetailsScreen(state = currentState, modifier = modifier, navHostController = navHostController)
+            }
     }
 }
 
@@ -103,7 +100,7 @@ private fun GameDetailsScreen(
     Box(
         modifier =
             modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .background(background),
     ) {
         LazyColumn(

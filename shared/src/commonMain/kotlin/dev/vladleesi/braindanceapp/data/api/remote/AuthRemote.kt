@@ -7,7 +7,9 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 
-class AuthRemote(ktorClientManager: KtorClientManager) {
+class AuthRemote(
+    ktorClientManager: KtorClientManager,
+) {
     private val twitchHttpClient = ktorClientManager.twitchHttpClient
 
     suspend fun getToken(): HttpResponse =

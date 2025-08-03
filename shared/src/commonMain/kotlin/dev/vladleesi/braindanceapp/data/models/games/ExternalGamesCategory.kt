@@ -17,7 +17,9 @@ data class ExternalGames(
 
 @Suppress("MagicNumber")
 @Serializable(with = ExternalGamesSerializer::class)
-enum class ExternalGamesCategory(val id: Int) {
+enum class ExternalGamesCategory(
+    val id: Int,
+) {
     STEAM(1),
     GOG(5),
     YOUTUBE(10),

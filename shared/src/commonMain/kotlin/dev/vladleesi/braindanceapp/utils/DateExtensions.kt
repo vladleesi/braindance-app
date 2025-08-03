@@ -34,12 +34,13 @@ fun Long.formatDate(): String? {
         DateTimeComponents.Format {
             monthName(MonthNames.ENGLISH_ABBREVIATED)
             char(' ')
-            dayOfMonth()
+            day()
             char(',')
             char(' ')
             year()
         }
-    return runCatching { Instant.fromEpochMilliseconds(this).format(format) }.getOrNull()
+
+    return runCatching { Instant.fromEpochSeconds(this).format(format) }.getOrNull()
 }
 
 @OptIn(ExperimentalTime::class)
@@ -47,9 +48,11 @@ fun String.formatEndDate(): String? {
     val formattedEndDate = this.replace(" ", "T")
     val endDateTime = LocalDateTime.parseOrNull(formattedEndDate) ?: return null
     val daysUntilEnd =
-        Clock.System.now()
+        Clock.System
+            .now()
             .toLocalDateTime(TimeZone.currentSystemDefault())
-            .date.daysUntil(endDateTime.date)
+            .date
+            .daysUntil(endDateTime.date)
 
     return when {
         daysUntilEnd > DAYS_OF_MONTH -> null

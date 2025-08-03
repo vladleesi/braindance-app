@@ -13,9 +13,7 @@ actual class TokenStorage {
         settings.putString(TokenStorageConstants.AUTH_TOKEN_KEY, token)
     }
 
-    actual fun getToken(): String? {
-        return settings.getStringOrNull(TokenStorageConstants.AUTH_TOKEN_KEY)
-    }
+    actual fun getToken(): String? = settings.getStringOrNull(TokenStorageConstants.AUTH_TOKEN_KEY)
 
     actual fun clearToken() {
         settings.remove(TokenStorageConstants.AUTH_TOKEN_KEY)

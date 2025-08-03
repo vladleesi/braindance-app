@@ -7,7 +7,7 @@ import dev.vladleesi.braindanceapp.ui.screens.HomeScreen
 
 data object HomeRoute : Route() {
     @Composable
-    override fun renderContent(
+    override fun Content(
         savedState: SavedState?,
         navHostController: NavHostController?,
     ) {

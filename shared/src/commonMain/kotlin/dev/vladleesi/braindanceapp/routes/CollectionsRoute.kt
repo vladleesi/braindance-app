@@ -7,7 +7,7 @@ import dev.vladleesi.braindanceapp.ui.screens.CollectionsScreen
 
 data object CollectionsRoute : Route() {
     @Composable
-    override fun renderContent(
+    override fun Content(
         savedState: SavedState?,
         navHostController: NavHostController?,
     ) {

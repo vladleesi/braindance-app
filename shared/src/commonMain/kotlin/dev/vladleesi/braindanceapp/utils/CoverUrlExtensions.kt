@@ -13,7 +13,9 @@ fun String.toCoverUrl(size: CoverSize): String {
     return coverUrlBuilder.buildString()
 }
 
-enum class CoverSize(val size: String) {
+enum class CoverSize(
+    val size: String,
+) {
     THUMB("t_thumb"),
     COVER_SMALL("t_cover_small"),
     COVER_BIG("t_cover_big"),

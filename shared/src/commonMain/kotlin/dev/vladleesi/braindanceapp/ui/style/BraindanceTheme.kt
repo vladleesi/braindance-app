@@ -59,8 +59,8 @@ fun BraindanceTheme(
 }
 
 @Composable
-private fun buildTypography(fonts: FontFamily): Typography {
-    return Typography(
+private fun buildTypography(fonts: FontFamily): Typography =
+    Typography(
         h1 =
             TextStyle(
                 color = white,
@@ -125,4 +125,3 @@ private fun buildTypography(fonts: FontFamily): Typography {
                 fontSize = 14.sp,
             ),
     )
-}

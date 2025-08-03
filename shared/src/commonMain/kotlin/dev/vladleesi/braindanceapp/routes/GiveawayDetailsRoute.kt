@@ -10,7 +10,7 @@ data object GiveawayDetailsRoute : Route() {
         get() = "${super.name}/{${Params.GIVEAWAY_ID}}"
 
     @Composable
-    override fun renderContent(
+    override fun Content(
         savedState: SavedState?,
         navHostController: NavHostController?,
     ) {

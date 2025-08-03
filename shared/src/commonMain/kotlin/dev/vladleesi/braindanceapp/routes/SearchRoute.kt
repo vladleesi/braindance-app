@@ -9,7 +9,7 @@ data object SearchRoute : Route() {
     const val SEARCH_TAB_RESELECTED = "searchTabReselected"
 
     @Composable
-    override fun renderContent(
+    override fun Content(
         savedState: SavedState?,
         navHostController: NavHostController?,
     ) {

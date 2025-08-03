@@ -12,6 +12,8 @@ data class GameItem(
     val id: Int?,
     val name: String?,
     val platforms: List<Platform>?,
+    @SerialName("release_dates")
+    val releaseDates: List<ReleaseDate>?,
     val screenshots: List<Screenshot>?,
     @SerialName("similar_games")
     val similarGames: List<SimilarGame>?,

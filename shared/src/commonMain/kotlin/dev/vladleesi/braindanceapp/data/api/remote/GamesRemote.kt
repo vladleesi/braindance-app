@@ -7,7 +7,9 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 
-class GamesRemote(ktorClientManager: KtorClientManager) {
+class GamesRemote(
+    ktorClientManager: KtorClientManager,
+) {
     private val igdbHttpClient = ktorClientManager.igdbHttpClient
 
     suspend fun games(requestBody: RequestBody): HttpResponse =

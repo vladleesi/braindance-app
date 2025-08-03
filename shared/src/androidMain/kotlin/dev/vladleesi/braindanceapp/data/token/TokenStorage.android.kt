@@ -23,9 +23,7 @@ actual class TokenStorage : KoinComponent {
         settings.edit { putString(TokenStorageConstants.AUTH_TOKEN_KEY, token) }
     }
 
-    actual fun getToken(): String? {
-        return settings.getString(TokenStorageConstants.AUTH_TOKEN_KEY, null)
-    }
+    actual fun getToken(): String? = settings.getString(TokenStorageConstants.AUTH_TOKEN_KEY, null)
 
     actual fun clearToken() {
         settings.edit { remove(TokenStorageConstants.AUTH_TOKEN_KEY) }

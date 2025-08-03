@@ -24,7 +24,8 @@ private const val DISK_CACHE_MAX_SIZE_BYTES = 512L * 1024 * 1024 // 512MB
 
 // Builds the ImageLoader with enabled caching policies
 private fun createImageLoader(context: PlatformContext) =
-    ImageLoader.Builder(context)
+    ImageLoader
+        .Builder(context)
         .memoryCachePolicy(CachePolicy.ENABLED)
         .memoryCache { configureMemoryCache(context) }
         .diskCachePolicy(CachePolicy.ENABLED)
@@ -36,14 +37,16 @@ private fun createImageLoader(context: PlatformContext) =
 
 // Configures the memory cache with a specific percentage of available memory
 private fun configureMemoryCache(context: PlatformContext) =
-    MemoryCache.Builder()
+    MemoryCache
+        .Builder()
         .maxSizePercent(context, MEMORY_CACHE_PERCENTAGE)
         .strongReferencesEnabled(true)
         .build()
 
 // Configures the disk cache with a specified size and directory
 private fun configureDiskCache() =
-    DiskCache.Builder()
+    DiskCache
+        .Builder()
         .directory(FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "image_cache")
         .maxSizeBytes(DISK_CACHE_MAX_SIZE_BYTES)
         .build()

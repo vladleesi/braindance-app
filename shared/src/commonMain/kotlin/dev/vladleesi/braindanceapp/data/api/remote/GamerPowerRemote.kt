@@ -6,7 +6,9 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpResponse
 
-class GamerPowerRemote(ktorClientManager: KtorClientManager) {
+class GamerPowerRemote(
+    ktorClientManager: KtorClientManager,
+) {
     private val gamerPowerHttpClient = ktorClientManager.gamerPowerHttpClient
 
     suspend fun giveaways(): HttpResponse = gamerPowerHttpClient.get(ApiConfig.Externals.GamerPower.Endpoints.GIVEAWAYS)

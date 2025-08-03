@@ -1,5 +1,9 @@
 package dev.vladleesi.braindanceapp.routes
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
@@ -15,19 +19,51 @@ sealed class Route {
         this::class.simpleName.orEmpty()
 
     @Composable
-    abstract fun renderContent(
+    abstract fun Content(
         savedState: SavedState?,
         navHostController: NavHostController?,
     )
 }
 
-inline fun <reified T : Route> NavGraphBuilder.registerRoute(
+inline fun <reified T : Route> NavGraphBuilder.registerMainRoute(
     route: T,
     arguments: List<NamedNavArgument> = emptyList(),
     navHostController: NavHostController? = null,
 ) {
-    composable(route = route.name, arguments = arguments) { entry ->
-        route.renderContent(entry.arguments, navHostController)
+    registerRoute(route, arguments, navHostController, RouteType.MAIN)
+}
+
+inline fun <reified T : Route> NavGraphBuilder.registerInnerRoute(
+    route: T,
+    arguments: List<NamedNavArgument> = emptyList(),
+    navHostController: NavHostController? = null,
+) {
+    registerRoute(route, arguments, navHostController, RouteType.INNER)
+}
+
+inline fun <reified T : Route> NavGraphBuilder.registerRoute(
+    route: T,
+    arguments: List<NamedNavArgument>,
+    navHostController: NavHostController?,
+    routeType: RouteType,
+) {
+    composable(
+        route = route.name,
+        arguments = arguments,
+        enterTransition = {
+            when (routeType) {
+                RouteType.MAIN -> fadeIn()
+                RouteType.INNER -> slideInHorizontally()
+            }
+        },
+        exitTransition = {
+            when (routeType) {
+                RouteType.MAIN -> fadeOut()
+                RouteType.INNER -> shrinkHorizontally()
+            }
+        },
+    ) { entry ->
+        route.Content(entry.arguments, navHostController)
     }
 }
 
@@ -49,4 +85,15 @@ fun NavHostController.navigate(
     runCatching {
         navigate(routeWithArgs, navOptions, navigatorExtras)
     }
+}
+
+/**
+ * Defines the type of a navigation route.
+ *
+ * - [MAIN]: Top-level screen in the navigation graph (e.g., bottom bar destinations).
+ * - [INNER]: Nested screen within a top-level section.
+ */
+enum class RouteType {
+    MAIN,
+    INNER,
 }

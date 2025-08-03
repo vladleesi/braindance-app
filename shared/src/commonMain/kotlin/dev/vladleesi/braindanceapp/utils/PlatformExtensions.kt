@@ -12,9 +12,7 @@ import dev.vladleesi.braindanceapp.resources.ic_platform_logo_windows
 import dev.vladleesi.braindanceapp.resources.ic_platform_logo_xbox
 import org.jetbrains.compose.resources.DrawableResource
 
-fun List<Platform>.parentPlatformTypes(): List<ParentPlatformType> {
-    return this.map { it.parentPlatformType() }.distinct()
-}
+fun List<Platform>.parentPlatformTypes(): List<ParentPlatformType> = this.map { it.parentPlatformType() }.distinct()
 
 fun Platform.parentPlatformType(): ParentPlatformType {
     val platformName = this.name ?: return ParentPlatformType.Other
@@ -33,7 +31,9 @@ fun Platform.parentPlatformType(): ParentPlatformType {
 
 fun String.giveawayPlatforms(): List<ParentPlatformType> = split(", ").map { Platform(null, it) }.parentPlatformTypes()
 
-enum class ParentPlatformType(val iconRes: DrawableResource?) {
+enum class ParentPlatformType(
+    val iconRes: DrawableResource?,
+) {
     PlayStation(iconRes = Res.drawable.ic_platform_logo_playstation),
     Xbox(iconRes = Res.drawable.ic_platform_logo_xbox),
     PC(iconRes = Res.drawable.ic_platform_logo_windows),

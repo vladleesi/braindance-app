@@ -7,7 +7,7 @@ import dev.vladleesi.braindanceapp.ui.screens.NewsScreen
 
 data object NewsRoute : Route() {
     @Composable
-    override fun renderContent(
+    override fun Content(
         savedState: SavedState?,
         navHostController: NavHostController?,
     ) {

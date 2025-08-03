@@ -17,7 +17,9 @@ data class Websites(
 
 @Suppress("MagicNumber")
 @Serializable(WebsiteCategorySerializer::class)
-enum class WebsiteCategory(val id: Int) {
+enum class WebsiteCategory(
+    val id: Int,
+) {
     OFFICIAL(1),
     WIKIA(2),
     WIKIPEDIA(3),

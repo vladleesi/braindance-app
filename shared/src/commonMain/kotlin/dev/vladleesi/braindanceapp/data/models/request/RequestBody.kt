@@ -1,7 +1,11 @@
 package dev.vladleesi.braindanceapp.data.models.request
 
-data class RequestBody(val body: String) {
-    class Builder(builder: Builder.() -> Unit) {
+data class RequestBody(
+    val body: String,
+) {
+    class Builder(
+        builder: Builder.() -> Unit,
+    ) {
         var fields: List<String> = emptyList()
         var where: List<String> = emptyList()
         var sort: String = ""
@@ -35,12 +39,16 @@ data class RequestBody(val body: String) {
         }
     }
 
-    enum class Where(val operator: String) {
+    enum class Where(
+        val operator: String,
+    ) {
         AND("&"),
         OR("|"),
     }
 
-    enum class Sort(val order: String) {
+    enum class Sort(
+        val order: String,
+    ) {
         ASC("asc"),
         DESC("desc"),
     }

@@ -17,6 +17,8 @@ import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import dev.vladleesi.braindanceapp.utils.toCoverUrl
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,53 +43,43 @@ class HomeViewModel(
         }
 
     fun loadHome() {
-        loadMostAnticipated()
-        loadGiveaways()
-        loadPopularRightNow()
-    }
-
-    private fun loadMostAnticipated(pageSize: Int = PAGE_SIZE) {
-        viewModelScope.launch(handler) {
-            runCatching {
-                val gameItems = homeRepo.mostAnticipated(pageSize = pageSize, currentTimestamp = nowUnix)
-                gameItems.orEmpty().mapperMiniGameCardModel()
-            }
-                .onSuccess { result ->
-                    _mostAnticipated.emit(HomeState.Success(result))
-                }
-                .onFailure { throwable ->
-                    _mostAnticipated.emit(HomeState.Error(throwable.message.orEmpty()))
-                }
+        viewModelScope.launch(Dispatchers.IO + handler) {
+            launch { loadMostAnticipated() }
+            launch { loadGiveaways() }
+            launch { loadPopularRightNow() }
         }
     }
 
-    private fun loadGiveaways(pageSize: Int = PAGE_SIZE) {
-        viewModelScope.launch(handler) {
-            runCatching {
-                val giveaways = gamerPowerRepo.giveaways(pageSize = pageSize)
-                giveaways.orEmpty().mapperGiveawayModel()
-            }
-                .onSuccess { result ->
-                    _giveaways.emit(HomeState.Success(result))
-                }
-                .onFailure { throwable ->
-                    _giveaways.emit(HomeState.Error(throwable.message.orEmpty()))
-                }
+    private suspend fun loadMostAnticipated(pageSize: Int = PAGE_SIZE) {
+        runCatching {
+            val gameItems = homeRepo.mostAnticipated(pageSize = pageSize, currentTimestamp = nowUnix)
+            gameItems.orEmpty().mapperMiniGameCardModel()
+        }.onSuccess { result ->
+            _mostAnticipated.emit(HomeState.Success(result))
+        }.onFailure { throwable ->
+            _mostAnticipated.emit(HomeState.Error(throwable.message.orEmpty()))
         }
     }
 
-    private fun loadPopularRightNow(pageSize: Int = PAGE_SIZE) {
-        viewModelScope.launch(handler) {
-            runCatching {
-                val gameItems = homeRepo.popularRightNow(pageSize = pageSize)
-                gameItems.orEmpty().mapperMiniGameCardModel()
-            }
-                .onSuccess { result ->
-                    _popularRightNow.emit(HomeState.Success(result))
-                }
-                .onFailure { throwable ->
-                    _popularRightNow.emit(HomeState.Error(throwable.message.orEmpty()))
-                }
+    private suspend fun loadGiveaways(pageSize: Int = PAGE_SIZE) {
+        runCatching {
+            val giveaways = gamerPowerRepo.giveaways(pageSize = pageSize)
+            giveaways.orEmpty().mapperGiveawayModel()
+        }.onSuccess { result ->
+            _giveaways.emit(HomeState.Success(result))
+        }.onFailure { throwable ->
+            _giveaways.emit(HomeState.Error(throwable.message.orEmpty()))
+        }
+    }
+
+    private suspend fun loadPopularRightNow(pageSize: Int = PAGE_SIZE) {
+        runCatching {
+            val gameItems = homeRepo.popularRightNow(pageSize = pageSize)
+            gameItems.orEmpty().mapperMiniGameCardModel()
+        }.onSuccess { result ->
+            _popularRightNow.emit(HomeState.Success(result))
+        }.onFailure { throwable ->
+            _popularRightNow.emit(HomeState.Error(throwable.message.orEmpty()))
         }
     }
 
@@ -96,7 +88,11 @@ class HomeViewModel(
             MiniGameCardModel(
                 id = item.id.orZero(),
                 title = item.name.orEmpty(),
-                backgroundImageUrl = item.cover?.url?.toCoverUrl(CoverSize.P_720).orEmpty(),
+                backgroundImageUrl =
+                    item.cover
+                        ?.url
+                        ?.toCoverUrl(CoverSize.P_720)
+                        .orEmpty(),
                 platforms = item.platforms.orEmpty().parentPlatformTypes(),
             )
         }
@@ -122,9 +118,13 @@ class HomeViewModel(
 sealed interface HomeState {
     data object Loading : HomeState
 
-    data class Success<T : HomeStateEntity>(val entities: List<T>) : HomeState
+    data class Success<T : HomeStateEntity>(
+        val entities: List<T>,
+    ) : HomeState
 
-    data class Error(val message: String) : HomeState
+    data class Error(
+        val message: String,
+    ) : HomeState
 }
 
 interface HomeStateEntity

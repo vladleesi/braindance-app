@@ -113,20 +113,20 @@ private enum class StoreType(
 }
 
 private fun List<ExternalGames>.uniqueExternalGamesByCategory(): List<ExternalGames> =
-    this.filter { it.url != null && deprecatedStoreUrls.none { url -> it.url.contains(url) } }
+    this
+        .filter { it.url != null && deprecatedStoreUrls.none { url -> it.url.contains(url) } }
         .groupBy { it.category }
         .map { it.value.first() }
 
 private fun List<Websites>.validWebsites(): List<Websites> =
     this.filter { !it.url.isNullOrEmpty() && deprecatedStoreUrls.none { url -> it.url.contains(url) } }
 
-private fun StoreType.toStoreModel(url: String): StoreTypeModel {
-    return StoreTypeModel(
+private fun StoreType.toStoreModel(url: String): StoreTypeModel =
+    StoreTypeModel(
         name = this.storeName,
         image = this.image,
         url = url,
     )
-}
 
 private val deprecatedStoreUrls =
     hashSetOf(

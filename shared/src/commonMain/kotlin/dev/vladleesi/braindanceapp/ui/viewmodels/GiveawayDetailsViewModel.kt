@@ -6,6 +6,8 @@ import dev.vladleesi.braindanceapp.data.models.giveaways.GiveawayResponse
 import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,7 +26,7 @@ class GiveawayDetailsViewModel(
         }
 
     fun loadGiveawayDetails(giveawayId: Int?) {
-        viewModelScope.launch(handler) {
+        viewModelScope.launch(Dispatchers.IO + handler) {
             runCatching {
                 _giveawayDetailsState.emit(GiveawayDetailsState.Loading)
                 if (giveawayId == null) {
@@ -33,13 +35,11 @@ class GiveawayDetailsViewModel(
                 }
                 val result = gamerPowerRepo.giveaway(giveawayId)
                 requireNotNull(result)
+            }.onSuccess { result ->
+                _giveawayDetailsState.emit(GiveawayDetailsState.Success(result))
+            }.onFailure { throwable ->
+                _giveawayDetailsState.emit(GiveawayDetailsState.Error(throwable.message.orEmpty()))
             }
-                .onSuccess { result ->
-                    _giveawayDetailsState.emit(GiveawayDetailsState.Success(result))
-                }
-                .onFailure { throwable ->
-                    _giveawayDetailsState.emit(GiveawayDetailsState.Error(throwable.message.orEmpty()))
-                }
         }
     }
 }
@@ -48,7 +48,11 @@ sealed class GiveawayDetailsState {
     data object Loading : GiveawayDetailsState()
 
     // TODO: Replace GiveawayResponse to GiveawayDetailsModel
-    data class Success(val giveawayDetails: GiveawayResponse) : GiveawayDetailsState()
+    data class Success(
+        val giveawayDetails: GiveawayResponse,
+    ) : GiveawayDetailsState()
 
-    data class Error(val message: String) : GiveawayDetailsState()
+    data class Error(
+        val message: String,
+    ) : GiveawayDetailsState()
 }

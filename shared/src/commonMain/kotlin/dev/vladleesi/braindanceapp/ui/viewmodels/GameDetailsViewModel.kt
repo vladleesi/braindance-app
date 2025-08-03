@@ -13,6 +13,8 @@ import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import dev.vladleesi.braindanceapp.utils.toCoverUrl
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,24 +33,30 @@ class GameDetailsViewModel(
         }
 
     fun loadGameDetails(gameId: Int?) {
-        viewModelScope.launch(handler) {
+        viewModelScope.launch(Dispatchers.IO + handler) {
             _gameDetailsState.emit(GameDetailsState.Loading)
-            val gameItem = gameDetailsRepo.gameDetails(gameId.orZero())?.firstOrNull()
+            val game = gameDetailsRepo.gameDetails(gameId.orZero())?.firstOrNull()
             val gameDetails =
                 GameDetails(
-                    name = gameItem?.name.orEmpty(),
-                    summary = gameItem?.summary.orEmpty(),
-                    storyline = gameItem?.storyline.orEmpty(),
-                    coverImageUrl = gameItem?.cover?.url?.toCoverUrl(CoverSize.ORIGINAL).orEmpty(),
-                    releaseDate = gameItem?.firstReleaseDate?.formatDate(),
-                    platforms = gameItem?.platforms.orEmpty().parentPlatformTypes(),
+                    id = game?.id.orZero(),
+                    name = game?.name.orEmpty(),
+                    summary = game?.summary.orEmpty(),
+                    storyline = game?.storyline.orEmpty(),
+                    coverImageUrl =
+                        game
+                            ?.cover
+                            ?.url
+                            ?.toCoverUrl(CoverSize.ORIGINAL)
+                            .orEmpty(),
+                    releaseDate = game?.releaseDates?.firstOrNull()?.human ?: game?.firstReleaseDate?.formatDate(),
+                    platforms = game?.platforms.orEmpty().parentPlatformTypes(),
                     stores =
                         getMergedStoresType(
-                            externalGames = gameItem?.externalGames.orEmpty(),
-                            websites = gameItem?.websites.orEmpty(),
+                            externalGames = game?.externalGames.orEmpty(),
+                            websites = game?.websites.orEmpty(),
                         ),
                     genres =
-                        gameItem?.genres.orEmpty().map { genre ->
+                        game?.genres.orEmpty().map { genre ->
                             GenreTag(
                                 id = genre.id.orZero(),
                                 name = genre.name.orEmpty(),
@@ -65,12 +73,17 @@ class GameDetailsViewModel(
 sealed class GameDetailsState {
     data object Loading : GameDetailsState()
 
-    data class Success(val gameDetails: GameDetails) : GameDetailsState()
+    data class Success(
+        val gameDetails: GameDetails,
+    ) : GameDetailsState()
 
-    data class Error(val message: String) : GameDetailsState()
+    data class Error(
+        val message: String,
+    ) : GameDetailsState()
 }
 
 data class GameDetails(
+    val id: Int,
     val name: String,
     val summary: String,
     val storyline: String,

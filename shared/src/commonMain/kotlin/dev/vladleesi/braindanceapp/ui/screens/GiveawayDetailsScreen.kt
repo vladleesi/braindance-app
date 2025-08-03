@@ -148,7 +148,10 @@ fun GiveawayDetailsScreen(
                     UsersClaimed(claimed, Modifier.fillParentMaxWidth())
                 }
             }
-            val platforms = state.giveawayDetails.platforms?.giveawayPlatforms().orEmpty()
+            val platforms =
+                state.giveawayDetails.platforms
+                    ?.giveawayPlatforms()
+                    .orEmpty()
             if (platforms.isNotEmpty()) {
                 item { Spacer(Modifier.height(Dimens.small)) }
                 item {
@@ -220,7 +223,10 @@ private fun WorthInfo(
             color = white,
             style = MaterialTheme.typography.body2,
         )
-        val worth = state.giveawayDetails.worth.takeIf { it != "N/A" }.orEmpty()
+        val worth =
+            state.giveawayDetails.worth
+                .takeIf { it != "N/A" }
+                .orEmpty()
         if (worth.isNotEmpty()) {
             Spacer(modifier = Modifier.width(Dimens.tiny))
             Text(

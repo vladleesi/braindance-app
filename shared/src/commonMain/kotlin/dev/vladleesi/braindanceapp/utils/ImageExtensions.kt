@@ -14,7 +14,8 @@ fun rememberCachedImagePainter(
     imageCacheKey: String?,
 ) = rememberAsyncImagePainter(
     model =
-        ImageRequest.Builder(LocalPlatformContext.current)
+        ImageRequest
+            .Builder(LocalPlatformContext.current)
             .data(data)
             .memoryCacheKey(imageCacheKey)
             .diskCacheKey(imageCacheKey)
