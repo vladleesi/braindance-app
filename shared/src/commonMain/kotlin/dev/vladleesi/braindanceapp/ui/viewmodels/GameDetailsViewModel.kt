@@ -26,6 +26,8 @@ class GameDetailsViewModel(
     private val _gameDetailsState = MutableStateFlow<GameDetailsState>(GameDetailsState.Loading)
     val gameDetailsState: StateFlow<GameDetailsState> = _gameDetailsState.asStateFlow()
 
+    private var hasLoaded = false
+
     private val handler =
         CoroutineExceptionHandler { _, exception ->
             Napier.e(message = exception.message.orEmpty(), throwable = exception)
@@ -33,6 +35,8 @@ class GameDetailsViewModel(
         }
 
     fun loadGameDetails(gameId: Int?) {
+        if (hasLoaded) return
+        hasLoaded = true
         viewModelScope.launch(Dispatchers.IO + handler) {
             _gameDetailsState.emit(GameDetailsState.Loading)
             val game = gameDetailsRepo.gameDetails(gameId.orZero())?.firstOrNull()

@@ -26,7 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,18 +75,13 @@ fun GiveawayDetailsScreen(
     modifier: Modifier = Modifier,
     viewModel: GiveawayDetailsViewModel = koinViewModel(),
 ) {
-    var isInitialized by rememberSaveable { mutableStateOf(false) }
-
     val giveawayId by rememberSaveable {
         mutableStateOf(savedState?.read { getString(GiveawayDetailsRoute.Params.GIVEAWAY_ID) }?.toIntOrNull())
     }
     val state by viewModel.giveawayDetailsState.collectAsState()
 
-    if (giveawayId != null && !isInitialized) {
-        LaunchedEffect(Unit) {
-            viewModel.loadGiveawayDetails(giveawayId)
-            isInitialized = true
-        }
+    LaunchedEffect(giveawayId) {
+        viewModel.loadGiveawayDetails(giveawayId)
     }
 
     when (val currentState = state) {

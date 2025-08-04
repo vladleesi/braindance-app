@@ -37,12 +37,16 @@ class HomeViewModel(
     private val _popularRightNow = MutableStateFlow<HomeState>(HomeState.Loading)
     val popularRightNow: StateFlow<HomeState> = _popularRightNow.asStateFlow()
 
+    private var hasLoaded = false
+
     private val handler =
         CoroutineExceptionHandler { _, exception ->
             Napier.e(message = exception.message.orEmpty(), throwable = exception)
         }
 
     fun loadHome() {
+        if (hasLoaded) return
+        hasLoaded = true
         viewModelScope.launch(Dispatchers.IO + handler) {
             launch { loadMostAnticipated() }
             launch { loadGiveaways() }
@@ -50,8 +54,14 @@ class HomeViewModel(
         }
     }
 
+    fun refresh() {
+        hasLoaded = false
+        loadHome()
+    }
+
     private suspend fun loadMostAnticipated(pageSize: Int = PAGE_SIZE) {
         runCatching {
+            _mostAnticipated.emit(HomeState.Loading)
             val gameItems = homeRepo.mostAnticipated(pageSize = pageSize, currentTimestamp = nowUnix)
             gameItems.orEmpty().mapperMiniGameCardModel()
         }.onSuccess { result ->
@@ -63,6 +73,7 @@ class HomeViewModel(
 
     private suspend fun loadGiveaways(pageSize: Int = PAGE_SIZE) {
         runCatching {
+            _giveaways.emit(HomeState.Loading)
             val giveaways = gamerPowerRepo.giveaways(pageSize = pageSize)
             giveaways.orEmpty().mapperGiveawayModel()
         }.onSuccess { result ->
@@ -74,6 +85,7 @@ class HomeViewModel(
 
     private suspend fun loadPopularRightNow(pageSize: Int = PAGE_SIZE) {
         runCatching {
+            _popularRightNow.emit(HomeState.Loading)
             val gameItems = homeRepo.popularRightNow(pageSize = pageSize)
             gameItems.orEmpty().mapperMiniGameCardModel()
         }.onSuccess { result ->

@@ -19,6 +19,8 @@ class GiveawayDetailsViewModel(
     private val _giveawayDetailsState = MutableStateFlow<GiveawayDetailsState>(GiveawayDetailsState.Loading)
     val giveawayDetailsState: StateFlow<GiveawayDetailsState> = _giveawayDetailsState.asStateFlow()
 
+    private var hasLoaded = false
+
     private val handler =
         CoroutineExceptionHandler { _, exception ->
             Napier.e(message = exception.message.orEmpty(), throwable = exception)
@@ -26,6 +28,8 @@ class GiveawayDetailsViewModel(
         }
 
     fun loadGiveawayDetails(giveawayId: Int?) {
+        if (hasLoaded) return
+        hasLoaded = true
         viewModelScope.launch(Dispatchers.IO + handler) {
             runCatching {
                 _giveawayDetailsState.emit(GiveawayDetailsState.Loading)

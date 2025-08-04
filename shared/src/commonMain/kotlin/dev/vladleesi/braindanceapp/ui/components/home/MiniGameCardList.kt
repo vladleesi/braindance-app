@@ -80,7 +80,7 @@ private fun MiniGameCardListSkeleton(
                     style = MaterialTheme.typography.subtitle2,
                     modifier =
                         Modifier
-                            .width(58.dp)
+                            .width(50.dp)
                             .clip(RoundedCornerShape(Dimens.small))
                             .shimmerEffect(),
                 )
