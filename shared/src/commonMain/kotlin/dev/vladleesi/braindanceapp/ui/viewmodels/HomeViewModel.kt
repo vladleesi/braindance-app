@@ -47,11 +47,9 @@ class HomeViewModel(
     fun loadHome() {
         if (hasLoaded) return
         hasLoaded = true
-        viewModelScope.launch(Dispatchers.IO + handler) {
-            launch { loadMostAnticipated() }
-            launch { loadGiveaways() }
-            launch { loadPopularRightNow() }
-        }
+        loadMostAnticipated()
+        loadGiveaways()
+        loadPopularRightNow()
     }
 
     fun refresh() {
@@ -59,39 +57,45 @@ class HomeViewModel(
         loadHome()
     }
 
-    private suspend fun loadMostAnticipated(pageSize: Int = PAGE_SIZE) {
-        runCatching {
-            _mostAnticipated.emit(HomeState.Loading)
-            val gameItems = homeRepo.mostAnticipated(pageSize = pageSize, currentTimestamp = nowUnix)
-            gameItems.orEmpty().mapperMiniGameCardModel()
-        }.onSuccess { result ->
-            _mostAnticipated.emit(HomeState.Success(result))
-        }.onFailure { throwable ->
-            _mostAnticipated.emit(HomeState.Error(throwable.message.orEmpty()))
+    fun loadMostAnticipated(pageSize: Int = PAGE_SIZE) {
+        viewModelScope.launch(Dispatchers.IO + handler) {
+            runCatching {
+                _mostAnticipated.emit(HomeState.Loading)
+                val gameItems = homeRepo.mostAnticipated(pageSize = pageSize, currentTimestamp = nowUnix)
+                gameItems.orEmpty().mapperMiniGameCardModel()
+            }.onSuccess { result ->
+                _mostAnticipated.emit(HomeState.Success(result))
+            }.onFailure { throwable ->
+                _mostAnticipated.emit(HomeState.Error(throwable.message.orEmpty()))
+            }
         }
     }
 
-    private suspend fun loadGiveaways(pageSize: Int = PAGE_SIZE) {
-        runCatching {
-            _giveaways.emit(HomeState.Loading)
-            val giveaways = gamerPowerRepo.giveaways(pageSize = pageSize)
-            giveaways.orEmpty().mapperGiveawayModel()
-        }.onSuccess { result ->
-            _giveaways.emit(HomeState.Success(result))
-        }.onFailure { throwable ->
-            _giveaways.emit(HomeState.Error(throwable.message.orEmpty()))
+    fun loadGiveaways(pageSize: Int = PAGE_SIZE) {
+        viewModelScope.launch(Dispatchers.IO + handler) {
+            runCatching {
+                _giveaways.emit(HomeState.Loading)
+                val giveaways = gamerPowerRepo.giveaways(pageSize = pageSize)
+                giveaways.orEmpty().mapperGiveawayModel()
+            }.onSuccess { result ->
+                _giveaways.emit(HomeState.Success(result))
+            }.onFailure { throwable ->
+                _giveaways.emit(HomeState.Error(throwable.message.orEmpty()))
+            }
         }
     }
 
-    private suspend fun loadPopularRightNow(pageSize: Int = PAGE_SIZE) {
-        runCatching {
-            _popularRightNow.emit(HomeState.Loading)
-            val gameItems = homeRepo.popularRightNow(pageSize = pageSize)
-            gameItems.orEmpty().mapperMiniGameCardModel()
-        }.onSuccess { result ->
-            _popularRightNow.emit(HomeState.Success(result))
-        }.onFailure { throwable ->
-            _popularRightNow.emit(HomeState.Error(throwable.message.orEmpty()))
+    fun loadPopularRightNow(pageSize: Int = PAGE_SIZE) {
+        viewModelScope.launch(Dispatchers.IO + handler) {
+            runCatching {
+                _popularRightNow.emit(HomeState.Loading)
+                val gameItems = homeRepo.popularRightNow(pageSize = pageSize)
+                gameItems.orEmpty().mapperMiniGameCardModel()
+            }.onSuccess { result ->
+                _popularRightNow.emit(HomeState.Success(result))
+            }.onFailure { throwable ->
+                _popularRightNow.emit(HomeState.Error(throwable.message.orEmpty()))
+            }
         }
     }
 

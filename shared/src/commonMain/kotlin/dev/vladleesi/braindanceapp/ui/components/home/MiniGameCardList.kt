@@ -32,6 +32,7 @@ private const val MINI_GAME_CARD_SKELETON_COUNT = 4
 fun MiniGameCardList(
     title: String,
     state: HomeState,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
 ) {
@@ -50,9 +51,13 @@ fun MiniGameCardList(
                 navHostController = navHostController,
             )
 
-        is HomeState.Error -> {
-            // TODO: Show error
-        }
+        is HomeState.Error ->
+            CarouselErrorState(
+                title = title,
+                errorMessage = state.message,
+                onRefresh = onRefresh,
+                modifier = modifier,
+            )
     }
 }
 

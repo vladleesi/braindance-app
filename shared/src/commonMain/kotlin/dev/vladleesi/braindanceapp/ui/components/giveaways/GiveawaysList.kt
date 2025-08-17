@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
 import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.ui.components.StaticText
+import dev.vladleesi.braindanceapp.ui.components.home.CarouselErrorState
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeState
 import dev.vladleesi.braindanceapp.utils.shimmerEffect
@@ -32,6 +33,7 @@ private const val GIVEAWAYS_SKELETON_COUNT = 3
 fun GiveawaysList(
     title: String,
     state: HomeState,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
 ) {
@@ -50,9 +52,12 @@ fun GiveawaysList(
                 modifier = modifier,
             )
 
-        is HomeState.Error -> {
-            // TODO: Add error state
-        }
+        is HomeState.Error ->
+            CarouselErrorState(
+                title = title,
+                errorMessage = state.message,
+                onRefresh = onRefresh,
+            )
     }
 }
 

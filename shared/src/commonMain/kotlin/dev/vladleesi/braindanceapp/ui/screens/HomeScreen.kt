@@ -112,6 +112,7 @@ private fun HomeScreen(
                 MiniGameCardList(
                     title = stringResource(Res.string.home_screen_popular_most_anticipated),
                     state = mostAnticipated,
+                    onRefresh = { viewModel.loadMostAnticipated() },
                     navHostController = navHostController,
                 )
             }
@@ -119,6 +120,7 @@ private fun HomeScreen(
                 GiveawaysList(
                     title = stringResource(Res.string.home_screen_popular_latest_giveaways),
                     state = giveaways,
+                    onRefresh = { viewModel.loadGiveaways() },
                     navHostController = navHostController,
                 )
             }
@@ -126,6 +128,7 @@ private fun HomeScreen(
                 MiniGameCardList(
                     title = stringResource(Res.string.home_screen_popular_popular_right_now),
                     state = popularRightNow,
+                    onRefresh = { viewModel.loadPopularRightNow() },
                     navHostController = navHostController,
                 )
             }

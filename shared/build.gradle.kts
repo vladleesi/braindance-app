@@ -3,12 +3,12 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("multiplatform")
-    id("org.jetbrains.compose")
-    id("org.jetbrains.kotlin.plugin.compose")
-    kotlin("plugin.serialization")
-    id("com.codingfeline.buildkonfig")
-    id("com.android.application")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.android.application)
 }
 
 kotlin {
