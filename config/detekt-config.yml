@@ -1,34 +1,38 @@
 style:
   active: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 120
   UnusedPrivateMember:
     active: true
-    excludes: "**/*.kts"
   MagicNumber:
     active: true
-    excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt,**/*.kts"
-    ignorePropertyDeclaration: true
-    ignoreCompanionObjectPropertyDeclaration: true
+    excludes:
+      - '**/*.gradle.kts'
+      - '**/ui/style/icons/**'
+      - '**/ui/style/Colors.kt'
   UnusedImports:
     active: true
   WildcardImport:
     active: true
-    excludeImports: [ 'java.util.*','kotlinx.android.synthetic.*' ]
+    excludeImports:
+      - 'java.util.*'
+      - 'kotlinx.android.synthetic.*'
   UnusedPrivateClass:
-    active: false
+    active: true
 
-#formatting:
-#  active: true
-#  MaximumLineLength:
-#    active: true
-#    maxLineLength: 120
+potential-bugs:
+  active: true
+  EqualsAlwaysReturnsTrueOrFalse:
+    active: true
 
 naming:
   active: true
   FunctionNaming:
     active: true
-    excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
-    functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
-    ignoreAnnotated: [ 'Composable' ]
+    functionPattern: '[a-z][a-zA-Z0-9]*'
+    ignoreAnnotated:
+      - 'Composable'
   ClassNaming:
     active: true
     classPattern: '[A-Z$][a-zA-Z0-9$]*'
@@ -41,24 +45,22 @@ naming:
     active: true
     enumEntryPattern: '^[A-Z][_a-zA-Z0-9]*'
   FunctionMaxLength:
-    active: false
-    maximumFunctionNameLength: 30
+    active: true
+    maximumFunctionNameLength: 40
   FunctionMinLength:
-    active: false
+    active: true
     minimumFunctionNameLength: 3
   FunctionParameterNaming:
     active: true
     parameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   InvalidPackageDeclaration:
-    active: false
+    active: true
     rootPackage: ''
   #  MatchingDeclarationName:
-  #    active: false
+  #    active: true
   MemberNameEqualsClassName:
-    active: false
-    ignoreOverridden: true
+    active: true
   ObjectPropertyNaming:
     active: true
     constantPattern: '[A-Za-z][_A-Za-z0-9]*'
@@ -73,17 +75,16 @@ naming:
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
     privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
   VariableMaxLength:
-    active: false
+    active: true
     maximumVariableNameLength: 64
   VariableMinLength:
-    active: false
+    active: true
     minimumVariableNameLength: 1
   VariableNaming:
     active: true
     variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
 
 empty-blocks:
   active: true
@@ -104,7 +105,6 @@ empty-blocks:
     active: true
   EmptyFunctionBlock:
     active: true
-    ignoreOverridden: true
   EmptyIfBlock:
     active: true
   EmptyInitBlock:
@@ -124,10 +124,10 @@ complexity:
     active: true
     threshold: 4
   ComplexInterface:
-    active: false
+    active: true
     threshold: 10
     includeStaticDeclarations: false
-  ComplexMethod:
+  CyclomaticComplexMethod:
     active: true
     threshold: 30
     ignoreSingleWhenExpression: true
@@ -144,13 +144,13 @@ complexity:
     constructorThreshold: 6
     ignoreDefaultParameters: true
   MethodOverloading:
-    active: false
+    active: true
     threshold: 6
   NestedBlockDepth:
     active: true
     threshold: 7
   StringLiteralDuplication:
-    active: false
+    active: true
     threshold: 3
     ignoreAnnotation: true
     excludeStringsWithLessThan5Characters: true
@@ -164,4 +164,3 @@ complexity:
     thresholdInEnums: 12
     ignoreDeprecated: false
     ignorePrivate: false
-    ignoreOverridden: false

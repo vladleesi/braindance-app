@@ -26,14 +26,19 @@ tasks.register("clean", Delete::class) {
 
 fun configureDetektTasks(tasks: NamedDomainObjectContainer<Task>) {
     tasks.withType<Detekt>().configureEach {
-        config.setFrom(file("config/detekt-config.yml"))
+        config.setFrom(rootProject.files("config/detekt-config.yml"))
         parallel = true
         autoCorrect = true
+
         reports {
             xml.required.set(false)
-            html.required.set(false)
             txt.required.set(false)
             sarif.required.set(false)
+
+            html {
+                required = true
+                outputLocation = layout.buildDirectory.file("reports/detekt/${project.name}.html")
+            }
         }
     }
     tasks.withType<Detekt> {
@@ -47,8 +52,5 @@ fun configureDetektTasks(tasks: NamedDomainObjectContainer<Task>) {
             val isInBuildDir = it.file.toPath().startsWith(buildDirPath)
             return@exclude isInBuildDir
         }
-    }
-    tasks.register("detektAll") {
-        dependsOn(tasks.withType<Detekt>())
     }
 }

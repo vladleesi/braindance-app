@@ -2,6 +2,8 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+val appNamespace = "dev.vladleesi.braindanceapp"
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose.multiplatform)
@@ -107,15 +109,15 @@ kotlin {
 
 compose.resources {
     publicResClass = true
-    packageOfResClass = "dev.vladleesi.braindanceapp.resources"
+    packageOfResClass = "$appNamespace.resources"
     generateResClass = always
 }
 
 android {
-    namespace = "dev.vladleesi.braindanceapp"
+    namespace = appNamespace
     compileSdk = 36
     defaultConfig {
-        applicationId = "dev.vladleesi.braindanceapp"
+        applicationId = appNamespace
         targetSdk = 36
         minSdk = 24
         versionCode = 1
@@ -151,7 +153,7 @@ android {
 }
 
 buildkonfig {
-    packageName = "dev.vladleesi.braindanceapp"
+    packageName = appNamespace
 
     defaultConfigs {
         val clientId: String? = gradleLocalProperties(rootDir, project.providers).getProperty("CLIENT_ID")
