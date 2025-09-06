@@ -1,6 +1,5 @@
 package dev.vladleesi.braindanceapp.data.models.request
 
-@Suppress("MagicNumber")
 enum class PopularityPrimitives(
     val type: Int,
 ) {

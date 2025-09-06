@@ -1,6 +1,5 @@
 package dev.vladleesi.braindanceapp.utils
 
-@Suppress("MagicNumber")
 enum class DelayDuration(
     val millis: Long,
 ) {

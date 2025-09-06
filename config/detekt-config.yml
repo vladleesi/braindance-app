@@ -7,6 +7,7 @@ style:
     active: true
   MagicNumber:
     active: true
+    ignoreEnums: true
     excludes:
       - '**/*.gradle.kts'
       - '**/ui/style/icons/**'
