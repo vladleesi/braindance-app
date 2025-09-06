@@ -26,8 +26,6 @@ class GameDetailsRepo(
                         "websites.type",
                         "screenshots.animated",
                         "screenshots.url",
-                        "external_games.category",
-                        "external_games.url",
                         "first_release_date",
                         "release_dates.human",
                     )

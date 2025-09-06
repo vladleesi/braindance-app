@@ -5,6 +5,7 @@ import dev.vladleesi.braindanceapp.data.models.games.GameItem
 import dev.vladleesi.braindanceapp.data.models.popularity.PopularityResponse
 import dev.vladleesi.braindanceapp.data.models.request.PopularityPrimitives
 import dev.vladleesi.braindanceapp.data.models.request.RequestBody
+import dev.vladleesi.braindanceapp.utils.excludeAdultOnlyGames
 import io.ktor.client.call.body
 
 class HomeRepo(
@@ -42,7 +43,7 @@ class HomeRepo(
                                 fields = listOf("game_id")
                                 where = listOf("popularity_type = ${PopularityPrimitives.VISITS.type}")
                                 sort = "value ${RequestBody.Sort.DESC.order}"
-                                limit = pageSize
+                                limit = pageSize + pageSize // Extra results to compensate for filtered adult-only games
                             }.build(),
                 ).body<List<PopularityResponse>?>()
 
@@ -59,7 +60,13 @@ class HomeRepo(
                     RequestBody
                         .Builder {
                             fields = listOf("name", "platforms.name", "cover.url")
-                            where = listOf(gameIdsCondition)
+                            where =
+                                listOf(
+                                    gameIdsCondition,
+                                    RequestBody.Where.AND.operator,
+                                    excludeAdultOnlyGames(),
+                                )
+                            sort = "hypes ${RequestBody.Sort.DESC.order}"
                             limit = pageSize
                         }.build(),
             ).body()
