@@ -12,12 +12,11 @@ import kotlinx.serialization.encoding.Encoder
 data class Websites(
     val id: Int?,
     val url: String?,
-    val category: WebsiteCategory?,
+    val type: WebsiteType?,
 )
 
-@Suppress("MagicNumber")
-@Serializable(WebsiteCategorySerializer::class)
-enum class WebsiteCategory(
+@Serializable(WebsiteTypeSerializer::class)
+enum class WebsiteType(
     val id: Int,
 ) {
     OFFICIAL(1),
@@ -38,28 +37,33 @@ enum class WebsiteCategory(
     GOG(17),
     DISCORD(18),
     BLUESKY(19),
+    XBOX(22),
+    PLAYSTATION(23),
     UNKNOWN(-1),
     ;
 
     companion object {
-        private val idMap = entries.associateBy(WebsiteCategory::id)
+        private val idMap = entries.associateBy(WebsiteType::id)
 
-        fun fromId(id: Int): WebsiteCategory = idMap[id] ?: UNKNOWN
+        fun fromId(id: Int): WebsiteType = idMap[id] ?: UNKNOWN
     }
 }
 
-object WebsiteCategorySerializer : KSerializer<WebsiteCategory> {
+object WebsiteTypeSerializer : KSerializer<WebsiteType> {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("WebsiteCategory", PrimitiveKind.INT)
+        PrimitiveSerialDescriptor(
+            serialName = WebsiteType::class.simpleName.orEmpty(),
+            kind = PrimitiveKind.INT,
+        )
 
-    override fun deserialize(decoder: Decoder): WebsiteCategory {
+    override fun deserialize(decoder: Decoder): WebsiteType {
         val id = decoder.decodeInt()
-        return WebsiteCategory.fromId(id)
+        return WebsiteType.fromId(id)
     }
 
     override fun serialize(
         encoder: Encoder,
-        value: WebsiteCategory,
+        value: WebsiteType,
     ) {
         encoder.encodeInt(value.id)
     }

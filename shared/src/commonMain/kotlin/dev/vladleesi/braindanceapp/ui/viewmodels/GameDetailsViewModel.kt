@@ -7,10 +7,10 @@ import dev.vladleesi.braindanceapp.utils.CoverSize
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.StoreTypeModel
 import dev.vladleesi.braindanceapp.utils.formatDate
-import dev.vladleesi.braindanceapp.utils.getMergedStoresType
 import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import dev.vladleesi.braindanceapp.utils.toCoverUrl
+import dev.vladleesi.braindanceapp.utils.toStoreTypes
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -54,11 +54,7 @@ class GameDetailsViewModel(
                             .orEmpty(),
                     releaseDate = game?.releaseDates?.firstOrNull()?.human ?: game?.firstReleaseDate?.formatDate(),
                     platforms = game?.platforms.orEmpty().parentPlatformTypes(),
-                    stores =
-                        getMergedStoresType(
-                            externalGames = game?.externalGames.orEmpty(),
-                            websites = game?.websites.orEmpty(),
-                        ),
+                    stores = game?.websites.orEmpty().toStoreTypes(),
                     genres =
                         game?.genres.orEmpty().map { genre ->
                             GenreTag(

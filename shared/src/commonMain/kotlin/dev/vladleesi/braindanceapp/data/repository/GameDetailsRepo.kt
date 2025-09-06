@@ -23,7 +23,7 @@ class GameDetailsRepo(
                         "storyline",
                         "platforms.name",
                         "websites.url",
-                        "websites.category",
+                        "websites.type",
                         "screenshots.animated",
                         "screenshots.url",
                         "external_games.category",
