@@ -1,9 +1,8 @@
 package dev.vladleesi.braindanceapp.routes
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
@@ -12,6 +11,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.compose.composable
 import androidx.savedstate.SavedState
+import dev.vladleesi.braindanceapp.routes.RouteType.INNER
+import dev.vladleesi.braindanceapp.routes.RouteType.MAIN
 import io.github.aakira.napier.Napier
 
 sealed class Route {
@@ -53,13 +54,19 @@ inline fun <reified T : Route> NavGraphBuilder.registerRoute(
         enterTransition = {
             when (routeType) {
                 RouteType.MAIN -> fadeIn()
-                RouteType.INNER -> slideInHorizontally()
+                RouteType.INNER ->
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    ) + fadeIn()
             }
         },
         exitTransition = {
             when (routeType) {
                 RouteType.MAIN -> fadeOut()
-                RouteType.INNER -> shrinkHorizontally()
+                RouteType.INNER ->
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    ) + fadeOut()
             }
         },
     ) { entry ->
