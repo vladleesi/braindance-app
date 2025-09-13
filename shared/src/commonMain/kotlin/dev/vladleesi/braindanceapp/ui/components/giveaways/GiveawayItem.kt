@@ -180,7 +180,7 @@ fun GiveawayItemSkeleton(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(Dimens.micro))
         Text(
             text = "",
-            style = MaterialTheme.typography.caption,
+            style = MaterialTheme.typography.subtitle1,
             modifier =
                 Modifier
                     .width(128.dp)

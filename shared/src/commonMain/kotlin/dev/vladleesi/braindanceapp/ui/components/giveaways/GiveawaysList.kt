@@ -1,5 +1,6 @@
 package dev.vladleesi.braindanceapp.ui.components.giveaways
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,27 +38,29 @@ fun GiveawaysList(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
 ) {
-    when (state) {
-        HomeState.Loading ->
-            GiveawaysListSkeleton(
-                title = title,
-                modifier = modifier,
-            )
+    Crossfade(targetState = state) {
+        when (state) {
+            HomeState.Loading ->
+                GiveawaysListSkeleton(
+                    title = title,
+                    modifier = modifier,
+                )
 
-        is HomeState.Success<*> ->
-            GiveawaysList(
-                navHostController = navHostController,
-                title = title,
-                giveaways = state.entities.filterIsInstance<GiveawayItemModel>(),
-                modifier = modifier,
-            )
+            is HomeState.Success<*> ->
+                GiveawaysList(
+                    navHostController = navHostController,
+                    title = title,
+                    giveaways = state.entities.filterIsInstance<GiveawayItemModel>(),
+                    modifier = modifier,
+                )
 
-        is HomeState.Error ->
-            CarouselErrorState(
-                title = title,
-                errorMessage = state.message,
-                onRefresh = onRefresh,
-            )
+            is HomeState.Error ->
+                CarouselErrorState(
+                    title = title,
+                    errorMessage = state.message,
+                    onRefresh = onRefresh,
+                )
+        }
     }
 }
 

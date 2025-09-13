@@ -1,5 +1,6 @@
 package dev.vladleesi.braindanceapp.ui.components.home
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,28 +37,30 @@ fun MiniGameCardList(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
 ) {
-    when (state) {
-        HomeState.Loading ->
-            MiniGameCardListSkeleton(
-                title = title,
-                modifier = modifier,
-            )
+    Crossfade(targetState = state) {
+        when (state) {
+            HomeState.Loading ->
+                MiniGameCardListSkeleton(
+                    title = title,
+                    modifier = modifier,
+                )
 
-        is HomeState.Success<*> ->
-            MiniGameCardList(
-                title = title,
-                games = state.entities.filterIsInstance<MiniGameCardModel>(),
-                modifier = modifier,
-                navHostController = navHostController,
-            )
+            is HomeState.Success<*> ->
+                MiniGameCardList(
+                    title = title,
+                    games = state.entities.filterIsInstance<MiniGameCardModel>(),
+                    modifier = modifier,
+                    navHostController = navHostController,
+                )
 
-        is HomeState.Error ->
-            CarouselErrorState(
-                title = title,
-                errorMessage = state.message,
-                onRefresh = onRefresh,
-                modifier = modifier,
-            )
+            is HomeState.Error ->
+                CarouselErrorState(
+                    title = title,
+                    errorMessage = state.message,
+                    onRefresh = onRefresh,
+                    modifier = modifier,
+                )
+        }
     }
 }
 
