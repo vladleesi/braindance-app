@@ -1,14 +1,11 @@
 package dev.vladleesi.braindanceapp.utils
 
-import dev.vladleesi.braindanceapp.data.models.games.Rating
+import dev.vladleesi.braindanceapp.data.models.games.RatingCategory
 
-private const val AGE_RATINGS_RATING = "age_ratings.rating"
+private const val AGE_RATINGS_RATING = "age_ratings.rating_category"
 
 fun excludeAdultOnlyGames() =
     "age_ratings != null\n" +
-        "  & $AGE_RATINGS_RATING != ${Rating.AO.value}\n" +
-        "  & $AGE_RATINGS_RATING != ${Rating.CERO_Z.value}\n" +
-        "  & $AGE_RATINGS_RATING != ${Rating.USK_18.value}\n" +
-        "  & $AGE_RATINGS_RATING != ${Rating.GRAC_EIGHTEEN.value}\n" +
-        "  & $AGE_RATINGS_RATING != ${Rating.CLASS_IND_EIGHTEEN.value}\n" +
-        "  & $AGE_RATINGS_RATING != ${Rating.ACB_R18.value}"
+        "  & $AGE_RATINGS_RATING != ${RatingCategory.AO.id}\n" +
+        "  & $AGE_RATINGS_RATING != ${RatingCategory.GRAC_19_PLUS.id}\n" +
+        "  & $AGE_RATINGS_RATING != ${RatingCategory.ACB_R18_PLUS.id}\n"
