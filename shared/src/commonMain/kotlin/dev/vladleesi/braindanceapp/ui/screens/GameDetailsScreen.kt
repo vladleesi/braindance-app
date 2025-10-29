@@ -122,7 +122,10 @@ private fun GameDetailsScreen(
                 }
                 item { Spacer(modifier = Modifier.size(Dimens.large)) }
             }
-            storesBlockItem(state.gameDetails.stores)
+            val stores = state.gameDetails.stores
+            if (stores.isNotEmpty()) {
+                storesBlockItem(stores)
+            }
             item { Spacer(modifier = Modifier.size(Dimens.large)) }
         }
         Column {

@@ -88,7 +88,7 @@ fun NavHostController.navigate(
         arguments.entries.fold(route.name) { acc, (key, value) ->
             acc.replace("{$key}", value)
         }
-    Napier.d("Navigating to $routeWithArgs")
+    Napier.i("Navigating to $routeWithArgs")
     runCatching {
         navigate(routeWithArgs, navOptions, navigatorExtras)
     }

@@ -2,6 +2,7 @@ package dev.vladleesi.braindanceapp.ui.components.details
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
@@ -33,20 +33,36 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
-private const val MAX_BUTTONS_PER_ROW = 2
-
 fun LazyListScope.storesBlockItem(stores: List<StoreTypeModel>) {
-    if (stores.isNotEmpty()) {
-        item {
-            Text(
-                text = stringResource(Res.string.game_details_screen_where_to_buy),
-                style = MaterialTheme.typography.h3,
-                modifier = Modifier.padding(start = Dimens.medium, end = Dimens.medium),
+    item {
+        Text(
+            text = stringResource(Res.string.game_details_screen_where_to_buy),
+            style = MaterialTheme.typography.h3,
+            modifier = Modifier.padding(start = Dimens.medium, end = Dimens.medium),
+        )
+    }
+    item {
+        StoreButtonsRow(stores)
+    }
+}
+
+@Composable
+fun StoreButtonsRow(storeList: List<StoreTypeModel>) {
+    Spacer(modifier = Modifier.size(Dimens.small))
+    FlowRow(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimens.medium),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.small),
+        verticalArrangement = Arrangement.spacedBy(Dimens.small),
+    ) {
+        storeList.forEach { store ->
+            StoreButton(
+                store = store.name,
+                image = store.image,
+                url = store.url,
             )
-        }
-        // TODO: Replace to FlowRow?
-        items(stores.chunked(MAX_BUTTONS_PER_ROW)) { chunk ->
-            StoreButtonsRow(chunk)
         }
     }
 }
@@ -75,26 +91,6 @@ fun StoreButton(
                     contentDescription = store.toContentDescription(),
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun StoreButtonsRow(storeList: List<StoreTypeModel>) {
-    Spacer(modifier = Modifier.size(Dimens.small))
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Dimens.medium),
-        horizontalArrangement = Arrangement.spacedBy(Dimens.small),
-    ) {
-        storeList.forEach { store ->
-            StoreButton(
-                store = store.name,
-                image = store.image,
-                url = store.url,
-            )
         }
     }
 }
