@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
-import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.components.home.CarouselErrorState
 import dev.vladleesi.braindanceapp.ui.style.Dimens
@@ -116,8 +115,7 @@ private fun GiveawaysList(
 ) {
     val onCardClicked: (Int) -> Unit = { id ->
         navHostController.navigate(
-            route = GiveawayDetailsRoute,
-            arguments = mapOf(GiveawayDetailsRoute.Params.GIVEAWAY_ID to id.toString()),
+            route = GiveawayDetailsRoute(id = id),
         )
     }
     Column(modifier = modifier) {

@@ -31,8 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.savedstate.SavedState
-import androidx.savedstate.read
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.isLargeDevice
@@ -56,13 +54,13 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun GameDetailsScreen(
-    savedState: SavedState?,
+    route: GameDetailsRoute,
     navHostController: NavHostController?,
     modifier: Modifier = Modifier,
     viewModel: GameDetailsViewModel = koinViewModel(),
 ) {
     val gameId by rememberSaveable {
-        mutableStateOf(savedState?.read { getString(GameDetailsRoute.Params.GAME_ID) }?.toIntOrNull())
+        mutableStateOf(route.id)
     }
     val state by viewModel.gameDetailsState.collectAsState()
 

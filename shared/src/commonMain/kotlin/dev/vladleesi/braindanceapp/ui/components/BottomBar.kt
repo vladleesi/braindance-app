@@ -17,12 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
-import dev.vladleesi.braindanceapp.routes.CollectionsRoute
-import dev.vladleesi.braindanceapp.routes.HomeRoute
-import dev.vladleesi.braindanceapp.routes.NewsRoute
-import dev.vladleesi.braindanceapp.routes.ProfileRoute
-import dev.vladleesi.braindanceapp.routes.SearchRoute
-import dev.vladleesi.braindanceapp.routes.SearchRoute.SEARCH_TAB_RESELECTED
+import dev.vladleesi.braindanceapp.routes.BottomBarRoute
+import dev.vladleesi.braindanceapp.routes.Route
 import dev.vladleesi.braindanceapp.routes.registerMainRoute
 import dev.vladleesi.braindanceapp.ui.style.navBar
 import dev.vladleesi.braindanceapp.ui.style.secondaryText
@@ -36,7 +32,7 @@ fun BottomBar(navController: NavHostController) {
         elevation = 0.dp,
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
+        val currentRoute = navBackStackEntry?.destination?.route.let(BottomBarRoute::fromRoute)
         BottomBarItem.entries.forEach { item ->
             BottomNavigationItem(
                 icon = {
@@ -56,22 +52,25 @@ fun BottomBar(navController: NavHostController) {
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = HomeRoute.name) {
-        registerMainRoute(HomeRoute)
-        registerMainRoute(NewsRoute)
-        registerMainRoute(SearchRoute, navHostController = navController)
-        registerMainRoute(CollectionsRoute)
-        registerMainRoute(ProfileRoute)
+    NavHost(navController = navController, startDestination = BottomBarRoute.HomeRoute) {
+        registerMainRoute<BottomBarRoute.HomeRoute>()
+        registerMainRoute<BottomBarRoute.NewsRoute>()
+        registerMainRoute<BottomBarRoute.SearchRoute>(navHostController = navController)
+        registerMainRoute<BottomBarRoute.CollectionsRoute>()
+        registerMainRoute<BottomBarRoute.ProfileRoute>()
     }
 }
 
 private fun NavHostController.navigateToRoute(
-    route: String,
-    currentRoute: String?,
+    route: Route,
+    currentRoute: Route?,
 ) {
-    if (currentRoute == route && currentRoute == SearchRoute.name) {
+    if (currentRoute == route && currentRoute == BottomBarRoute.SearchRoute) {
         // Handle second click on search item
-        this@navigateToRoute.currentBackStackEntry?.savedStateHandle?.set(SEARCH_TAB_RESELECTED, true)
+        this@navigateToRoute.currentBackStackEntry?.savedStateHandle?.set(
+            BottomBarRoute.SearchRoute.SEARCH_TAB_RESELECTED,
+            true,
+        )
         return // Prevent unnecessary navigation
     }
 
@@ -80,7 +79,7 @@ private fun NavHostController.navigateToRoute(
         // avoid building up a large stack of destination
         // on the back stack as users select items
         this@navigateToRoute.graph.startDestinationRoute?.let {
-            popUpTo(HomeRoute.name) {
+            popUpTo(BottomBarRoute.HomeRoute) {
                 saveState = true
             }
         }
@@ -94,11 +93,11 @@ private fun NavHostController.navigateToRoute(
 
 enum class BottomBarItem(
     val imageVector: ImageVector,
-    val route: String,
+    val route: Route,
 ) {
-    HomeItem(imageVector = House, route = HomeRoute.name),
-    NewsItem(imageVector = Newspaper, route = NewsRoute.name),
-    SearchItem(imageVector = Search, route = SearchRoute.name),
-    CollectionsItem(imageVector = Album, route = CollectionsRoute.name),
-    ProfileItem(imageVector = CircleUserRound, route = ProfileRoute.name),
+    HomeItem(imageVector = House, route = BottomBarRoute.HomeRoute),
+    NewsItem(imageVector = Newspaper, route = BottomBarRoute.NewsRoute),
+    SearchItem(imageVector = Search, route = BottomBarRoute.SearchRoute),
+    CollectionsItem(imageVector = Album, route = BottomBarRoute.CollectionsRoute),
+    ProfileItem(imageVector = CircleUserRound, route = BottomBarRoute.ProfileRoute),
 }

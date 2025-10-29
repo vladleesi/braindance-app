@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
-import dev.vladleesi.braindanceapp.routes.navigate
 import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeState
@@ -116,8 +115,7 @@ private fun MiniGameCardList(
 ) {
     val onCardClicked: (Int) -> Unit = { id ->
         navHostController.navigate(
-            route = GameDetailsRoute,
-            arguments = mapOf(GameDetailsRoute.Params.GAME_ID to id.toString()),
+            route = GameDetailsRoute(id = id),
         )
     }
     Column(modifier = modifier) {

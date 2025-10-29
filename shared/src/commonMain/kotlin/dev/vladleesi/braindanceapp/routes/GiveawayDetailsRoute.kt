@@ -2,22 +2,15 @@ package dev.vladleesi.braindanceapp.routes
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.savedstate.SavedState
 import dev.vladleesi.braindanceapp.ui.screens.GiveawayDetailsScreen
+import kotlinx.serialization.Serializable
 
-data object GiveawayDetailsRoute : Route() {
-    override val name
-        get() = "${super.name}/{${Params.GIVEAWAY_ID}}"
-
+@Serializable
+data class GiveawayDetailsRoute(
+    val id: Int,
+) : Route {
     @Composable
-    override fun Content(
-        savedState: SavedState?,
-        navHostController: NavHostController?,
-    ) {
-        GiveawayDetailsScreen(savedState, navHostController)
-    }
-
-    object Params {
-        const val GIVEAWAY_ID = "giveawayId"
+    override fun Content(navHostController: NavHostController?) {
+        GiveawayDetailsScreen(this, navHostController)
     }
 }

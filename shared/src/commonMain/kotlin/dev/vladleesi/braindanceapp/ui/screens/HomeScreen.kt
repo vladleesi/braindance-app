@@ -56,8 +56,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         composable(HOME_INNER_ROUTE) {
             HomeScreen(modifier = modifier, navHostController = childNavController)
         }
-        registerInnerRoute(route = GameDetailsRoute, navHostController = childNavController)
-        registerInnerRoute(route = GiveawayDetailsRoute, navHostController = childNavController)
+        registerInnerRoute<GameDetailsRoute>(navHostController = childNavController)
+        registerInnerRoute<GiveawayDetailsRoute>(navHostController = childNavController)
     }
 }
 

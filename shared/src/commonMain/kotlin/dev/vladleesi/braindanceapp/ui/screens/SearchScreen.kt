@@ -26,7 +26,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import dev.vladleesi.braindanceapp.routes.SearchRoute
+import dev.vladleesi.braindanceapp.routes.BottomBarRoute
 import dev.vladleesi.braindanceapp.ui.components.SearchBar
 import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.style.Dimens
@@ -48,7 +48,7 @@ fun SearchScreen(
         navHostController
             ?.currentBackStackEntry
             ?.savedStateHandle
-            ?.getStateFlow(SearchRoute.SEARCH_TAB_RESELECTED, false)
+            ?.getStateFlow(BottomBarRoute.SearchRoute.SEARCH_TAB_RESELECTED, false)
             ?.collectAsState()
     val onSearchIconClick: () -> Unit = {
         if (isFocused) {
@@ -66,7 +66,7 @@ fun SearchScreen(
             // Reset the state after handling it
             navHostController.currentBackStackEntry
                 ?.savedStateHandle
-                ?.set(SearchRoute.SEARCH_TAB_RESELECTED, false)
+                ?.set(BottomBarRoute.SearchRoute.SEARCH_TAB_RESELECTED, false)
         }
     }
 

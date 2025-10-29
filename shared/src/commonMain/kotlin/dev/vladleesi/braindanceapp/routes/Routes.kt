@@ -4,53 +4,34 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
-import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
-import androidx.navigation.Navigator
 import androidx.navigation.compose.composable
-import androidx.savedstate.SavedState
+import androidx.navigation.toRoute
 import dev.vladleesi.braindanceapp.routes.RouteType.INNER
 import dev.vladleesi.braindanceapp.routes.RouteType.MAIN
-import io.github.aakira.napier.Napier
 
-sealed class Route {
-    open val name: String =
-        this::class.simpleName.orEmpty()
-
+/**
+ * Every Route subclass must be annotated with @Serializable.
+ */
+interface Route {
     @Composable
-    abstract fun Content(
-        savedState: SavedState?,
-        navHostController: NavHostController?,
-    )
+    fun Content(navHostController: NavHostController?)
 }
 
-inline fun <reified T : Route> NavGraphBuilder.registerMainRoute(
-    route: T,
-    arguments: List<NamedNavArgument> = emptyList(),
-    navHostController: NavHostController? = null,
-) {
-    registerRoute(route, arguments, navHostController, RouteType.MAIN)
+inline fun <reified T : Route> NavGraphBuilder.registerMainRoute(navHostController: NavHostController? = null) {
+    registerRoute<T>(navHostController, RouteType.MAIN)
 }
 
-inline fun <reified T : Route> NavGraphBuilder.registerInnerRoute(
-    route: T,
-    arguments: List<NamedNavArgument> = emptyList(),
-    navHostController: NavHostController? = null,
-) {
-    registerRoute(route, arguments, navHostController, RouteType.INNER)
+inline fun <reified T : Route> NavGraphBuilder.registerInnerRoute(navHostController: NavHostController? = null) {
+    registerRoute<T>(navHostController, RouteType.INNER)
 }
 
 inline fun <reified T : Route> NavGraphBuilder.registerRoute(
-    route: T,
-    arguments: List<NamedNavArgument>,
     navHostController: NavHostController?,
     routeType: RouteType,
 ) {
-    composable(
-        route = route.name,
-        arguments = arguments,
+    composable<T>(
         enterTransition = {
             when (routeType) {
                 RouteType.MAIN -> fadeIn()
@@ -70,27 +51,9 @@ inline fun <reified T : Route> NavGraphBuilder.registerRoute(
             }
         },
     ) { entry ->
-        route.Content(entry.arguments, navHostController)
-    }
-}
-
-fun NavHostController.navigate(
-    route: Route,
-    arguments: Map<String, String> = emptyMap(),
-    navOptions: NavOptions? = null,
-    navigatorExtras: Navigator.Extras? = null,
-) {
-    if (arguments.isEmpty()) {
-        navigate(route.name, navOptions, navigatorExtras)
-        return
-    }
-    val routeWithArgs =
-        arguments.entries.fold(route.name) { acc, (key, value) ->
-            acc.replace("{$key}", value)
-        }
-    Napier.i("Navigating to $routeWithArgs")
-    runCatching {
-        navigate(routeWithArgs, navOptions, navigatorExtras)
+        val route = entry.toRoute<T>()
+        // TODO: Provide navHostController
+        route.Content(navHostController)
     }
 }
 
