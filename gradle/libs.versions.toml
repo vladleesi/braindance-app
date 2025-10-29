@@ -1,17 +1,17 @@
 [versions]
-gradle = "8.11.1"
-kotlin = "2.2.0"
-compose-plugin = "1.8.2"
-ktlint = "13.0.0"
+gradle = "8.13.0"
+kotlin = "2.2.21"
+compose-plugin = "1.9.1"
+ktlint = "13.1.0"
 detekt = "1.23.8"
-ktor = "3.2.3"
-activity-compose = "1.10.1"
-compose = "1.8.3"
-lifecycle = "2.9.1"
+ktor = "3.3.1"
+activity-compose = "1.11.0"
+compose = "1.9.4"
+lifecycle = "2.9.5"
 coil3 = "3.3.0"
 buildkonfig = "0.17.1"
 datetime = "0.7.1"
-koin = "4.1.0"
+koin = "4.1.1"
 
 [libraries]
 
@@ -26,7 +26,7 @@ compose-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewm
 compose-lifecycle = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
 # compose navigation
-compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version = "2.9.0-beta03" }
+compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version = "2.9.1" }
 
 # security
 androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx", version = "1.1.0" }
