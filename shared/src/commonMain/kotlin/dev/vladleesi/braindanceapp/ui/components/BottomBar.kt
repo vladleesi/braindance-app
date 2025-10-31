@@ -52,7 +52,7 @@ fun BottomBar(navController: NavHostController) {
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = BottomBarRoute.HomeRoute) {
+    NavHost(navController = navController, startDestination = BottomBarRoute.HomeRoute::class) {
         registerMainRoute<BottomBarRoute.HomeRoute>()
         registerMainRoute<BottomBarRoute.NewsRoute>()
         registerMainRoute<BottomBarRoute.SearchRoute>(navHostController = navController)

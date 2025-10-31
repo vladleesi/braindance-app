@@ -2,8 +2,9 @@ package dev.vladleesi.braindanceapp.routes
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import dev.vladleesi.braindanceapp.ui.screens.CollectionsScreen
-import dev.vladleesi.braindanceapp.ui.screens.HomeScreen
 import dev.vladleesi.braindanceapp.ui.screens.NewsScreen
 import dev.vladleesi.braindanceapp.ui.screens.ProfileScreen
 import dev.vladleesi.braindanceapp.ui.screens.SearchScreen
@@ -17,7 +18,12 @@ sealed class BottomBarRoute(
     object HomeRoute : BottomBarRoute("HomeRoute") {
         @Composable
         override fun Content(navHostController: NavHostController?) {
-            HomeScreen()
+            val childNavController = rememberNavController()
+            NavHost(navController = childNavController, startDestination = FeedRoute::class) {
+                registerInnerRoute<FeedRoute>(navHostController = childNavController)
+                registerInnerRoute<GameDetailsRoute>(navHostController = childNavController)
+                registerInnerRoute<GiveawayDetailsRoute>(navHostController = childNavController)
+            }
         }
     }
 

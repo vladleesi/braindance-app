@@ -52,7 +52,6 @@ inline fun <reified T : Route> NavGraphBuilder.registerRoute(
         },
     ) { entry ->
         val route = entry.toRoute<T>()
-        // TODO: Provide navHostController
         route.Content(navHostController)
     }
 }

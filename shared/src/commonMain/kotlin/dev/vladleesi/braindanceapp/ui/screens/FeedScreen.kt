@@ -23,16 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.home_screen_popular_latest_giveaways
 import dev.vladleesi.braindanceapp.resources.home_screen_popular_most_anticipated
 import dev.vladleesi.braindanceapp.resources.home_screen_popular_popular_right_now
-import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
-import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
-import dev.vladleesi.braindanceapp.routes.registerInnerRoute
 import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.components.StatusBarOverlay
 import dev.vladleesi.braindanceapp.ui.components.giveaways.GiveawaysList
@@ -47,23 +41,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
-private const val HOME_INNER_ROUTE = "HomeInnerRoute"
-
-@Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-    val childNavController = rememberNavController()
-    NavHost(navController = childNavController, startDestination = HOME_INNER_ROUTE) {
-        composable(HOME_INNER_ROUTE) {
-            HomeScreen(modifier = modifier, navHostController = childNavController)
-        }
-        registerInnerRoute<GameDetailsRoute>(navHostController = childNavController)
-        registerInnerRoute<GiveawayDetailsRoute>(navHostController = childNavController)
-    }
-}
-
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-private fun HomeScreen(
+fun FeedScreen(
     viewModel: HomeViewModel = koinViewModel(),
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
