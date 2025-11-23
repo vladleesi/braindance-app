@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -32,7 +33,8 @@ fun BottomBar(navController: NavHostController) {
         elevation = 0.dp,
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route.let(BottomBarRoute::fromRoute)
+        val currentRoute: BottomBarRoute? = navBackStackEntry?.destination?.currentBottomBarRoute
+
         BottomBarItem.entries.forEach { item ->
             BottomNavigationItem(
                 icon = {
@@ -51,37 +53,49 @@ fun BottomBar(navController: NavHostController) {
 }
 
 @Composable
-fun NavigationGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = BottomBarRoute.HomeRoute::class) {
+fun NavigationGraph(
+    modifier: Modifier,
+    navController: NavHostController,
+) {
+    NavHost(navController = navController, startDestination = BottomBarRoute.HomeRoute, modifier) {
         registerMainRoute<BottomBarRoute.HomeRoute>()
         registerMainRoute<BottomBarRoute.NewsRoute>()
-        registerMainRoute<BottomBarRoute.SearchRoute>(navHostController = navController)
+        registerMainRoute<BottomBarRoute.SearchRoute>()
         registerMainRoute<BottomBarRoute.CollectionsRoute>()
         registerMainRoute<BottomBarRoute.ProfileRoute>()
     }
 }
 
+private inline val NavDestination?.currentBottomBarRoute: BottomBarRoute?
+    get() =
+        when (this?.route) {
+            BottomBarRoute.HomeRoute::class.qualifiedName -> BottomBarRoute.HomeRoute
+            BottomBarRoute.NewsRoute::class.qualifiedName -> BottomBarRoute.NewsRoute
+            BottomBarRoute.SearchRoute::class.qualifiedName -> BottomBarRoute.SearchRoute
+            BottomBarRoute.CollectionsRoute::class.qualifiedName -> BottomBarRoute.CollectionsRoute
+            BottomBarRoute.ProfileRoute::class.qualifiedName -> BottomBarRoute.ProfileRoute
+            else -> null
+        }
+
 private fun NavHostController.navigateToRoute(
-    route: Route,
+    target: Route,
     currentRoute: Route?,
 ) {
-    if (currentRoute == route && currentRoute == BottomBarRoute.SearchRoute) {
+    if (currentRoute == target && currentRoute == BottomBarRoute.SearchRoute) {
         // Handle second click on search item
-        this@navigateToRoute.currentBackStackEntry?.savedStateHandle?.set(
+        currentBackStackEntry?.savedStateHandle?.set(
             BottomBarRoute.SearchRoute.SEARCH_TAB_RESELECTED,
             true,
         )
         return // Prevent unnecessary navigation
     }
 
-    this@navigateToRoute.navigate(route) {
+    navigate(target) {
         // Pop up to the start destination of the graph to
         // avoid building up a large stack of destination
         // on the back stack as users select items
-        this@navigateToRoute.graph.startDestinationRoute?.let {
-            popUpTo(BottomBarRoute.HomeRoute) {
-                saveState = true
-            }
+        popUpTo<BottomBarRoute.HomeRoute> {
+            saveState = true
         }
         // Avoid multiple copies of the same destination
         // when reselecting the same item

@@ -41,7 +41,6 @@ import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_about
 import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_free
 import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_get_giveaway
 import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_instruction
-import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
 import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
 import dev.vladleesi.braindanceapp.ui.components.PlatformLogoList
@@ -68,24 +67,24 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun GiveawayDetailsScreen(
-    route: GiveawayDetailsRoute,
+    id: Int,
     navHostController: NavHostController?,
     modifier: Modifier = Modifier,
     viewModel: GiveawayDetailsViewModel = koinViewModel(),
 ) {
     val giveawayId by rememberSaveable {
-        mutableStateOf(route.id)
+        mutableStateOf(id)
     }
     val state by viewModel.giveawayDetailsState.collectAsState()
 
     LaunchedEffect(giveawayId) {
-        viewModel.loadGiveawayDetails(giveawayId)
+        viewModel.loadGiveawayDetails(giveawayId = giveawayId, reload = false)
     }
 
     when (val currentState = state) {
         is GiveawayDetailsState.Error ->
             ErrorScreen(errorMessage = currentState.message, modifier = modifier) {
-                viewModel.loadGiveawayDetails(giveawayId)
+                viewModel.loadGiveawayDetails(giveawayId = giveawayId, reload = true)
             }
 
         GiveawayDetailsState.Loading ->

@@ -11,15 +11,13 @@ import dev.vladleesi.braindanceapp.ui.screens.SearchScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class BottomBarRoute(
-    val route: String,
-) : Route {
+sealed class BottomBarRoute : Route {
     @Serializable
-    object HomeRoute : BottomBarRoute("HomeRoute") {
+    object HomeRoute : BottomBarRoute() {
         @Composable
         override fun Content(navHostController: NavHostController?) {
             val childNavController = rememberNavController()
-            NavHost(navController = childNavController, startDestination = FeedRoute::class) {
+            NavHost(navController = childNavController, startDestination = FeedRoute) {
                 registerInnerRoute<FeedRoute>(navHostController = childNavController)
                 registerInnerRoute<GameDetailsRoute>(navHostController = childNavController)
                 registerInnerRoute<GiveawayDetailsRoute>(navHostController = childNavController)
@@ -28,7 +26,7 @@ sealed class BottomBarRoute(
     }
 
     @Serializable
-    object NewsRoute : BottomBarRoute("NewsRoute") {
+    object NewsRoute : BottomBarRoute() {
         @Composable
         override fun Content(navHostController: NavHostController?) {
             NewsScreen()
@@ -36,7 +34,7 @@ sealed class BottomBarRoute(
     }
 
     @Serializable
-    object SearchRoute : BottomBarRoute("SearchRoute") {
+    object SearchRoute : BottomBarRoute() {
         const val SEARCH_TAB_RESELECTED = "searchTabReselected"
 
         @Composable
@@ -46,7 +44,7 @@ sealed class BottomBarRoute(
     }
 
     @Serializable
-    object CollectionsRoute : BottomBarRoute("CollectionsRoute") {
+    object CollectionsRoute : BottomBarRoute() {
         @Composable
         override fun Content(navHostController: NavHostController?) {
             CollectionsScreen()
@@ -54,23 +52,10 @@ sealed class BottomBarRoute(
     }
 
     @Serializable
-    object ProfileRoute : BottomBarRoute("ProfileRoute") {
+    object ProfileRoute : BottomBarRoute() {
         @Composable
         override fun Content(navHostController: NavHostController?) {
             ProfileScreen()
         }
-    }
-
-    companion object {
-        fun fromRoute(route: String?): BottomBarRoute? =
-            when {
-                route.isNullOrEmpty() -> null
-                route.contains(HomeRoute.route, ignoreCase = true) -> HomeRoute
-                route.contains(NewsRoute.route, ignoreCase = true) -> NewsRoute
-                route.contains(SearchRoute.route, ignoreCase = true) -> SearchRoute
-                route.contains(CollectionsRoute.route, ignoreCase = true) -> CollectionsRoute
-                route.contains(ProfileRoute.route, ignoreCase = true) -> ProfileRoute
-                else -> null
-            }
     }
 }

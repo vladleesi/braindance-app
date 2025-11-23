@@ -11,6 +11,6 @@ data class GiveawayDetailsRoute(
 ) : Route {
     @Composable
     override fun Content(navHostController: NavHostController?) {
-        GiveawayDetailsScreen(this, navHostController)
+        GiveawayDetailsScreen(id, navHostController)
     }
 }

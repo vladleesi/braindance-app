@@ -32,7 +32,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
-import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
@@ -54,24 +53,24 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun GameDetailsScreen(
-    route: GameDetailsRoute,
+    id: Int,
     navHostController: NavHostController?,
     modifier: Modifier = Modifier,
     viewModel: GameDetailsViewModel = koinViewModel(),
 ) {
     val gameId by rememberSaveable {
-        mutableStateOf(route.id)
+        mutableStateOf(id)
     }
     val state by viewModel.gameDetailsState.collectAsState()
 
-    LaunchedEffect(gameId) {
-        gameId.let { viewModel.loadGameDetails(it) }
+    LaunchedEffect(Unit) {
+        gameId.let { viewModel.loadGameDetails(gameId = gameId, reload = false) }
     }
 
     when (val currentState = state) {
         is GameDetailsState.Error ->
             ErrorScreen(errorMessage = currentState.message, modifier = modifier) {
-                viewModel.loadGameDetails(gameId)
+                viewModel.loadGameDetails(gameId = gameId, reload = true)
             }
 
         GameDetailsState.Loading ->

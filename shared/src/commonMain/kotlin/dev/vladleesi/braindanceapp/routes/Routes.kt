@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -52,7 +53,9 @@ inline fun <reified T : Route> NavGraphBuilder.registerRoute(
         },
     ) { entry ->
         val route = entry.toRoute<T>()
-        route.Content(navHostController)
+        key(entry.id) {
+            route.Content(navHostController)
+        }
     }
 }
 

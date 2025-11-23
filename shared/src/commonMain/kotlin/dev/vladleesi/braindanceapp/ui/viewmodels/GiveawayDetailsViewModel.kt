@@ -27,8 +27,11 @@ class GiveawayDetailsViewModel(
             _giveawayDetailsState.value = GiveawayDetailsState.Error(exception.message.orEmpty())
         }
 
-    fun loadGiveawayDetails(giveawayId: Int?) {
-        if (hasLoaded) return
+    fun loadGiveawayDetails(
+        giveawayId: Int?,
+        reload: Boolean,
+    ) {
+        if (hasLoaded && reload.not()) return
         hasLoaded = true
         viewModelScope.launch(Dispatchers.IO + handler) {
             runCatching {

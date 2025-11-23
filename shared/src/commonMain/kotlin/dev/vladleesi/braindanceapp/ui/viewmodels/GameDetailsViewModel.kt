@@ -34,8 +34,11 @@ class GameDetailsViewModel(
             _gameDetailsState.value = GameDetailsState.Error(exception.message.orEmpty())
         }
 
-    fun loadGameDetails(gameId: Int?) {
-        if (hasLoaded) return
+    fun loadGameDetails(
+        gameId: Int?,
+        reload: Boolean,
+    ) {
+        if (hasLoaded && reload.not()) return
         hasLoaded = true
         viewModelScope.launch(Dispatchers.IO + handler) {
             _gameDetailsState.emit(GameDetailsState.Loading)

@@ -1,6 +1,5 @@
 package dev.vladleesi.braindanceapp
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -38,7 +37,7 @@ fun BraindanceApp(modifier: Modifier = Modifier) {
             },
             modifier = modifier.fillMaxSize(),
         ) { paddingValues ->
-            Column(
+            NavigationGraph(
                 modifier =
                     Modifier
                         .fillMaxSize()
@@ -49,9 +48,8 @@ fun BraindanceApp(modifier: Modifier = Modifier) {
                                 WindowInsetsSides.Horizontal,
                             ),
                         ),
-            ) {
-                NavigationGraph(navController = navController)
-            }
+                navController = navController,
+            )
         }
     }
 }

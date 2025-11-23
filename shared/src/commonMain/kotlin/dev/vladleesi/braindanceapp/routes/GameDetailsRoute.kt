@@ -11,6 +11,6 @@ data class GameDetailsRoute(
 ) : Route {
     @Composable
     override fun Content(navHostController: NavHostController?) {
-        GameDetailsScreen(this, navHostController)
+        GameDetailsScreen(id, navHostController)
     }
 }
