@@ -14,11 +14,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.vladleesi.braindanceapp.routes.BottomBarRoute
+import dev.vladleesi.braindanceapp.routes.BottomBarRoute.CollectionsRoute.currentBottomBarRoute
 import dev.vladleesi.braindanceapp.routes.Route
 import dev.vladleesi.braindanceapp.routes.registerMainRoute
 import dev.vladleesi.braindanceapp.ui.style.navBar
@@ -65,17 +65,6 @@ fun NavigationGraph(
         registerMainRoute<BottomBarRoute.ProfileRoute>()
     }
 }
-
-private inline val NavDestination?.currentBottomBarRoute: BottomBarRoute?
-    get() =
-        when (this?.route) {
-            BottomBarRoute.HomeRoute::class.qualifiedName -> BottomBarRoute.HomeRoute
-            BottomBarRoute.NewsRoute::class.qualifiedName -> BottomBarRoute.NewsRoute
-            BottomBarRoute.SearchRoute::class.qualifiedName -> BottomBarRoute.SearchRoute
-            BottomBarRoute.CollectionsRoute::class.qualifiedName -> BottomBarRoute.CollectionsRoute
-            BottomBarRoute.ProfileRoute::class.qualifiedName -> BottomBarRoute.ProfileRoute
-            else -> null
-        }
 
 private fun NavHostController.navigateToRoute(
     target: Route,

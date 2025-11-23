@@ -1,6 +1,7 @@
 package dev.vladleesi.braindanceapp.routes
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -12,6 +13,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class BottomBarRoute : Route {
+    inline val NavDestination?.currentBottomBarRoute: BottomBarRoute?
+        get() =
+            when (this?.route) {
+                HomeRoute::class.qualifiedName -> HomeRoute
+                NewsRoute::class.qualifiedName -> NewsRoute
+                SearchRoute::class.qualifiedName -> SearchRoute
+                CollectionsRoute::class.qualifiedName -> CollectionsRoute
+                ProfileRoute::class.qualifiedName -> ProfileRoute
+                else -> null
+            }
+
     @Serializable
     object HomeRoute : BottomBarRoute() {
         @Composable
