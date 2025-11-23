@@ -37,8 +37,8 @@ fun ErrorScreen(
         modifier =
             modifier
                 .fillMaxSize()
-                .padding(Dimens.medium)
-                .background(background),
+                .background(background)
+                .padding(Dimens.medium),
         contentAlignment = Alignment.Center,
     ) {
         Column(

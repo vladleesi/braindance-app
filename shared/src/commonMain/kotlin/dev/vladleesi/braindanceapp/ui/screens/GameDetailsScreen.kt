@@ -65,7 +65,7 @@ fun GameDetailsScreen(
     val state by viewModel.gameDetailsState.collectAsState()
 
     LaunchedEffect(gameId) {
-        gameId?.let { viewModel.loadGameDetails(it) }
+        gameId.let { viewModel.loadGameDetails(it) }
     }
 
     when (val currentState = state) {
