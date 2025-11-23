@@ -50,13 +50,14 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.calculateScrollTopBarColors
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun GameDetailsScreen(
     id: Int,
     navHostController: NavHostController?,
     modifier: Modifier = Modifier,
-    viewModel: GameDetailsViewModel = koinViewModel(),
+    viewModel: GameDetailsViewModel = koinViewModel { parametersOf(id) },
 ) {
     val gameId by rememberSaveable {
         mutableStateOf(id)
@@ -64,13 +65,13 @@ fun GameDetailsScreen(
     val state by viewModel.gameDetailsState.collectAsState()
 
     LaunchedEffect(Unit) {
-        gameId.let { viewModel.loadGameDetails(gameId = gameId, reload = false) }
+        gameId.let { viewModel.load() }
     }
 
     when (val currentState = state) {
         is GameDetailsState.Error ->
             ErrorScreen(errorMessage = currentState.message, modifier = modifier) {
-                viewModel.loadGameDetails(gameId = gameId, reload = true)
+                viewModel.refresh()
             }
 
         GameDetailsState.Loading ->

@@ -54,7 +54,7 @@ fun FeedScreen(
 
     // Load the screen only on first navigation
     LaunchedEffect(Unit) {
-        viewModel.loadHome()
+        viewModel.load()
     }
 
     val scope = rememberCoroutineScope()

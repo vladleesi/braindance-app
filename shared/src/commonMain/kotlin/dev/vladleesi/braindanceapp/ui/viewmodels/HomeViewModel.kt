@@ -1,6 +1,5 @@
 package dev.vladleesi.braindanceapp.ui.viewmodels
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.models.games.GameItem
 import dev.vladleesi.braindanceapp.data.models.giveaways.GiveawayResponse
@@ -27,7 +26,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val homeRepo: HomeRepo,
     private val gamerPowerRepo: GamerPowerRepo,
-) : ViewModel() {
+) : ScreenViewModel() {
     private val _mostAnticipated = MutableStateFlow<HomeState>(HomeState.Loading)
     val mostAnticipated: StateFlow<HomeState> = _mostAnticipated.asStateFlow()
 
@@ -37,24 +36,19 @@ class HomeViewModel(
     private val _popularRightNow = MutableStateFlow<HomeState>(HomeState.Loading)
     val popularRightNow: StateFlow<HomeState> = _popularRightNow.asStateFlow()
 
-    private var hasLoaded = false
-
     private val handler =
         CoroutineExceptionHandler { _, exception ->
             Napier.e(message = exception.message.orEmpty(), throwable = exception)
         }
 
-    fun loadHome() {
-        if (hasLoaded) return
-        hasLoaded = true
+    override fun onLoad() {
         loadMostAnticipated()
         loadGiveaways()
         loadPopularRightNow()
     }
 
-    fun refresh() {
-        hasLoaded = false
-        loadHome()
+    override fun onRefresh() {
+        onLoad()
     }
 
     fun loadMostAnticipated(pageSize: Int = PAGE_SIZE) {

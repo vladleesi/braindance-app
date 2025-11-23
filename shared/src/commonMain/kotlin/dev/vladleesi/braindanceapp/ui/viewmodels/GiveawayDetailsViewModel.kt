@@ -1,6 +1,5 @@
 package dev.vladleesi.braindanceapp.ui.viewmodels
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.models.giveaways.GiveawayResponse
 import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
@@ -14,12 +13,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class GiveawayDetailsViewModel(
+    private val giveawayId: Int?,
     private val gamerPowerRepo: GamerPowerRepo,
-) : ViewModel() {
+) : ScreenViewModel() {
     private val _giveawayDetailsState = MutableStateFlow<GiveawayDetailsState>(GiveawayDetailsState.Loading)
     val giveawayDetailsState: StateFlow<GiveawayDetailsState> = _giveawayDetailsState.asStateFlow()
-
-    private var hasLoaded = false
 
     private val handler =
         CoroutineExceptionHandler { _, exception ->
@@ -27,17 +25,12 @@ class GiveawayDetailsViewModel(
             _giveawayDetailsState.value = GiveawayDetailsState.Error(exception.message.orEmpty())
         }
 
-    fun loadGiveawayDetails(
-        giveawayId: Int?,
-        reload: Boolean,
-    ) {
-        if (hasLoaded && reload.not()) return
-        hasLoaded = true
+    override fun onLoad() {
         viewModelScope.launch(Dispatchers.IO + handler) {
             runCatching {
                 _giveawayDetailsState.emit(GiveawayDetailsState.Loading)
                 if (giveawayId == null) {
-                    _giveawayDetailsState.emit(GiveawayDetailsState.Error("Invalid giveaway ID"))
+                    _giveawayDetailsState.emit(GiveawayDetailsState.Error("Invalid giveaway ID: $giveawayId"))
                     return@launch
                 }
                 val result = gamerPowerRepo.giveaway(giveawayId)
@@ -48,6 +41,10 @@ class GiveawayDetailsViewModel(
                 _giveawayDetailsState.emit(GiveawayDetailsState.Error(throwable.message.orEmpty()))
             }
         }
+    }
+
+    override fun onRefresh() {
+        onLoad()
     }
 }
 

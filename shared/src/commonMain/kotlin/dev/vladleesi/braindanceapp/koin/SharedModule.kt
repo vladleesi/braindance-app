@@ -17,6 +17,7 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
@@ -59,8 +60,8 @@ private val repositoryModule =
 private val viewModelModule =
     module {
         viewModelOf(::HomeViewModel)
-        viewModelOf(::GameDetailsViewModel)
-        viewModelOf(::GiveawayDetailsViewModel)
+        viewModel { (id: Int) -> GameDetailsViewModel(gameId = id, gameDetailsRepo = get()) }
+        viewModel { (id: Int) -> GiveawayDetailsViewModel(giveawayId = id, gamerPowerRepo = get()) }
     }
 
 private val tokenStorageModule =

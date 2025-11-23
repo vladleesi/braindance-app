@@ -64,13 +64,14 @@ import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.toContentDescription
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun GiveawayDetailsScreen(
     id: Int,
     navHostController: NavHostController?,
     modifier: Modifier = Modifier,
-    viewModel: GiveawayDetailsViewModel = koinViewModel(),
+    viewModel: GiveawayDetailsViewModel = koinViewModel { parametersOf(id) },
 ) {
     val giveawayId by rememberSaveable {
         mutableStateOf(id)
@@ -78,13 +79,13 @@ fun GiveawayDetailsScreen(
     val state by viewModel.giveawayDetailsState.collectAsState()
 
     LaunchedEffect(giveawayId) {
-        viewModel.loadGiveawayDetails(giveawayId = giveawayId, reload = false)
+        viewModel.load()
     }
 
     when (val currentState = state) {
         is GiveawayDetailsState.Error ->
             ErrorScreen(errorMessage = currentState.message, modifier = modifier) {
-                viewModel.loadGiveawayDetails(giveawayId = giveawayId, reload = true)
+                viewModel.refresh()
             }
 
         GiveawayDetailsState.Loading ->

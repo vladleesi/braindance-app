@@ -1,6 +1,5 @@
 package dev.vladleesi.braindanceapp.ui.viewmodels
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
 import dev.vladleesi.braindanceapp.utils.CoverSize
@@ -21,12 +20,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class GameDetailsViewModel(
+    private val gameId: Int?,
     private val gameDetailsRepo: GameDetailsRepo,
-) : ViewModel() {
+) : ScreenViewModel() {
     private val _gameDetailsState = MutableStateFlow<GameDetailsState>(GameDetailsState.Loading)
     val gameDetailsState: StateFlow<GameDetailsState> = _gameDetailsState.asStateFlow()
-
-    private var hasLoaded = false
 
     private val handler =
         CoroutineExceptionHandler { _, exception ->
@@ -34,14 +32,13 @@ class GameDetailsViewModel(
             _gameDetailsState.value = GameDetailsState.Error(exception.message.orEmpty())
         }
 
-    fun loadGameDetails(
-        gameId: Int?,
-        reload: Boolean,
-    ) {
-        if (hasLoaded && reload.not()) return
-        hasLoaded = true
+    override fun onLoad() {
         viewModelScope.launch(Dispatchers.IO + handler) {
             _gameDetailsState.emit(GameDetailsState.Loading)
+            if (gameId == null) {
+                _gameDetailsState.emit(GameDetailsState.Error("Invalid game ID: $gameId"))
+                return@launch
+            }
             val game = gameDetailsRepo.gameDetails(gameId.orZero())?.firstOrNull()
             val gameDetails =
                 GameDetails(
@@ -70,6 +67,10 @@ class GameDetailsViewModel(
                 GameDetailsState.Success(gameDetails),
             )
         }
+    }
+
+    override fun onRefresh() {
+        onLoad()
     }
 }
 
