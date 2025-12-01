@@ -2,7 +2,6 @@ package dev.vladleesi.braindanceapp.data.repository
 
 import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
 import dev.vladleesi.braindanceapp.data.models.games.GameItem
-import dev.vladleesi.braindanceapp.data.models.popularity.PopularityResponse
 import dev.vladleesi.braindanceapp.data.models.request.PopularityPrimitives
 import dev.vladleesi.braindanceapp.data.models.request.RequestBody
 import dev.vladleesi.braindanceapp.utils.excludeAdultOnlyGames
@@ -10,6 +9,7 @@ import io.ktor.client.call.body
 
 class HomeRepo(
     private val gamesRemote: GamesRemote,
+    private val primitivesRepo: PopularityPrimitivesRepo,
 ) {
     suspend fun mostAnticipated(
         pageSize: Int,
@@ -35,17 +35,10 @@ class HomeRepo(
 
     suspend fun popularRightNow(pageSize: Int): List<GameItem>? {
         val popularityResponses =
-            gamesRemote
-                .popularityPrimitives(
-                    requestBody =
-                        RequestBody
-                            .Builder {
-                                fields = listOf("game_id")
-                                where = listOf("popularity_type = ${PopularityPrimitives.VISITS.type}")
-                                sort = "value ${RequestBody.Sort.DESC.order}"
-                                limit = pageSize + pageSize // Extra results to compensate for filtered adult-only games
-                            }.build(),
-                ).body<List<PopularityResponse>?>()
+            primitivesRepo.popularityPrimitives(
+                type = PopularityPrimitives.HOURS_WATCHED_24H,
+                pageSize = pageSize + pageSize, // Extra results to compensate for filtered adult-only games
+            )
 
         if (popularityResponses.isNullOrEmpty()) {
             return null

@@ -7,13 +7,13 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 
-class GamesRemote(
+class PopularityPrimitivesRemote(
     ktorClientManager: KtorClientManager,
 ) {
     private val igdbHttpClient = ktorClientManager.igdbHttpClient
 
-    suspend fun games(requestBody: RequestBody): HttpResponse =
-        igdbHttpClient.post(ApiConfig.Endpoints.GAMES) {
+    suspend fun popularityPrimitives(requestBody: RequestBody): HttpResponse =
+        igdbHttpClient.post(ApiConfig.Endpoints.POPULARITY_PRIMITIVES) {
             setBody(requestBody.body)
         }
 }

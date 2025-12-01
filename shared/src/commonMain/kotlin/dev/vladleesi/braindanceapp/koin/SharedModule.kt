@@ -7,9 +7,11 @@ import dev.vladleesi.braindanceapp.data.api.clients.TwitchClient
 import dev.vladleesi.braindanceapp.data.api.remote.AuthRemote
 import dev.vladleesi.braindanceapp.data.api.remote.GamerPowerRemote
 import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
+import dev.vladleesi.braindanceapp.data.api.remote.PopularityPrimitivesRemote
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
 import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
+import dev.vladleesi.braindanceapp.data.repository.PopularityPrimitivesRepo
 import dev.vladleesi.braindanceapp.data.token.TokenStorage
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.ui.viewmodels.GiveawayDetailsViewModel
@@ -47,6 +49,7 @@ private val remoteModule =
     module {
         singleOf(::AuthRemote)
         singleOf(::GamesRemote)
+        singleOf(::PopularityPrimitivesRemote)
         singleOf(::GamerPowerRemote)
     }
 
@@ -55,6 +58,7 @@ private val repositoryModule =
         singleOf(::HomeRepo)
         singleOf(::GamerPowerRepo)
         singleOf(::GameDetailsRepo)
+        singleOf(::PopularityPrimitivesRepo)
     }
 
 private val viewModelModule =
