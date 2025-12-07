@@ -94,6 +94,6 @@ sealed interface BottomBarRoute : Route {
     }
 
     companion object {
-        val routes = listOf(HomeRoute, NewsRoute, SearchRoute, CollectionsRoute, ProfileRoute)
+        val routes = listOf<BottomBarRoute>(HomeRoute, NewsRoute, SearchRoute, CollectionsRoute, ProfileRoute)
     }
 }
