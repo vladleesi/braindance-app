@@ -10,7 +10,7 @@ import dev.vladleesi.braindanceapp.ui.components.SpacerTopBarWithStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 
 @Composable
-fun NewsScreen(modifier: Modifier = Modifier) {
+fun NewsScreen(modifier: Modifier) {
     Column(modifier = modifier) {
         SpacerTopBarWithStatusBarInsets()
         Text(

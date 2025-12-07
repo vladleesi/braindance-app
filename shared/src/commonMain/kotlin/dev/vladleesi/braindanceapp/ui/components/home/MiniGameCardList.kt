@@ -19,8 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import dev.vladleesi.braindanceapp.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeState
@@ -30,11 +28,11 @@ private const val MINI_GAME_CARD_SKELETON_COUNT = 4
 
 @Composable
 fun MiniGameCardList(
+    modifier: Modifier = Modifier,
     title: String,
     state: HomeState,
     onRefresh: () -> Unit,
-    modifier: Modifier = Modifier,
-    navHostController: NavHostController,
+    onItemClick: (Int) -> Unit,
 ) {
     Crossfade(targetState = state) {
         when (state) {
@@ -49,7 +47,7 @@ fun MiniGameCardList(
                     title = title,
                     games = state.entities.filterIsInstance<MiniGameCardModel>(),
                     modifier = modifier,
-                    navHostController = navHostController,
+                    onItemClick = onItemClick,
                 )
 
             is HomeState.Error ->
@@ -111,13 +109,8 @@ private fun MiniGameCardList(
     title: String,
     games: List<MiniGameCardModel>,
     modifier: Modifier = Modifier,
-    navHostController: NavHostController,
+    onItemClick: (Int) -> Unit,
 ) {
-    val onCardClicked: (Int) -> Unit = { id ->
-        navHostController.navigate(
-            route = GameDetailsRoute(id = id),
-        )
-    }
     Column(modifier = modifier) {
         Box(modifier = Modifier.fillMaxWidth()) {
             StaticText(
@@ -145,7 +138,7 @@ private fun MiniGameCardList(
             contentPadding = PaddingValues(horizontal = Dimens.medium),
         ) {
             items(games, key = { it.id }, contentType = { it }) { card ->
-                MiniGameCard(card = card, onCardClicked = onCardClicked)
+                MiniGameCard(card = card, onClick = onItemClick)
             }
         }
     }

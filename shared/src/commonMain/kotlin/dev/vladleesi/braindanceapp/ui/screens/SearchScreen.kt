@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,8 +23,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import dev.vladleesi.braindanceapp.routes.BottomBarRoute
 import dev.vladleesi.braindanceapp.ui.components.SearchBar
 import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.style.Dimens
@@ -35,21 +31,12 @@ import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.utils.clickable
 
 @Composable
-fun SearchScreen(
-    navHostController: NavHostController?,
-    modifier: Modifier = Modifier,
-) {
+fun SearchScreen(modifier: Modifier) {
     var isFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val searchFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    // TODO: Refactor it
-    val searchTabReselected =
-        navHostController
-            ?.currentBackStackEntry
-            ?.savedStateHandle
-            ?.getStateFlow(BottomBarRoute.SearchRoute.SEARCH_TAB_RESELECTED, false)
-            ?.collectAsState()
+
     val onSearchIconClick: () -> Unit = {
         if (isFocused) {
             keyboardController?.hide()
@@ -58,17 +45,6 @@ fun SearchScreen(
         }
     }
     var isLoading by remember { mutableStateOf(false) }
-    LaunchedEffect(searchTabReselected?.value) {
-        if (searchTabReselected?.value == true) {
-            searchFocusRequester.requestFocus()
-            keyboardController?.show()
-
-            // Reset the state after handling it
-            navHostController.currentBackStackEntry
-                ?.savedStateHandle
-                ?.set(BottomBarRoute.SearchRoute.SEARCH_TAB_RESELECTED, false)
-        }
-    }
 
     Column(modifier = modifier.fillMaxSize().background(background)) {
         SpacerStatusBarInsets()

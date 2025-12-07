@@ -10,7 +10,7 @@ import dev.vladleesi.braindanceapp.ui.components.SpacerTopBarWithStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
+fun ProfileScreen(modifier: Modifier) {
     Column(modifier = modifier) {
         SpacerTopBarWithStatusBarInsets()
         Text(

@@ -22,7 +22,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
+import dev.vladleesi.braindanceapp.LocalNavigator
+import dev.vladleesi.braindanceapp.navigation.routes.GameDetailsRoute
+import dev.vladleesi.braindanceapp.navigation.routes.GiveawayDetailsRoute
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.home_screen_popular_latest_giveaways
 import dev.vladleesi.braindanceapp.resources.home_screen_popular_most_anticipated
@@ -43,11 +45,12 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun FeedScreen(
+fun HomeScreen(
+    modifier: Modifier,
     viewModel: HomeViewModel = koinViewModel(),
-    modifier: Modifier = Modifier,
-    navHostController: NavHostController,
 ) {
+    val navigator = LocalNavigator.current
+
     val mostAnticipated by viewModel.mostAnticipated.collectAsState()
     val giveaways by viewModel.giveaways.collectAsState()
     val popularRightNow by viewModel.popularRightNow.collectAsState()
@@ -93,7 +96,7 @@ fun FeedScreen(
                     title = stringResource(Res.string.home_screen_popular_most_anticipated),
                     state = mostAnticipated,
                     onRefresh = { viewModel.loadMostAnticipated() },
-                    navHostController = navHostController,
+                    onItemClick = { id -> navigator.navigate(GameDetailsRoute(id)) },
                 )
             }
             item {
@@ -101,7 +104,7 @@ fun FeedScreen(
                     title = stringResource(Res.string.home_screen_popular_latest_giveaways),
                     state = giveaways,
                     onRefresh = { viewModel.loadGiveaways() },
-                    navHostController = navHostController,
+                    onItemClick = { id -> navigator.navigate(GiveawayDetailsRoute(id)) },
                 )
             }
             item {
@@ -109,7 +112,7 @@ fun FeedScreen(
                     title = stringResource(Res.string.home_screen_popular_popular_right_now),
                     state = popularRightNow,
                     onRefresh = { viewModel.loadPopularRightNow() },
-                    navHostController = navHostController,
+                    onItemClick = { id -> navigator.navigate(GameDetailsRoute(id)) },
                 )
             }
             item { Spacer(Modifier.height(Dimens.large)) }

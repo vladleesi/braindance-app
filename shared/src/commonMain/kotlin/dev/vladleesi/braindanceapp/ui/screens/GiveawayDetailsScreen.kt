@@ -34,8 +34,8 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import dev.vladleesi.braindanceapp.LocalNavigator
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_about
 import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_free
@@ -69,10 +69,11 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun GiveawayDetailsScreen(
     id: Int,
-    navHostController: NavHostController?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     viewModel: GiveawayDetailsViewModel = koinViewModel { parametersOf(id) },
 ) {
+    val navigator = LocalNavigator.current
+
     val giveawayId by rememberSaveable {
         mutableStateOf(id)
     }
@@ -92,7 +93,11 @@ fun GiveawayDetailsScreen(
             GlobalLoading(modifier = modifier)
 
         is GiveawayDetailsState.Success ->
-            GiveawayDetailsScreen(state = currentState, modifier = modifier, navHostController = navHostController)
+            GiveawayDetailsScreen(
+                state = currentState,
+                modifier = modifier,
+                onBackButtonPressed = { navigator.goBack() },
+            )
     }
 }
 
@@ -100,7 +105,7 @@ fun GiveawayDetailsScreen(
 fun GiveawayDetailsScreen(
     state: GiveawayDetailsState.Success,
     modifier: Modifier,
-    navHostController: NavHostController?,
+    onBackButtonPressed: (() -> Unit),
 ) {
     Box(
         modifier =
@@ -179,7 +184,7 @@ fun GiveawayDetailsScreen(
                 titleColor = topBarTitleColor,
                 showBackButton = true,
                 backButtonBackgroundColor = backButtonColor,
-                onBackButtonPressed = { navHostController?.popBackStack() },
+                onBackButtonPressed = onBackButtonPressed,
             )
         }
     }

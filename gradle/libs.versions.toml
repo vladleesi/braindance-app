@@ -4,14 +4,15 @@ kotlin = "2.2.21"
 compose-plugin = "1.9.3"
 ktlint = "14.0.1"
 detekt = "1.23.8"
-ktor = "3.3.2"
-activity-compose = "1.12.0"
-compose = "1.9.5"
+ktor = "3.3.3"
+activity-compose = "1.12.1"
+compose = "1.10.0"
 lifecycle = "2.9.6"
 coil3 = "3.3.0"
 buildkonfig = "0.17.1"
 datetime = "0.7.1"
 koin = "4.1.1"
+nav3 = "1.0.0-alpha06"
 
 [libraries]
 
@@ -26,7 +27,7 @@ compose-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewm
 compose-lifecycle = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
 # compose navigation
-compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version = "2.9.1" }
+compose-navigation3 = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "nav3" }
 
 # security
 androidx-security-crypto-ktx = { module = "androidx.security:security-crypto-ktx", version = "1.1.0" }

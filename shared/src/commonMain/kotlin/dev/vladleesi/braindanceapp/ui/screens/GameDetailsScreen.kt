@@ -30,8 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import dev.vladleesi.braindanceapp.LocalNavigator
 import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
@@ -55,10 +55,11 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun GameDetailsScreen(
     id: Int,
-    navHostController: NavHostController?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     viewModel: GameDetailsViewModel = koinViewModel { parametersOf(id) },
 ) {
+    val navigator = LocalNavigator.current
+
     val gameId by rememberSaveable {
         mutableStateOf(id)
     }
@@ -79,7 +80,11 @@ fun GameDetailsScreen(
 
         is GameDetailsState.Success ->
             key(currentState.gameDetails.id) {
-                GameDetailsScreen(state = currentState, modifier = modifier, navHostController = navHostController)
+                GameDetailsScreen(
+                    state = currentState,
+                    modifier = modifier,
+                    onBackButtonPressed = { navigator.goBack() },
+                )
             }
     }
 }
@@ -88,7 +93,7 @@ fun GameDetailsScreen(
 private fun GameDetailsScreen(
     state: GameDetailsState.Success,
     modifier: Modifier,
-    navHostController: NavHostController?,
+    onBackButtonPressed: (() -> Unit),
 ) {
     val lazyListState = rememberLazyListState()
     val (topBarColor, backButtonColor, topBarTitleColor) =
@@ -133,7 +138,7 @@ private fun GameDetailsScreen(
                 titleColor = topBarTitleColor,
                 showBackButton = true,
                 backButtonBackgroundColor = backButtonColor,
-                onBackButtonPressed = { navHostController?.popBackStack() },
+                onBackButtonPressed = onBackButtonPressed,
                 title = state.gameDetails.name,
             )
         }

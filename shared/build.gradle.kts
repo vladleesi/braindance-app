@@ -42,7 +42,7 @@ kotlin {
             implementation(compose.material)
             implementation(compose.components.resources)
             // Navigation
-            implementation(libs.compose.navigation)
+            implementation(libs.compose.navigation3)
             // View Model
             implementation(libs.compose.viewmodel)
             implementation(libs.compose.lifecycle)

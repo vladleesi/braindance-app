@@ -10,14 +10,23 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
+import dev.vladleesi.braindanceapp.navigation.Navigator
+import dev.vladleesi.braindanceapp.navigation.rememberNavigationState
+import dev.vladleesi.braindanceapp.navigation.routes.BottomBarRoute
 import dev.vladleesi.braindanceapp.ui.components.BottomBar
 import dev.vladleesi.braindanceapp.ui.components.NavigationGraph
 import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.utils.ImageLoaderInitializer
+
+val LocalNavigator =
+    staticCompositionLocalOf<Navigator> {
+        error("No Navigator provided")
+    }
 
 @Composable
 fun BraindanceApp(modifier: Modifier = Modifier) {
@@ -28,28 +37,33 @@ fun BraindanceApp(modifier: Modifier = Modifier) {
         isInitialized.value = true
     }
 
-    val navController = rememberNavController()
+    val navigationState =
+        rememberNavigationState(
+            startRoute = BottomBarRoute.HomeRoute,
+            topLevelRoutes = BottomBarRoute.routes.toSet(),
+        )
 
-    BraindanceTheme {
-        Scaffold(
-            bottomBar = {
-                BottomBar(navController = navController)
-            },
-            modifier = modifier.fillMaxSize(),
-        ) { paddingValues ->
-            NavigationGraph(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .consumeWindowInsets(paddingValues)
-                        .windowInsetsPadding(
-                            WindowInsets.safeDrawing.only(
-                                WindowInsetsSides.Horizontal,
+    val navigator = remember { Navigator(navigationState) }
+
+    CompositionLocalProvider(LocalNavigator provides navigator) {
+        BraindanceTheme {
+            Scaffold(
+                bottomBar = { BottomBar() },
+                modifier = modifier.fillMaxSize(),
+            ) { paddingValues ->
+                NavigationGraph(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .consumeWindowInsets(paddingValues)
+                            .windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(
+                                    WindowInsetsSides.Horizontal,
+                                ),
                             ),
-                        ),
-                navController = navController,
-            )
+                )
+            }
         }
     }
 }

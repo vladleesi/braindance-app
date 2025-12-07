@@ -45,12 +45,12 @@ import org.jetbrains.compose.resources.stringResource
 fun GiveawayItem(
     item: GiveawayItemModel,
     modifier: Modifier = Modifier,
-    onCardClicked: (id: Int) -> Unit,
+    onClick: (Int) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         GiveawayItemCard(
             item = item,
-            onCardClicked = onCardClicked,
+            onClick = onClick,
         )
         Spacer(modifier = Modifier.height(Dimens.small))
         Text(
@@ -83,7 +83,7 @@ fun GiveawayItem(
 private fun GiveawayItemCard(
     modifier: Modifier = Modifier,
     item: GiveawayItemModel,
-    onCardClicked: (id: Int) -> Unit,
+    onClick: (id: Int) -> Unit,
 ) {
     val imagePainter =
         rememberCachedImagePainter(
@@ -96,7 +96,7 @@ private fun GiveawayItemCard(
                 .height(Dimens.giveAwayCardHeight)
                 .width(Dimens.giveAwayCardWidth)
                 .clip(RoundedCornerShape(Dimens.small))
-                .clickable { onCardClicked(item.id) },
+                .clickable { onClick(item.id) },
     ) {
         Image(
             painter = imagePainter,

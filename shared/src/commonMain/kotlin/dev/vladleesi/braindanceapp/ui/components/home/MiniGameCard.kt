@@ -23,7 +23,7 @@ import dev.vladleesi.braindanceapp.utils.toContentDescription
 fun MiniGameCard(
     card: MiniGameCardModel,
     modifier: Modifier = Modifier,
-    onCardClicked: (id: Int) -> Unit,
+    onClick: (id: Int) -> Unit,
 ) {
     val imagePainter =
         rememberCachedImagePainter(
@@ -37,7 +37,7 @@ fun MiniGameCard(
                     .height(Dimens.miniGameCardHeight)
                     .width(Dimens.miniGameCardWidth)
                     .clip(RoundedCornerShape(Dimens.small))
-                    .clickable { onCardClicked(card.id) },
+                    .clickable { onClick(card.id) },
         ) {
             Image(
                 painter = imagePainter,

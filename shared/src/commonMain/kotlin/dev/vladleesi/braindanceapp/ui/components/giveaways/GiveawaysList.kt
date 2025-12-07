@@ -19,8 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import dev.vladleesi.braindanceapp.routes.GiveawayDetailsRoute
 import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.components.home.CarouselErrorState
 import dev.vladleesi.braindanceapp.ui.style.Dimens
@@ -35,7 +33,7 @@ fun GiveawaysList(
     state: HomeState,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
-    navHostController: NavHostController,
+    onItemClick: (Int) -> Unit,
 ) {
     Crossfade(targetState = state) {
         when (state) {
@@ -47,10 +45,10 @@ fun GiveawaysList(
 
             is HomeState.Success<*> ->
                 GiveawaysList(
-                    navHostController = navHostController,
                     title = title,
                     giveaways = state.entities.filterIsInstance<GiveawayItemModel>(),
                     modifier = modifier,
+                    onItemClick = onItemClick,
                 )
 
             is HomeState.Error ->
@@ -108,16 +106,11 @@ private fun GiveawaysListSkeleton(
 
 @Composable
 private fun GiveawaysList(
-    navHostController: NavHostController,
     title: String,
     giveaways: List<GiveawayItemModel>,
     modifier: Modifier,
+    onItemClick: (Int) -> Unit,
 ) {
-    val onCardClicked: (Int) -> Unit = { id ->
-        navHostController.navigate(
-            route = GiveawayDetailsRoute(id = id),
-        )
-    }
     Column(modifier = modifier) {
         Box(modifier = Modifier.fillMaxWidth()) {
             StaticText(
@@ -151,7 +144,7 @@ private fun GiveawaysList(
             ) { item ->
                 GiveawayItem(
                     item = item,
-                    onCardClicked = onCardClicked,
+                    onClick = onItemClick,
                 )
             }
         }
