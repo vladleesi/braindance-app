@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +25,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import dev.vladleesi.braindanceapp.navigation.LocalNavigator
+import dev.vladleesi.braindanceapp.navigation.routes.BottomBarRoute
 import dev.vladleesi.braindanceapp.ui.components.SearchBar
 import dev.vladleesi.braindanceapp.ui.components.SpacerStatusBarInsets
 import dev.vladleesi.braindanceapp.ui.style.Dimens
@@ -36,6 +40,16 @@ fun SearchScreen(modifier: Modifier) {
     val focusManager = LocalFocusManager.current
     val searchFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val navigator = LocalNavigator.current
+
+    val searchTabReselected by navigator.resultsFlow(BottomBarRoute.SearchRoute.RESULT_KEY).collectAsState(null)
+
+    LaunchedEffect(searchTabReselected) {
+        if (searchTabReselected == true) {
+            searchFocusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
 
     val onSearchIconClick: () -> Unit = {
         if (isFocused) {
@@ -56,6 +70,9 @@ fun SearchScreen(modifier: Modifier) {
                     .focusRequester(searchFocusRequester)
                     .onFocusChanged { focusState ->
                         isFocused = focusState.isFocused
+                        if (isFocused.not()) {
+                            navigator.setResult(BottomBarRoute.SearchRoute.RESULT_KEY, false)
+                        }
                     },
             leadingIcon = {
                 SearchIcon(visible = !isFocused, imageVector = Search, onClick = onSearchIconClick)

@@ -53,6 +53,8 @@ sealed interface BottomBarRoute : Route {
 
     @Serializable
     object SearchRoute : BottomBarRoute {
+        const val RESULT_KEY = "search_result_key"
+
         override val imageVector: ImageVector
             get() = Search
 

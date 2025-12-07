@@ -1,6 +1,12 @@
 package dev.vladleesi.braindanceapp.navigation
 
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation3.runtime.NavKey
+import io.github.aakira.napier.Napier
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.update
 
 /**
  * Handles navigation events (forward and back) by updating the navigation state.
@@ -28,4 +34,35 @@ class Navigator(
             currentStack.removeLastOrNull()
         }
     }
+
+    private val resultsFlow = MutableStateFlow<Map<String, Any?>>(emptyMap())
+
+    fun setResult(
+        key: String,
+        value: Any?,
+    ) {
+        resultsFlow.update { it + (key to value) }
+    }
+
+    /**
+     * Observes updates for [key] and calls [onResult] on each emission.
+     */
+    suspend fun observeResult(
+        key: String,
+        onResult: (Any?) -> Unit,
+    ) = resultsFlow(key)
+        .collect(onResult)
+
+    /**
+     * Returns a flow that emits values for [key] whenever they change.
+     */
+    fun resultsFlow(key: String) =
+        resultsFlow
+            .mapNotNull { it[key] }
+            .catch { Napier.e(throwable = it) { "Result observation failed for key: $key" } }
 }
+
+val LocalNavigator =
+    staticCompositionLocalOf<Navigator> {
+        error("No Navigator provided")
+    }

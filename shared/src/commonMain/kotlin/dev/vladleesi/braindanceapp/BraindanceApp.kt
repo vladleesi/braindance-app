@@ -13,8 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import dev.vladleesi.braindanceapp.navigation.LocalNavigator
 import dev.vladleesi.braindanceapp.navigation.Navigator
 import dev.vladleesi.braindanceapp.navigation.rememberNavigationState
 import dev.vladleesi.braindanceapp.navigation.routes.BottomBarRoute
@@ -22,11 +22,6 @@ import dev.vladleesi.braindanceapp.ui.components.BottomBar
 import dev.vladleesi.braindanceapp.ui.components.NavigationGraph
 import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.utils.ImageLoaderInitializer
-
-val LocalNavigator =
-    staticCompositionLocalOf<Navigator> {
-        error("No Navigator provided")
-    }
 
 @Composable
 fun BraindanceApp(modifier: Modifier = Modifier) {

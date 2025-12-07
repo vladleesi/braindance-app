@@ -35,7 +35,7 @@ import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import dev.vladleesi.braindanceapp.LocalNavigator
+import dev.vladleesi.braindanceapp.navigation.LocalNavigator
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_about
 import dev.vladleesi.braindanceapp.resources.giveaway_details_screen_free

@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import dev.vladleesi.braindanceapp.LocalNavigator
+import dev.vladleesi.braindanceapp.navigation.LocalNavigator
 import dev.vladleesi.braindanceapp.navigation.routes.BottomBarRoute
 import dev.vladleesi.braindanceapp.navigation.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.navigation.routes.GiveawayDetailsRoute
@@ -29,6 +29,7 @@ fun BottomBar() {
         elevation = 0.dp,
     ) {
         BottomBarRoute.routes.forEach { route ->
+            val isSelected = route == navigator.state.topLevelRoute
             BottomNavigationItem(
                 icon = {
                     Icon(
@@ -36,10 +37,17 @@ fun BottomBar() {
                         contentDescription = null,
                     )
                 },
-                selected = route == navigator.state.topLevelRoute,
+                selected = isSelected,
                 selectedContentColor = white,
                 unselectedContentColor = secondaryText,
-                onClick = { navigator.navigate(route) },
+                onClick = {
+                    // Handle double click on search tab
+                    if (isSelected && route is BottomBarRoute.SearchRoute) {
+                        navigator.setResult(BottomBarRoute.SearchRoute.RESULT_KEY, true)
+                    } else {
+                        navigator.navigate(route)
+                    }
+                },
             )
         }
     }
