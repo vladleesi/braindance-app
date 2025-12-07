@@ -50,8 +50,10 @@ class Navigator(
     suspend fun observeResult(
         key: String,
         onResult: (Any?) -> Unit,
-    ) = resultsFlow(key)
-        .collect(onResult)
+    ) {
+        resultsFlow(key)
+            .collect(onResult)
+    }
 
     /**
      * Returns a flow that emits values for [key] whenever they change.
