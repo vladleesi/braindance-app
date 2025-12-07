@@ -70,8 +70,13 @@ import org.koin.core.parameter.parametersOf
 fun GiveawayDetailsScreen(
     id: Int,
     modifier: Modifier,
-    viewModel: GiveawayDetailsViewModel = koinViewModel { parametersOf(id) },
 ) {
+    val viewModel: GiveawayDetailsViewModel =
+        koinViewModel(
+            key = "giveaway_details_$id",
+            parameters = { parametersOf(id) },
+        )
+
     val navigator = LocalNavigator.current
 
     val giveawayId by rememberSaveable {

@@ -56,8 +56,13 @@ import org.koin.core.parameter.parametersOf
 fun GameDetailsScreen(
     id: Int,
     modifier: Modifier,
-    viewModel: GameDetailsViewModel = koinViewModel { parametersOf(id) },
 ) {
+    val viewModel: GameDetailsViewModel =
+        koinViewModel(
+            key = "game_details_$id",
+            parameters = { parametersOf(id) },
+        )
+
     val navigator = LocalNavigator.current
 
     val gameId by rememberSaveable {
