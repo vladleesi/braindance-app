@@ -1,7 +1,6 @@
 package dev.vladleesi.braindanceapp.data.api
 
-import io.github.aakira.napier.DebugAntilog
-import io.github.aakira.napier.Napier
+import dev.vladleesi.braindanceapp.logger.BLogger
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -25,10 +24,6 @@ fun HttpClientConfig<*>.defaultConfig() {
     errorHandlerConfig()
 }
 
-fun initNapier() {
-    Napier.base(DebugAntilog())
-}
-
 private fun HttpClientConfig<*>.engineConfig() {
     engine {
         request {
@@ -49,7 +44,7 @@ private fun HttpClientConfig<*>.loggerConfig() {
         logger =
             object : Logger {
                 override fun log(message: String) {
-                    Napier.d(tag = "HTTP Client", message = message)
+                    BLogger.debug(tag = "HTTP Client", message = message)
                 }
             }
     }

@@ -3,7 +3,7 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.models.giveaways.GiveawayResponse
 import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
-import io.github.aakira.napier.Napier
+import dev.vladleesi.braindanceapp.logger.BLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -21,7 +21,7 @@ class GiveawayDetailsViewModel(
 
     private val handler =
         CoroutineExceptionHandler { _, exception ->
-            Napier.e(message = exception.message.orEmpty(), throwable = exception)
+            BLogger.error(message = exception.message.orEmpty(), throwable = exception)
             _giveawayDetailsState.value = GiveawayDetailsState.Error(exception.message.orEmpty())
         }
 

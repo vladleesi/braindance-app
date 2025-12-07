@@ -2,7 +2,6 @@ package dev.vladleesi.braindanceapp.data.api.clients
 
 import dev.vladleesi.braindanceapp.BuildKonfig
 import dev.vladleesi.braindanceapp.data.api.defaultConfig
-import dev.vladleesi.braindanceapp.data.api.initNapier
 import dev.vladleesi.braindanceapp.data.api.remote.AuthRemote
 import dev.vladleesi.braindanceapp.data.config.ApiConfig
 import dev.vladleesi.braindanceapp.data.models.token.TwitchTokenResponse
@@ -27,7 +26,7 @@ object IgdbClient {
         authConfig(authRemote, tokenStorage)
         defaultConfig()
         defaultRequestConfig()
-    }.also { initNapier() }
+    }
 }
 
 private fun HttpClientConfig<*>.defaultRequestConfig() {

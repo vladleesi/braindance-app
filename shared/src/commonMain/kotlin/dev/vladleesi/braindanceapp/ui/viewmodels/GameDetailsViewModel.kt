@@ -2,6 +2,7 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
+import dev.vladleesi.braindanceapp.logger.BLogger
 import dev.vladleesi.braindanceapp.utils.CoverSize
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.StoreTypeModel
@@ -10,7 +11,6 @@ import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import dev.vladleesi.braindanceapp.utils.toCoverUrl
 import dev.vladleesi.braindanceapp.utils.toStoreTypes
-import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -28,7 +28,7 @@ class GameDetailsViewModel(
 
     private val handler =
         CoroutineExceptionHandler { _, exception ->
-            Napier.e(message = exception.message.orEmpty(), throwable = exception)
+            BLogger.error(message = exception.message.orEmpty(), throwable = exception)
             _gameDetailsState.value = GameDetailsState.Error(exception.message.orEmpty())
         }
 

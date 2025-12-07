@@ -2,7 +2,7 @@ package dev.vladleesi.braindanceapp.navigation
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation3.runtime.NavKey
-import io.github.aakira.napier.Napier
+import dev.vladleesi.braindanceapp.logger.BLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.mapNotNull
@@ -61,7 +61,7 @@ class Navigator(
     fun resultsFlow(key: String) =
         resultsFlow
             .mapNotNull { it[key] }
-            .catch { Napier.e(throwable = it) { "Result observation failed for key: $key" } }
+            .catch { BLogger.error(throwable = it, message = "Result observation failed for key: $key") }
 }
 
 val LocalNavigator =
