@@ -14,6 +14,7 @@
 
     <!-- Game details screen -->
     <string name="game_details_screen_where_to_buy">Where to buy</string>
+    <string name="game_details_screen_similar_games">Similar games</string>
 
     <!-- Giveaway details screen -->
     <string name="giveaway_details_screen_free">FREE</string>

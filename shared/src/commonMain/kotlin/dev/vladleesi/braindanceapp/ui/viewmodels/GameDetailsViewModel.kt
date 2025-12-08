@@ -3,6 +3,7 @@ package dev.vladleesi.braindanceapp.ui.viewmodels
 import androidx.lifecycle.viewModelScope
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
 import dev.vladleesi.braindanceapp.logger.BLogger
+import dev.vladleesi.braindanceapp.ui.components.home.MiniGameCardModel
 import dev.vladleesi.braindanceapp.utils.CoverSize
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.StoreTypeModel
@@ -62,6 +63,19 @@ class GameDetailsViewModel(
                                 name = genre.name.orEmpty(),
                             )
                         },
+                    similarGames =
+                        game?.similarGames.orEmpty().map {
+                            MiniGameCardModel(
+                                id = it.id.orZero(),
+                                title = it.name.orEmpty(),
+                                backgroundImageUrl =
+                                    it.cover
+                                        ?.url
+                                        ?.toCoverUrl(CoverSize.P_720)
+                                        .orEmpty(),
+                                platforms = emptyList(),
+                            )
+                        },
                 )
             _gameDetailsState.emit(
                 GameDetailsState.Success(gameDetails),
@@ -96,6 +110,7 @@ data class GameDetails(
     val platforms: List<ParentPlatformType>,
     val stores: List<StoreTypeModel>,
     val genres: List<GenreTag>,
+    val similarGames: List<MiniGameCardModel>,
 )
 
 data class GenreTag(

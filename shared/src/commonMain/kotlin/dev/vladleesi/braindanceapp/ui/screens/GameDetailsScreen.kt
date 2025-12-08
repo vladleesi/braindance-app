@@ -32,6 +32,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import dev.vladleesi.braindanceapp.navigation.LocalNavigator
+import dev.vladleesi.braindanceapp.navigation.routes.GameDetailsRoute
+import dev.vladleesi.braindanceapp.resources.Res
+import dev.vladleesi.braindanceapp.resources.game_details_screen_similar_games
 import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.ui.components.ExpandableText
 import dev.vladleesi.braindanceapp.ui.components.GlobalLoading
@@ -42,6 +45,7 @@ import dev.vladleesi.braindanceapp.ui.components.TopAppBar
 import dev.vladleesi.braindanceapp.ui.components.details.GenreTags
 import dev.vladleesi.braindanceapp.ui.components.details.ReleaseDateLabel
 import dev.vladleesi.braindanceapp.ui.components.details.storesBlockItem
+import dev.vladleesi.braindanceapp.ui.components.home.MiniGameCardList
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetails
@@ -49,6 +53,7 @@ import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsState
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.utils.calculateScrollTopBarColors
 import dev.vladleesi.braindanceapp.utils.toContentDescription
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -100,6 +105,8 @@ private fun GameDetailsScreen(
     modifier: Modifier,
     onBackButtonPressed: (() -> Unit),
 ) {
+    val navigator = LocalNavigator.current
+
     val lazyListState = rememberLazyListState()
     val (topBarColor, backButtonColor, topBarTitleColor) =
         lazyListState.calculateScrollTopBarColors()
@@ -133,6 +140,18 @@ private fun GameDetailsScreen(
             val stores = state.gameDetails.stores
             if (stores.isNotEmpty()) {
                 storesBlockItem(stores)
+            }
+            val similarGames = state.gameDetails.similarGames
+            if (similarGames.isNotEmpty()) {
+                item { Spacer(modifier = Modifier.size(Dimens.large)) }
+                item {
+                    MiniGameCardList(
+                        title = stringResource(Res.string.game_details_screen_similar_games),
+                        titleTextStyle = MaterialTheme.typography.h3,
+                        games = similarGames,
+                        onItemClick = { id -> navigator.navigate(GameDetailsRoute(id)) },
+                    )
+                }
             }
             item { Spacer(modifier = Modifier.size(Dimens.large)) }
         }

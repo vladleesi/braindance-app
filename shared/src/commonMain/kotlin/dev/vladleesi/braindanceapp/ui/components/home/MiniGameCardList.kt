@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.style.Dimens
@@ -45,9 +46,11 @@ fun MiniGameCardList(
             is HomeState.Success<*> ->
                 MiniGameCardList(
                     title = title,
+                    titleTextStyle = MaterialTheme.typography.h2,
                     games = state.entities.filterIsInstance<MiniGameCardModel>(),
                     modifier = modifier,
                     onItemClick = onItemClick,
+                    onExpandClick = {},
                 )
 
             is HomeState.Error ->
@@ -57,6 +60,50 @@ fun MiniGameCardList(
                     onRefresh = onRefresh,
                     modifier = modifier,
                 )
+        }
+    }
+}
+
+@Composable
+fun MiniGameCardList(
+    title: String,
+    titleTextStyle: TextStyle,
+    games: List<MiniGameCardModel>,
+    modifier: Modifier = Modifier,
+    onItemClick: (Int) -> Unit,
+    onExpandClick: (() -> Unit)? = null,
+) {
+    Column(modifier = modifier) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            StaticText(
+                text = title,
+                modifier =
+                    Modifier
+                        .padding(horizontal = Dimens.medium)
+                        .align(Alignment.CenterStart),
+                style = titleTextStyle,
+            )
+            onExpandClick?.let {
+                Button(
+                    onClick = onExpandClick,
+                    elevation = null,
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                ) {
+                    Text(
+                        text = "See all",
+                        style = MaterialTheme.typography.subtitle2,
+                    )
+                }
+            }
+        }
+        LazyRow(
+            modifier = Modifier.padding(top = Dimens.small),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.small),
+            contentPadding = PaddingValues(horizontal = Dimens.medium),
+        ) {
+            items(games, key = { it.id }, contentType = { it }) { card ->
+                MiniGameCard(card = card, onClick = onItemClick)
+            }
         }
     }
 }
@@ -99,46 +146,6 @@ private fun MiniGameCardListSkeleton(
         ) {
             items(MINI_GAME_CARD_SKELETON_COUNT) {
                 MiniGameCardSkeleton()
-            }
-        }
-    }
-}
-
-@Composable
-private fun MiniGameCardList(
-    title: String,
-    games: List<MiniGameCardModel>,
-    modifier: Modifier = Modifier,
-    onItemClick: (Int) -> Unit,
-) {
-    Column(modifier = modifier) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            StaticText(
-                text = title,
-                modifier =
-                    Modifier
-                        .padding(horizontal = Dimens.medium)
-                        .align(Alignment.CenterStart),
-                style = MaterialTheme.typography.h2,
-            )
-            Button(
-                onClick = {},
-                elevation = null,
-                modifier = Modifier.align(Alignment.CenterEnd),
-            ) {
-                Text(
-                    text = "See all",
-                    style = MaterialTheme.typography.subtitle2,
-                )
-            }
-        }
-        LazyRow(
-            modifier = Modifier.padding(top = Dimens.small),
-            horizontalArrangement = Arrangement.spacedBy(Dimens.small),
-            contentPadding = PaddingValues(horizontal = Dimens.medium),
-        ) {
-            items(games, key = { it.id }, contentType = { it }) { card ->
-                MiniGameCard(card = card, onClick = onItemClick)
             }
         }
     }
