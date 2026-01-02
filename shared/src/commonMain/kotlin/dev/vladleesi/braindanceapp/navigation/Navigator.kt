@@ -15,11 +15,25 @@ class Navigator(
     val state: NavigationState,
 ) {
     fun navigate(route: NavKey) {
-        if (route in state.backStacks.keys) {
-            // This is a top level route, just switch to it.
-            state.topLevelRoute = route
-        } else {
-            state.backStacks[state.topLevelRoute]?.add(route)
+        val backStacks = state.backStacks
+        val currentTopLevel = state.topLevelRoute
+
+        when {
+            route in backStacks.keys -> {
+                if (route == currentTopLevel) {
+                    // Double-tap on current tab, reset to root (only keep the tab's root route)
+                    backStacks[route]?.clear()
+                    backStacks[route]?.add(route)
+                } else {
+                    // Switch to another top-level tab
+                    state.topLevelRoute = route
+                }
+            }
+
+            else -> {
+                // Navigate deeper in current tab
+                backStacks[currentTopLevel]?.add(route)
+            }
         }
     }
 
