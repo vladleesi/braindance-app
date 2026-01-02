@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import dev.vladleesi.braindanceapp.system.isLargeDevice
 import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeState
@@ -138,13 +139,14 @@ private fun MiniGameCardListSkeleton(
                 )
             }
         }
+        val skeletonCount = if (isLargeDevice()) MINI_GAME_CARD_SKELETON_COUNT * 2 else MINI_GAME_CARD_SKELETON_COUNT
         LazyRow(
             modifier = Modifier.padding(top = Dimens.small),
             horizontalArrangement = Arrangement.spacedBy(Dimens.small),
             userScrollEnabled = false,
             contentPadding = PaddingValues(horizontal = Dimens.medium),
         ) {
-            items(MINI_GAME_CARD_SKELETON_COUNT) {
+            items(skeletonCount) {
                 MiniGameCardSkeleton()
             }
         }
