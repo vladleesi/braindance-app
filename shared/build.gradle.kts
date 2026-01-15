@@ -37,10 +37,11 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Compose
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.components.resources)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material)
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.compose.components.resources)
             // Navigation
             implementation(libs.compose.navigation3)
             // View Model
@@ -80,9 +81,7 @@ kotlin {
         androidMain.dependencies {
             // Compose
             implementation(libs.androidx.activity.compose)
-            implementation(libs.compose.ui)
             implementation(libs.compose.ui.tooling)
-            implementation(libs.compose.ui.tooling.preview)
             // Network
             implementation(libs.ktor.client.okhttp)
             // Security

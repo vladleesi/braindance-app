@@ -18,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.back_button_content_description
+import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.navBar
 import dev.vladleesi.braindanceapp.ui.style.white
@@ -89,5 +91,18 @@ fun TopAppBar(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+internal fun TopAppBarPreview() {
+    BraindanceTheme {
+        TopAppBar(
+            title = "Title",
+            subtitle = "Subtitle",
+            showBackButton = true,
+            onBackButtonPressed = {},
+        )
     }
 }

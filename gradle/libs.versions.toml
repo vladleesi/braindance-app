@@ -1,11 +1,11 @@
 [versions]
-gradle = "8.13.1"
-kotlin = "2.2.21"
-compose-plugin = "1.9.3"
+gradle = "8.13.2"
+kotlin = "2.3.0"
+compose-plugin = "1.10.0"
 ktlint = "14.0.1"
 detekt = "1.23.8"
 ktor = "3.3.3"
-activity-compose = "1.12.1"
+activity-compose = "1.12.2"
 compose = "1.10.0"
 lifecycle = "2.9.6"
 coil3 = "3.3.0"
@@ -20,9 +20,11 @@ nav3 = "1.0.0-alpha06"
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose" }
+compose-material = { module = "org.jetbrains.compose.material:material", version.ref = "compose" }
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose" }
 compose-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 compose-lifecycle = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 

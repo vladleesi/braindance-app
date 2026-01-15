@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -21,9 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.UriHandler
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.vladleesi.braindanceapp.resources.Res
 import dev.vladleesi.braindanceapp.resources.game_details_screen_where_to_buy
+import dev.vladleesi.braindanceapp.resources.ic_platform_logo_playstation
+import dev.vladleesi.braindanceapp.resources.ic_platform_logo_switch
+import dev.vladleesi.braindanceapp.resources.ic_platform_logo_windows
+import dev.vladleesi.braindanceapp.resources.ic_platform_logo_xbox
+import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.white
@@ -91,6 +98,51 @@ fun StoreButton(
                     contentDescription = store.toContentDescription(),
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+internal fun StoreButtonPreview() {
+    BraindanceTheme {
+        StoreButton(
+            store = "PlayStation Store",
+            image = Res.drawable.ic_platform_logo_playstation,
+            url = "",
+        )
+    }
+}
+
+@Preview
+@Composable
+internal fun StoreButtonsPreview() {
+    BraindanceTheme {
+        LazyColumn {
+            storesBlockItem(
+                listOf(
+                    StoreTypeModel(
+                        name = "PlayStation Store",
+                        image = Res.drawable.ic_platform_logo_playstation,
+                        url = "",
+                    ),
+                    StoreTypeModel(
+                        name = "Windows Store",
+                        image = Res.drawable.ic_platform_logo_windows,
+                        url = "",
+                    ),
+                    StoreTypeModel(
+                        name = "Xbox Store",
+                        image = Res.drawable.ic_platform_logo_xbox,
+                        url = "",
+                    ),
+                    StoreTypeModel(
+                        name = "Nintendo Store",
+                        image = Res.drawable.ic_platform_logo_switch,
+                        url = "",
+                    ),
+                ),
+            )
         }
     }
 }

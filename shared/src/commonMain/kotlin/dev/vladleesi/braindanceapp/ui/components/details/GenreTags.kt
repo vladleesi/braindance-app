@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.secondaryVariant
 import dev.vladleesi.braindanceapp.ui.style.white
@@ -53,5 +55,24 @@ fun GenreTags(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+internal fun GenreTagsPreview() {
+    BraindanceTheme {
+        GenreTags(
+            genres =
+                listOf(
+                    GenreTag(id = 1, name = "Action"),
+                    GenreTag(id = 2, name = "Adventure"),
+                    GenreTag(id = 3, name = "Indie"),
+                    GenreTag(id = 4, name = "Strategy"),
+                    GenreTag(id = 5, name = "RPG"),
+                    GenreTag(id = 6, name = "Simulation"),
+                ),
+            onClick = {},
+        )
     }
 }

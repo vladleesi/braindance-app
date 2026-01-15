@@ -8,7 +8,9 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.white
@@ -30,5 +32,13 @@ fun GlobalLoading(modifier: Modifier = Modifier) {
             color = white,
             strokeWidth = Dimens.tiny,
         )
+    }
+}
+
+@Preview
+@Composable
+internal fun GlobalLoadingPreview() {
+    BraindanceTheme {
+        GlobalLoading()
     }
 }

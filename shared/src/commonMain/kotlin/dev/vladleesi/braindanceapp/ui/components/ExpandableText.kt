@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.secondaryText
 import dev.vladleesi.braindanceapp.ui.style.white
@@ -59,5 +61,22 @@ fun ExpandableText(
                         .padding(top = Dimens.tiny),
             )
         }
+    }
+}
+
+@Preview
+@Composable
+internal fun ExpandableTextPreview() {
+    BraindanceTheme {
+        ExpandableText(
+            text =
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
+                    "Integer non lorem nec sapien cursus faucibus. Suspendisse potenti. " +
+                    "Praesent euismod, massa non dignissim viverra, turpis justo tincidunt nisi, " +
+                    "sed fermentum purus lorem at mauris. " +
+                    "Curabitur id arcu vel sapien tristique interdum. Nullam in tortor sed urna placerat blandit. " +
+                    "Maecenas vel lorem at odio consequat convallis. " +
+                    "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        )
     }
 }

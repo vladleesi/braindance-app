@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
 import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.background
 import dev.vladleesi.braindanceapp.ui.style.white
@@ -36,6 +38,16 @@ fun ReleaseDateLabel(
             text = releaseDate,
             style = textStyle,
             color = textColor,
+        )
+    }
+}
+
+@Preview
+@Composable
+internal fun ReleaseDateLabelPreview() {
+    BraindanceTheme {
+        ReleaseDateLabel(
+            releaseDate = "Feb 3th, 2026",
         )
     }
 }

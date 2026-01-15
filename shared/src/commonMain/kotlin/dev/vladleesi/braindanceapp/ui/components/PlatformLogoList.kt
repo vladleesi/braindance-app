@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import dev.vladleesi.braindanceapp.ui.style.BraindanceTheme
+import dev.vladleesi.braindanceapp.ui.style.Dimens
 import dev.vladleesi.braindanceapp.ui.style.white
 import dev.vladleesi.braindanceapp.utils.ParentPlatformType
 import dev.vladleesi.braindanceapp.utils.toContentDescription
@@ -33,5 +37,17 @@ fun PlatformLogoList(
                 colorFilter = ColorFilter.tint(white),
             )
         }
+    }
+}
+
+@Preview
+@Composable
+internal fun PlatformLogoListPreview() {
+    BraindanceTheme {
+        PlatformLogoList(
+            platforms = ParentPlatformType.entries,
+            imageSize = 24.dp,
+            horizontalSpacing = Dimens.small,
+        )
     }
 }
