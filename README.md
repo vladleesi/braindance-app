@@ -20,6 +20,13 @@ CLIENT_SECRET=YOUR_CLIENT_SECRET
 ```
 3. [Build](https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-multiplatform-create-first-app.html#run-your-application) for the target platform.
 
+
+The Android host is in `androidApp`; shared Android and iOS code is in `shared`. Select `androidApp` in the IDE
+or build with `./gradlew :androidApp:assembleDebug`. Install on a connected device with
+`./gradlew :androidApp:installDebug`. For builds without API credentials, add `-PbuildWithoutApiKey=true`;
+those builds cannot fetch authenticated IGDB data. Android test tasks are `:androidApp:testDebugUnitTest` and
+`:shared:testAndroidHostTest`. The Xcode project continues to use `:shared:embedAndSignAppleFrameworkForXcode`.
+
 ## License
 This App is released under the [The GNU General Public License v3.0](LICENSE).
 

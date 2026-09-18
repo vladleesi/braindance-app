@@ -19,6 +19,7 @@ import androidx.savedstate.serialization.SavedStateConfiguration
 import dev.vladleesi.braindanceapp.navigation.routes.BottomBarRoute
 import dev.vladleesi.braindanceapp.navigation.routes.GameDetailsRoute
 import dev.vladleesi.braindanceapp.navigation.routes.GiveawayDetailsRoute
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
@@ -52,6 +53,7 @@ fun rememberNavigationState(
         rememberSerializable(
             startRoute,
             topLevelRoutes,
+            stateSerializer = PolymorphicSerializer(NavKey::class),
             configuration = SavedStateConfiguration { serializersModule = navSerializersModule },
         ) {
             mutableStateOf(startRoute)
