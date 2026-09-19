@@ -43,11 +43,12 @@ private fun HttpClientConfig<*>.loggerConfig(debugHttpLogging: Boolean) {
 
     install(Logging) {
         level = LogLevel.INFO
-        logger = object : Logger {
-            override fun log(message: String) {
-                BLogger.debug(tag = "HTTP Client", message = message)
+        logger =
+            object : Logger {
+                override fun log(message: String) {
+                    BLogger.debug(tag = "HTTP Client", message = message)
+                }
             }
-        }
     }
 }
 

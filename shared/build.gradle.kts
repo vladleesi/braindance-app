@@ -4,6 +4,7 @@ import java.io.StringReader
 import java.util.Properties
 
 val appNamespace = "dev.vladleesi.braindanceapp"
+val backendBaseUrlProperty = "BACKEND_BASE_URL"
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -108,11 +109,23 @@ buildkonfig {
     packageName = appNamespace
 
     defaultConfigs {
-        val localBackendUrl = project.providers.fileContents(rootProject.layout.projectDirectory.file("local.properties"))
-            .asText.map { contents ->
-                Properties().apply { load(StringReader(contents)) }.getProperty("BACKEND_BASE_URL").orEmpty()
-            }
-        val backendUrl = project.providers.gradleProperty("BACKEND_BASE_URL").orElse(localBackendUrl).orNull.orEmpty()
-        buildConfigField(FieldSpec.Type.STRING, "BACKEND_BASE_URL", backendUrl)
+        val localPropertiesFile = rootProject.layout.projectDirectory.file("local.properties")
+        val localBackendUrl =
+            project.providers
+                .fileContents(localPropertiesFile)
+                .asText
+                .map { contents ->
+                    Properties()
+                        .apply { load(StringReader(contents)) }
+                        .getProperty(backendBaseUrlProperty)
+                        .orEmpty()
+                }
+        val backendUrl =
+            project.providers
+                .gradleProperty(backendBaseUrlProperty)
+                .orElse(localBackendUrl)
+                .orNull
+                .orEmpty()
+        buildConfigField(FieldSpec.Type.STRING, backendBaseUrlProperty, backendUrl)
     }
 }

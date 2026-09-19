@@ -7,10 +7,11 @@ import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.defaultRequest
 
 object IgdbClient {
-    fun build(debugHttpLogging: Boolean) = HttpClient {
-        defaultConfig(debugHttpLogging)
-        defaultRequestConfig()
-    }
+    fun build(debugHttpLogging: Boolean) =
+        HttpClient {
+            defaultConfig(debugHttpLogging)
+            defaultRequestConfig()
+        }
 }
 
 private fun HttpClientConfig<*>.defaultRequestConfig() {

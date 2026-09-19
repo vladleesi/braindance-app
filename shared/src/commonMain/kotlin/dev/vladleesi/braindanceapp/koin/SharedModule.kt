@@ -22,7 +22,10 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-fun initKoin(androidConfig: KoinAppDeclaration? = null, debugHttpLogging: Boolean = false) {
+fun initKoin(
+    androidConfig: KoinAppDeclaration? = null,
+    debugHttpLogging: Boolean = false,
+) {
     startKoin {
         androidConfig?.invoke(this)
         koinModules(debugHttpLogging)
