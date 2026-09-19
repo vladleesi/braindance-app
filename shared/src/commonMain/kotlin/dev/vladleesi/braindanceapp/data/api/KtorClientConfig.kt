@@ -16,10 +16,10 @@ import kotlinx.serialization.json.Json
 private const val TIMEOUT_SECONDS = 5000L
 private const val MAX_RETRIES = 5
 
-fun HttpClientConfig<*>.defaultConfig() {
+fun HttpClientConfig<*>.defaultConfig(debugHttpLogging: Boolean) {
     expectSuccess = true
     engineConfig()
-    loggerConfig()
+    loggerConfig(debugHttpLogging)
     jsonConfig()
     errorHandlerConfig()
 }
@@ -38,15 +38,16 @@ private fun HttpClientConfig<*>.engineConfig() {
     }
 }
 
-private fun HttpClientConfig<*>.loggerConfig() {
-    Logging {
-        level = LogLevel.ALL
-        logger =
-            object : Logger {
-                override fun log(message: String) {
-                    BLogger.debug(tag = "HTTP Client", message = message)
-                }
+private fun HttpClientConfig<*>.loggerConfig(debugHttpLogging: Boolean) {
+    if (!debugHttpLogging) return
+
+    install(Logging) {
+        level = LogLevel.INFO
+        logger = object : Logger {
+            override fun log(message: String) {
+                BLogger.debug(tag = "HTTP Client", message = message)
             }
+        }
     }
 }
 

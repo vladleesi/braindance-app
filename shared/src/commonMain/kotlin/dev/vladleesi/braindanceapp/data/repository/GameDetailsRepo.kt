@@ -2,36 +2,13 @@ package dev.vladleesi.braindanceapp.data.repository
 
 import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
 import dev.vladleesi.braindanceapp.data.models.games.GameItem
-import dev.vladleesi.braindanceapp.data.models.request.RequestBody
 import io.ktor.client.call.body
 
 class GameDetailsRepo(
     private val gamesRemote: GamesRemote,
 ) {
     suspend fun gameDetails(gameId: Int): List<GameItem>? {
-        val builder =
-            RequestBody.Builder {
-                fields =
-                    listOf(
-                        "name",
-                        "cover.url",
-                        "similar_games.name",
-                        "similar_games.cover.url",
-                        "videos.video_id",
-                        "genres.name",
-                        "summary",
-                        "storyline",
-                        "platforms.name",
-                        "websites.url",
-                        "websites.type",
-                        "screenshots.animated",
-                        "screenshots.url",
-                        "first_release_date",
-                        "release_dates.human",
-                    )
-                where = listOf("id = $gameId")
-            }
-        val response = gamesRemote.games(builder.build())
+        val response = gamesRemote.gameDetails(gameId)
         return response.body()
     }
 }

@@ -10,9 +10,9 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 
 object GamerPowerClient {
-    fun build() =
+    fun build(debugHttpLogging: Boolean) =
         HttpClient {
-            defaultConfig()
+            defaultConfig(debugHttpLogging)
             defaultRequestConfig()
         }
 

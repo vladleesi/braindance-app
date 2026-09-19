@@ -3,8 +3,6 @@ package dev.vladleesi.braindanceapp.koin
 import dev.vladleesi.braindanceapp.data.api.KtorClientManager
 import dev.vladleesi.braindanceapp.data.api.clients.GamerPowerClient
 import dev.vladleesi.braindanceapp.data.api.clients.IgdbClient
-import dev.vladleesi.braindanceapp.data.api.clients.TwitchClient
-import dev.vladleesi.braindanceapp.data.api.remote.AuthRemote
 import dev.vladleesi.braindanceapp.data.api.remote.GamerPowerRemote
 import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
 import dev.vladleesi.braindanceapp.data.api.remote.PopularityPrimitivesRemote
@@ -12,7 +10,6 @@ import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
 import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
 import dev.vladleesi.braindanceapp.data.repository.PopularityPrimitivesRepo
-import dev.vladleesi.braindanceapp.data.token.TokenStorage
 import dev.vladleesi.braindanceapp.ui.viewmodels.GameDetailsViewModel
 import dev.vladleesi.braindanceapp.ui.viewmodels.GiveawayDetailsViewModel
 import dev.vladleesi.braindanceapp.ui.viewmodels.HomeViewModel
@@ -25,29 +22,25 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 
-fun initKoin(androidConfig: KoinAppDeclaration? = null) {
+fun initKoin(androidConfig: KoinAppDeclaration? = null, debugHttpLogging: Boolean = false) {
     startKoin {
         androidConfig?.invoke(this)
-        koinModules()
+        koinModules(debugHttpLogging)
     }
 }
 
-private fun KoinApplication.koinModules() =
-    modules(remoteModule, repositoryModule, viewModelModule, tokenStorageModule, ktorClientManagerModule)
+private fun KoinApplication.koinModules(debugHttpLogging: Boolean) =
+    modules(remoteModule, repositoryModule, viewModelModule, ktorClientManagerModule(debugHttpLogging))
 
-private val ktorClientManagerModule =
+private fun ktorClientManagerModule(debugHttpLogging: Boolean) =
     module {
-        single(named(KtorClientManager.IGDB_HTTP_CLIENT)) {
-            IgdbClient.build(authRemote = get(), tokenStorage = get())
-        }
-        single(named(KtorClientManager.TWITCH_HTTP_CLIENT)) { TwitchClient.build() }
-        single(named(KtorClientManager.GAMER_POWER_HTTP_CLIENT)) { GamerPowerClient.build() }
+        single(named(KtorClientManager.IGDB_HTTP_CLIENT)) { IgdbClient.build(debugHttpLogging) }
+        single(named(KtorClientManager.GAMER_POWER_HTTP_CLIENT)) { GamerPowerClient.build(debugHttpLogging) }
         singleOf(::KtorClientManager)
     }
 
 private val remoteModule =
     module {
-        singleOf(::AuthRemote)
         singleOf(::GamesRemote)
         singleOf(::PopularityPrimitivesRemote)
         singleOf(::GamerPowerRemote)
@@ -66,9 +59,4 @@ private val viewModelModule =
         viewModelOf(::HomeViewModel)
         viewModel { (id: Int) -> GameDetailsViewModel(gameId = id, gameDetailsRepo = get()) }
         viewModel { (id: Int) -> GiveawayDetailsViewModel(giveawayId = id, gamerPowerRepo = get()) }
-    }
-
-private val tokenStorageModule =
-    module {
-        singleOf(::TokenStorage)
     }

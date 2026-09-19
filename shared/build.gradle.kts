@@ -1,6 +1,7 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.StringReader
+import java.util.Properties
 
 val appNamespace = "dev.vladleesi.braindanceapp"
 
@@ -53,7 +54,6 @@ kotlin {
             implementation(libs.compose.lifecycle)
             // Ktor
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.auth)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.client.serialization)
             implementation(libs.ktor.client.content.negotiation)
@@ -69,8 +69,6 @@ kotlin {
             implementation(libs.coil.network.ktor)
             // Logger
             implementation(libs.logging.napier)
-            // Security
-            implementation(libs.multiplatform.settings)
             // Koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -83,10 +81,6 @@ kotlin {
         androidMain.dependencies {
             // Network
             implementation(libs.ktor.client.okhttp)
-            // Security
-            implementation(libs.androidx.security.crypto.ktx)
-            // Koin
-            implementation(libs.koin.android)
         }
         getByName("androidHostTest") {
             dependencies {
@@ -114,16 +108,11 @@ buildkonfig {
     packageName = appNamespace
 
     defaultConfigs {
-        val buildWithoutApiKey = project.property("buildWithoutApiKey").toString().toBoolean()
-        val localProperties = if (buildWithoutApiKey) null else gradleLocalProperties(rootDir, project.providers)
-        val clientId: String? = localProperties?.getProperty("CLIENT_ID")
-        val clientSecret: String? = localProperties?.getProperty("CLIENT_SECRET")
-
-        require((!clientId.isNullOrEmpty() && !clientSecret.isNullOrEmpty()) || buildWithoutApiKey) {
-            "Please add CLIENT_ID and CLIENT_SECRET to local.properties."
-        }
-
-        buildConfigField(FieldSpec.Type.STRING, "CLIENT_ID", clientId.orEmpty())
-        buildConfigField(FieldSpec.Type.STRING, "CLIENT_SECRET", clientSecret.orEmpty())
+        val localBackendUrl = project.providers.fileContents(rootProject.layout.projectDirectory.file("local.properties"))
+            .asText.map { contents ->
+                Properties().apply { load(StringReader(contents)) }.getProperty("BACKEND_BASE_URL").orEmpty()
+            }
+        val backendUrl = project.providers.gradleProperty("BACKEND_BASE_URL").orElse(localBackendUrl).orNull.orEmpty()
+        buildConfigField(FieldSpec.Type.STRING, "BACKEND_BASE_URL", backendUrl)
     }
 }

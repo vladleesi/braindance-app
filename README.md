@@ -1,9 +1,9 @@
-# Braindance: Games Tracker
+# Braindance
 
 > **Important:**
 > It is an ongoing project and is currently under development. However, I'm actively working on adding new features, enhancing existing functionality, and addressing any issues or bugs.
 
-![wallhaven-oxmlym-1](https://github.com/vladleesi/braindance-app/assets/30999008/cdb06536-ecbf-43ae-9336-3833a89a3718)
+![Braindance vibe](https://github.com/vladleesi/braindance-app/assets/30999008/cdb06536-ecbf-43ae-9336-3833a89a3718)
 
 ## Overview
 Braindance is a versatile game-tracking application that allows users to search, explore, and keep up with their favorite games. Powered by the extensive [IGDB database](https://api-docs.igdb.com/#getting-started), users can effortlessly find detailed information about any game, add them to their favorites, stay updated with release dates using the integrated calendar, and read the latest game news.
@@ -11,27 +11,57 @@ Braindance is a versatile game-tracking application that allows users to search,
 ## Platforms
 Braindance is a multiplatform application that is available for Android and iOS. It is built using the [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html) (KMP).
 
-## Setup Instructions
-1. Check the [IGDB API docs](https://api-docs.igdb.com/#getting-started) for steps to get your CLIENT_ID and CLIENT_SECRET.
-2. Open `local.properties` from your project root directory and add these lines:
-```
-CLIENT_ID=YOUR_CLIENT_ID
-CLIENT_SECRET=YOUR_CLIENT_SECRET
-```
-3. [Build](https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-multiplatform-create-first-app.html#run-your-application) for the target platform.
+## Project layout
 
+| Directory | Purpose |
+| --- | --- |
+| `androidApp` | Android application host |
+| `shared` | Shared Compose UI, app logic, networking, and Android/iOS targets |
+| `iosApp` | Xcode and SwiftUI host |
+| `backend` | Cloudflare Worker that calls IGDB using private Twitch credentials |
 
-The Android host is in `androidApp`; shared Android and iOS code is in `shared`. Select `androidApp` in the IDE
-or build with `./gradlew :androidApp:assembleDebug`. Install on a connected device with
-`./gradlew :androidApp:installDebug`. For builds without API credentials, add `-PbuildWithoutApiKey=true`;
-those builds cannot fetch authenticated IGDB data. Android test tasks are `:androidApp:testDebugUnitTest` and
-`:shared:testAndroidHostTest`. The Xcode project continues to use `:shared:embedAndSignAppleFrameworkForXcode`.
+The mobile app calls the Worker for IGDB data and GamerPower directly for giveaways. The Worker URL is included
+in each mobile build, so use your own deployment; its URL is not a secret. Keep Twitch credentials only in
+Cloudflare Worker secrets. See [backend setup](backend/README.md) for deployment and abuse-control notes.
+
+## Requirements
+
+- JDK 21 and an Android SDK with API 37 installed for Android builds.
+- macOS with Xcode and an iOS Simulator for iOS builds.
+- Node.js 20 or newer and a Cloudflare account to deploy the Worker.
+
+Use the checked-in Gradle wrapper; a separate Gradle installation is unnecessary.
+
+## Local setup
+
+1. [Deploy your own Worker](backend/README.md) and configure its Twitch secrets.
+2. Create a root `local.properties` file. Add your Android SDK path if your environment needs it, and add the
+   Worker URL without a trailing slash:
+
+   ```properties
+   sdk.dir=/path/to/your/Android/sdk
+   BACKEND_BASE_URL=https://your-worker.example.workers.dev
+   ```
+
+   `local.properties` is ignored by Git. For CI or temporary builds, pass
+   `-PBACKEND_BASE_URL=https://your-worker.example.workers.dev` to Gradle or set
+   `ORG_GRADLE_PROJECT_BACKEND_BASE_URL`. No Twitch client ID or secret belongs in this file or in a mobile build.
+3. Build the Android app from the repository root:
+
+   ```sh
+   ./gradlew :androidApp:assembleDebug
+   ```
+
+   Install the resulting APK from `androidApp/build/outputs/apk/debug/`, or run the `androidApp` configuration in
+   Android Studio.
+4. On macOS, open `iosApp/iosApp.xcodeproj` in Xcode, select an iOS Simulator, and run the `iosApp` target. Xcode
+   invokes `:shared:embedAndSignAppleFrameworkForXcode`. For a physical device or distribution, select your own
+   Apple development team and bundle identifier in Xcode.
+
+The project can be built without a Worker URL. Configure a reachable Worker with both Twitch secrets before
+running IGDB-backed app flows. A fresh clone does not include anyone else's Worker URL or credentials.
 
 ## License
-This App is released under the [The GNU General Public License v3.0](LICENSE).
 
-## Support
-For any issues or questions related to the Braindance project, please open an [issue](https://github.com/vladleesi/braindance-app/issues) on the GitHub repository. I will assist you as soon as possible.
-
-## Acknowledgments
-The Braindance project is built upon various open-source libraries and technologies. I would like to acknowledge the contributions of the open-source community and express my gratitude for their valuable work.
+Braindance is licensed under [GPL-3.0](LICENSE). Report issues through the
+[GitHub issue tracker](https://github.com/vladleesi/braindance-app/issues).
