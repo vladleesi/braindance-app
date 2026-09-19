@@ -6,6 +6,19 @@ on:
     branches: [master]
   # Allows an intentional redeploy of the current master revision.
   workflow_dispatch:
+  # Develop validation calls this directly because its GITHUB_TOKEN promotion cannot trigger a push workflow.
+  workflow_call:
+    inputs:
+      promoted:
+        description: Deploy the master revision promoted from develop
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
 
 permissions:
   contents: read
@@ -14,7 +27,7 @@ jobs:
   deploy-worker:
     name: Deploy Worker
     # A manual run from another branch must not deploy that branch.
-    if: github.ref == 'refs/heads/master'
+    if: inputs.promoted || github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,6 +36,8 @@ jobs:
     steps:
       - name: Checkout Master
         uses: actions/checkout@v7
+        with:
+          ref: master
 
       - name: Set up Node.js
         uses: actions/setup-node@v7

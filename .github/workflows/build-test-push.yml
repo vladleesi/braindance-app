@@ -143,7 +143,6 @@ jobs:
     # Prevent pull-request and manual validation runs from changing master.
     if: github.event_name == 'push'
     permissions:
-      actions: write
       contents: write
 
     steps:
@@ -156,8 +155,11 @@ jobs:
         # Keep master as an exact promotion of the validated develop commit.
         run: git push --force origin HEAD:master
 
-      - name: Deploy Worker from Promoted Master
-        # GITHUB_TOKEN pushes do not trigger other workflows, so dispatch the Worker deployment explicitly.
-        run: gh workflow run deploy-worker.yml --ref master
-        env:
-          GH_TOKEN: ${{ github.token }}
+  deploy-promoted-worker:
+    name: Deploy Promoted Worker
+    needs: promote-to-master
+    if: github.event_name == 'push'
+    uses: ./.github/workflows/deploy-worker.yml
+    with:
+      promoted: true
+    secrets: inherit
