@@ -1,0 +1,74 @@
+name: Mobile Release
+
+on:
+  # A direct master version change publishes without running the develop pipeline.
+  push:
+    branches: [master]
+    paths: [version.xcconfig]
+  # Allows an intentional retry or publication of the current master version.
+  workflow_dispatch:
+  # Develop validation calls this after promoting the validated commit to master.
+  workflow_call:
+    inputs:
+      promoted:
+        description: Publish the mobile version promoted from develop
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mobile-release
+  cancel-in-progress: false
+
+jobs:
+  publish-mobile-release:
+    name: Publish Android and iOS Release
+    if: inputs.promoted || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Master
+        uses: actions/checkout@v7
+        with:
+          ref: master
+
+      - name: Read Mobile Version
+        id: version
+        shell: bash
+        run: |
+          version="$(sed -n 's/^MARKETING_VERSION[[:space:]]*=[[:space:]]*//p' version.xcconfig)"
+          build_number="$(sed -n 's/^CURRENT_PROJECT_VERSION[[:space:]]*=[[:space:]]*//p' version.xcconfig)"
+
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid mobile version: $version" >&2
+            exit 1
+          fi
+          if [[ ! "$build_number" =~ ^[1-9][0-9]*$ ]]; then
+            echo "Invalid mobile build number: $build_number" >&2
+            exit 1
+          fi
+
+          echo "name=$version" >> "$GITHUB_OUTPUT"
+          echo "build_number=$build_number" >> "$GITHUB_OUTPUT"
+          echo "tag=mobile-v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MOBILE_VERSION: ${{ steps.version.outputs.name }}
+          MOBILE_BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          MOBILE_TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if gh release view "$MOBILE_TAG" >/dev/null 2>&1; then
+            echo "GitHub Release $MOBILE_TAG already exists."
+            exit 0
+          fi
+
+          gh release create "$MOBILE_TAG" \
+            --target "$GITHUB_SHA" \
+            --title "Braindance Mobile $MOBILE_VERSION" \
+            --generate-notes \
+            --notes "Android and iOS release. Build number: $MOBILE_BUILD_NUMBER."

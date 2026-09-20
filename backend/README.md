@@ -3,6 +3,9 @@
 The Cloudflare Worker handles Twitch client credentials and IGDB requests. The mobile app calls four fixed JSON
 endpoints; it never receives an OAuth token or the Twitch client secret. GamerPower remains a direct client request.
 
+The Worker uses an independent Semantic Version from `package.json`. Each deployment records that version, its
+GitHub source commit, and the triggering GitHub actor in Cloudflare Version History.
+
 The request validation, IGDB queries, token lifecycle, response limits, and upstream error handling live in
 `src/igdb-backend.mjs`. That module uses standard Web APIs and receives credentials, `fetch`, logging, time, and
 rate-slot acquisition as dependencies. `worker.mjs` is the Cloudflare adapter: it supplies Worker secrets and a

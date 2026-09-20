@@ -50,9 +50,11 @@ jobs:
         run: npm ci
 
       - name: Deploy Worker
-        run: >
-          npm run deploy --
-          --message "Source: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA} by @${GITHUB_ACTOR}"
+        run: |
+          backend_version="$(node -p "require('./package.json').version")"
+          source_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
+          deploy_message="Backend ${backend_version}; source: ${source_url} by @${GITHUB_ACTOR}"
+          npm run deploy -- --message "$deploy_message"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

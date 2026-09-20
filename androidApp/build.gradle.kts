@@ -1,4 +1,10 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+val mobileVersionProperties =
+    Properties().apply {
+        rootProject.file("version.xcconfig").inputStream().use(::load)
+    }
 
 plugins {
     alias(libs.plugins.android.application)
@@ -12,8 +18,8 @@ android {
         applicationId = "dev.vladleesi.braindanceapp"
         targetSdk = 36
         minSdk = 24
-        versionCode = 1
-        versionName = "0.2.0"
+        versionCode = mobileVersionProperties.getProperty("CURRENT_PROJECT_VERSION").toInt()
+        versionName = mobileVersionProperties.getProperty("MARKETING_VERSION")
     }
     buildFeatures {
         compose = true
@@ -29,7 +35,6 @@ android {
         }
         release {
             isMinifyEnabled = false
-            versionNameSuffix = "-release"
         }
     }
     compileOptions {

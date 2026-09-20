@@ -165,3 +165,13 @@ jobs:
     secrets:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  publish-promoted-mobile-release:
+    name: Publish Promoted Mobile Release
+    needs: promote-to-master
+    if: github.event_name == 'push'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release-mobile.yml
+    with:
+      promoted: true

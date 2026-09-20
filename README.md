@@ -11,6 +11,16 @@ Braindance is a versatile game-tracking application that allows users to search,
 ## Platforms
 Braindance is a multiplatform application that is available for Android and iOS. It is built using the [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html) (KMP).
 
+## Releases
+
+The current Android and iOS release is
+[Braindance Mobile 0.1.0](https://github.com/vladleesi/braindance-app/releases/tag/mobile-v0.1.0).
+Both apps share the same `MAJOR.MINOR.PATCH` version and build number from `version.xcconfig`.
+
+The Cloudflare Worker is versioned independently from the mobile apps. Its current version is `0.1.0`.
+After validation promotes a new mobile version to `master`, GitHub Actions publishes its shared Android/iOS
+source release. The Mobile Release workflow can also publish or retry the current version manually from `master`.
+
 ## Project layout
 
 | Directory | Purpose |
