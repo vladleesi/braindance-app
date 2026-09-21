@@ -80,12 +80,18 @@ Use the checked-in Gradle wrapper; a separate Gradle installation is unnecessary
 ## Web publication
 
 Pushes to `master` build the production browser app and replace the `web-app` branch with its static files. The
-develop validation workflow also publishes after it promotes a validated commit to `master`. Add the Worker URL as
-the repository Actions secret `BACKEND_BASE_URL`, then manually select the `web-app` branch and `/ (root)` in
-GitHub Pages settings. To use a custom domain, set the optional repository Actions variable `WEB_CUSTOM_DOMAIN` and
-configure the matching DNS record and Pages custom-domain setting. Include the deployed website origin in the
-Worker's `CORS_ALLOWED_ORIGINS` variable. The workflow preserves configured custom domains in the generated branch
-but does not change Pages, DNS, or Worker settings.
+develop validation workflow also publishes after it promotes a validated commit to `master`. Configure these under
+**Repository Settings → Secrets and variables → Actions**:
+
+- Add the Worker URL as the repository **secret** `BACKEND_BASE_URL`.
+- To use a custom domain, add its hostname as the repository **variable** `WEB_CUSTOM_DOMAIN`, without `https://`
+  or a trailing slash. **Do not add `WEB_CUSTOM_DOMAIN` as a secret:** the publication workflow reads the `vars`
+  context and would otherwise omit the generated `CNAME` file on every deployment.
+
+Select the `web-app` branch and `/ (root)` in GitHub Pages settings, then configure the matching DNS record and Pages
+custom-domain setting. Include the deployed website origin in the Worker's `CORS_ALLOWED_ORIGINS` variable. The
+workflow preserves configured custom domains in the generated branch but does not change Pages, DNS, or Worker
+settings.
 
 The project can be built without a Worker URL. Configure a reachable Worker before running backend-powered flows,
 and add both Twitch secrets for IGDB requests. A fresh clone does not include anyone else's Worker URL or credentials.
