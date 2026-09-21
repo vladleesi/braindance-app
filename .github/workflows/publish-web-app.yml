@@ -12,11 +12,17 @@ on:
         required: false
         type: boolean
         default: false
+      artifact_name:
+        description: Validated web app artifact to publish without rebuilding
+        required: false
+        type: string
+        default: ''
     secrets:
       BACKEND_BASE_URL:
         required: false
 
 permissions:
+  actions: read
   contents: write
 
 concurrency:
@@ -25,7 +31,7 @@ concurrency:
 
 jobs:
   publish-web-app:
-    name: Build and Publish Web App Branch
+    name: Publish Web App Branch
     # Reusable calls publish only revisions that the validation workflow promoted to master.
     if: inputs.promoted || github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -40,12 +46,14 @@ jobs:
           ref: master
 
       - name: Set up JDK 21
+        if: inputs.artifact_name == ''
         uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
 
       - name: Set up Gradle
+        if: inputs.artifact_name == ''
         uses: gradle/actions/setup-gradle@v6
 
       - name: Validate Web Configuration
@@ -56,7 +64,15 @@ jobs:
           fi
 
       - name: Build Production Web App
+        if: inputs.artifact_name == ''
         run: ./gradlew :webApp:wasmJsBrowserDistribution --stacktrace
+
+      - name: Download Validated Web App
+        if: inputs.artifact_name != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: webApp/build/dist/wasmJs/productionExecutable
 
       - name: Publish Web App Branch
         env:

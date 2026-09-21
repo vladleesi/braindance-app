@@ -38,11 +38,49 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Build Project
-        run: ./gradlew build --stacktrace
+      - name: Build Android App
+        run: ./gradlew :androidApp:build --stacktrace
 
       - name: Run Unit Tests
         run: ./gradlew :androidApp:testDebugUnitTest :shared:testAndroidHostTest --stacktrace
+
+  web-app-build:
+    name: Web App Build
+    runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Validate Web Configuration
+        if: github.event_name == 'push'
+        run: |
+          if [ -z "$ORG_GRADLE_PROJECT_BACKEND_BASE_URL" ]; then
+            echo "Repository secret BACKEND_BASE_URL is required." >&2
+            exit 1
+          fi
+
+      - name: Build Web App
+        run: ./gradlew :webApp:wasmJsBrowserDistribution --stacktrace
+
+      - name: Store Validated Web App
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-app-production
+          path: webApp/build/dist/wasmJs/productionExecutable
+          retention-days: 1
 
   android-instrumented-tests:
     name: Android Instrumented Tests (API ${{ matrix.api-level }})
@@ -138,6 +176,7 @@ jobs:
     needs:
       - android-build-and-unit-tests
       - android-instrumented-tests
+      - web-app-build
       - ios-framework-validation
       - worker-validation
     # Prevent pull-request and manual validation runs from changing master.
@@ -178,12 +217,16 @@ jobs:
 
   publish-promoted-web-app:
     name: Publish Promoted Web App
-    needs: promote-to-master
+    needs:
+      - promote-to-master
+      - web-app-build
     if: github.event_name == 'push'
     permissions:
+      actions: read
       contents: write
     uses: ./.github/workflows/publish-web-app.yml
     with:
       promoted: true
+      artifact_name: web-app-production
     secrets:
       BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL }}
