@@ -1,15 +1,16 @@
 # Braindance API Worker
 
-The Cloudflare Worker handles Twitch client credentials and IGDB requests. The mobile app calls four fixed JSON
-endpoints; it never receives an OAuth token or the Twitch client secret. GamerPower remains a direct client request.
+The JavaScript backend handles Twitch client credentials and proxies IGDB and GamerPower requests. The mobile app
+uses fixed backend endpoints and never receives an OAuth token or the Twitch client secret.
 
 The Worker uses an independent Semantic Version from `package.json`. Each deployment records that version, its
 GitHub source commit, and the triggering GitHub actor in Cloudflare Version History.
 
 The request validation, IGDB queries, token lifecycle, response limits, and upstream error handling live in
-`src/igdb-backend.mjs`. That module uses standard Web APIs and receives credentials, `fetch`, logging, time, and
-rate-slot acquisition as dependencies. `worker.mjs` is the Cloudflare adapter: it supplies Worker secrets and a
-Durable Object backed global rate limiter. A future Node.js adapter can reuse the core without changing the API.
+`src/igdb-backend.mjs`. GamerPower routing and proxy behavior live in `src/gamerpower-backend.mjs`, while shared
+HTTP response utilities live in `src/http.mjs`. The modules use standard Web APIs and receive external dependencies
+such as `fetch` and logging. `worker.mjs` is the Cloudflare adapter: it supplies Worker secrets and a Durable Object
+backed global IGDB rate limiter. A future Node.js adapter can reuse these modules without changing the API.
 
 ## Deploy
 
@@ -34,17 +35,19 @@ variable names and run `npm run dev`.
 
 The health endpoint is `GET /healthz`.
 
-| Endpoint | JSON request |
+| Endpoint | Request |
 | --- | --- |
 | `POST /v1/games/details` | `{"id": 42}` |
 | `POST /v1/games/anticipated` | `{"currentTimestamp": 1780000000, "pageSize": 20}` |
 | `POST /v1/games/popular` | `{"ids": [42, 43], "pageSize": 20}` |
 | `POST /v1/games/popularity` | `{"type": 34, "pageSize": 40}` |
+| `GET /v1/giveaways` | No body |
+| `GET /v1/giveaways/42` | No body |
 
-All requests use `Content-Type: application/json`. IDs and page sizes are bounded; the Worker generates IGDB
-queries itself. A single Durable Object coordinates the app token and the IGDB limit of four upstream calls per
-second across Worker instances. Request and response sizes are capped; errors do not log credentials or bodies.
-Durable Objects are available on Cloudflare's Free plan, subject to its limits.
+POST requests use `Content-Type: application/json`. IDs and page sizes are bounded; the Worker generates IGDB
+queries and GamerPower URLs itself. A single Durable Object coordinates the app token and the IGDB limit of four
+upstream calls per second across Worker instances. Request and response sizes are capped; errors do not log
+credentials or bodies. Durable Objects are available on Cloudflare's Free plan, subject to its limits.
 
 The API is public to mobile clients. The global IGDB limit protects the upstream quota, but a third party can
 still use all four slots. Configure Cloudflare rate limiting or other abuse controls before broad distribution.

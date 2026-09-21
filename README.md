@@ -14,10 +14,10 @@ Braindance is a multiplatform application that is available for Android and iOS.
 ## Releases
 
 The current Android and iOS release is
-[Braindance Mobile 0.1.0](https://github.com/vladleesi/braindance-app/releases/tag/mobile-v0.1.0).
+[Braindance Mobile 0.2.0](https://github.com/vladleesi/braindance-app/releases/tag/mobile-v0.2.0).
 Both apps share the same `MAJOR.MINOR.PATCH` version and build number from `version.xcconfig`.
 
-The Cloudflare Worker is versioned independently from the mobile apps. Its current version is `0.1.0`.
+The Cloudflare Worker is versioned independently from the mobile apps. Its current version is `0.2.0`.
 After validation promotes a new mobile version to `master`, GitHub Actions publishes its shared Android/iOS
 source release. The Mobile Release workflow can also publish or retry the current version manually from `master`.
 
@@ -28,11 +28,11 @@ source release. The Mobile Release workflow can also publish or retry the curren
 | `androidApp` | Android application host |
 | `shared` | Shared Compose UI, app logic, networking, and Android/iOS targets |
 | `iosApp` | Xcode and SwiftUI host |
-| `backend` | Cloudflare Worker that calls IGDB using private Twitch credentials |
+| `backend` | JavaScript API deployed as a Cloudflare Worker that proxies IGDB and GamerPower |
 
-The mobile app calls the Worker for IGDB data and GamerPower directly for giveaways. The Worker URL is included
-in each mobile build, so use your own deployment; its URL is not a secret. Keep Twitch credentials only in
-Cloudflare Worker secrets. See [backend setup](backend/README.md) for deployment and abuse-control notes.
+The mobile app calls the Worker for both IGDB and GamerPower data. The Worker URL is included in each mobile
+build, so use your own deployment; its URL is not a secret. Keep Twitch credentials only in Cloudflare Worker
+secrets. See [backend setup](backend/README.md) for deployment and abuse-control notes.
 
 ## Requirements
 
@@ -68,8 +68,8 @@ Use the checked-in Gradle wrapper; a separate Gradle installation is unnecessary
    invokes `:shared:embedAndSignAppleFrameworkForXcode`. For a physical device or distribution, select your own
    Apple development team and bundle identifier in Xcode.
 
-The project can be built without a Worker URL. Configure a reachable Worker with both Twitch secrets before
-running IGDB-backed app flows. A fresh clone does not include anyone else's Worker URL or credentials.
+The project can be built without a Worker URL. Configure a reachable Worker before running backend-powered flows,
+and add both Twitch secrets for IGDB requests. A fresh clone does not include anyone else's Worker URL or credentials.
 
 ## License
 

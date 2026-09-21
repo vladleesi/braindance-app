@@ -1,8 +1,7 @@
 package dev.vladleesi.braindanceapp.koin
 
 import dev.vladleesi.braindanceapp.data.api.KtorClientManager
-import dev.vladleesi.braindanceapp.data.api.clients.GamerPowerClient
-import dev.vladleesi.braindanceapp.data.api.clients.IgdbClient
+import dev.vladleesi.braindanceapp.data.api.clients.BackendClient
 import dev.vladleesi.braindanceapp.data.api.remote.GamerPowerRemote
 import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
 import dev.vladleesi.braindanceapp.data.api.remote.PopularityPrimitivesRemote
@@ -37,8 +36,7 @@ private fun KoinApplication.koinModules(debugHttpLogging: Boolean) =
 
 private fun ktorClientManagerModule(debugHttpLogging: Boolean) =
     module {
-        single(named(KtorClientManager.IGDB_HTTP_CLIENT)) { IgdbClient.build(debugHttpLogging) }
-        single(named(KtorClientManager.GAMER_POWER_HTTP_CLIENT)) { GamerPowerClient.build(debugHttpLogging) }
+        single(named(KtorClientManager.BACKEND_HTTP_CLIENT)) { BackendClient.build(debugHttpLogging) }
         singleOf(::KtorClientManager)
     }
 

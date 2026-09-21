@@ -12,13 +12,13 @@ import io.ktor.http.contentType
 class PopularityPrimitivesRemote(
     ktorClientManager: KtorClientManager,
 ) {
-    private val igdbHttpClient = ktorClientManager.igdbHttpClient
+    private val backendHttpClient = ktorClientManager.backendHttpClient
 
     suspend fun popularityPrimitives(
         type: Int,
         pageSize: Int,
     ): HttpResponse =
-        igdbHttpClient.post(ApiConfig.Endpoints.POPULARITY_PRIMITIVES) {
+        backendHttpClient.post(ApiConfig.Endpoints.POPULARITY_PRIMITIVES) {
             contentType(ContentType.Application.Json)
             setBody(PopularityRequest(type, pageSize))
         }

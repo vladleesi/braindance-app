@@ -1,5 +1,8 @@
 import { DurableObject } from 'cloudflare:workers';
+import { createGamerPowerBackend } from './src/gamerpower-backend.mjs';
 import { createIgdbBackend, healthResponse } from './src/igdb-backend.mjs';
+
+const gamerPowerBackend = createGamerPowerBackend({});
 
 export class IgdbGateway extends DurableObject {
   constructor(ctx, env) {
@@ -33,9 +36,11 @@ export class IgdbGateway extends DurableObject {
 
 export default {
   fetch(request, env) {
-    if (new URL(request.url).pathname === '/healthz' && request.method === 'GET') {
+    const path = new URL(request.url).pathname;
+    if (path === '/healthz' && request.method === 'GET') {
       return healthResponse(Boolean(env.TWITCH_CLIENT_ID && env.TWITCH_CLIENT_SECRET));
     }
+    if (path.startsWith('/v1/giveaways')) return gamerPowerBackend.fetch(request);
     return env.IGDB_GATEWAY.getByName('global').fetch(request);
   },
 };

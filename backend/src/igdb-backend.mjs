@@ -1,3 +1,5 @@
+import { JSON_RESPONSE_HEADERS, jsonResponse, readLimited } from './http.mjs';
+
 const endpoints = new Set([
   '/v1/games/details',
   '/v1/games/anticipated',
@@ -6,34 +8,6 @@ const endpoints = new Set([
 ]);
 const maxRequestBytes = 2048;
 const maxResponseBytes = 1024 * 1024;
-const responseHeaders = {
-  'Content-Type': 'application/json; charset=utf-8',
-  'Cache-Control': 'no-store',
-  'X-Content-Type-Options': 'nosniff',
-};
-
-function json(status, body) {
-  return new Response(JSON.stringify(body), { status, headers: responseHeaders });
-}
-
-async function readLimited(stream, limit) {
-  if (!stream) return '';
-  const reader = stream.getReader();
-  const decoder = new TextDecoder();
-  let size = 0;
-  let text = '';
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    size += value.byteLength;
-    if (size > limit) {
-      await reader.cancel();
-      throw new Error('body_too_large');
-    }
-    text += decoder.decode(value, { stream: true });
-  }
-  return text + decoder.decode();
-}
 
 function positiveInteger(value, max) {
   return Number.isSafeInteger(value) && value > 0 && value <= max;
@@ -82,8 +56,8 @@ function igdbQuery(path, input) {
 
 export function healthResponse(credentialsAvailable) {
   return credentialsAvailable
-    ? json(200, { ok: true })
-    : json(503, { error: 'Backend credentials unavailable' });
+    ? jsonResponse(200, { ok: true })
+    : jsonResponse(503, { error: 'Backend credentials unavailable' });
 }
 
 export function createIgdbBackend({
@@ -166,11 +140,11 @@ export function createIgdbBackend({
   return {
     async fetch(request) {
       const path = new URL(request.url).pathname;
-      if (request.method !== 'POST' || !endpoints.has(path)) return json(404, { error: 'Not found' });
+      if (request.method !== 'POST' || !endpoints.has(path)) return jsonResponse(404, { error: 'Not found' });
       if (!request.headers.get('content-type')?.startsWith('application/json')) {
-        return json(415, { error: 'Expected application/json' });
+        return jsonResponse(415, { error: 'Expected application/json' });
       }
-      if (!credentialsAvailable) return json(503, { error: 'Backend credentials unavailable' });
+      if (!credentialsAvailable) return jsonResponse(503, { error: 'Backend credentials unavailable' });
 
       try {
         const body = await readLimited(request.body, maxRequestBytes);
@@ -178,21 +152,21 @@ export function createIgdbBackend({
         try {
           input = JSON.parse(body);
         } catch {
-          return json(400, { error: 'Invalid JSON' });
+          return jsonResponse(400, { error: 'Invalid JSON' });
         }
         const query = igdbQuery(path, input);
-        if (!query) return json(400, { error: 'Invalid request' });
+        if (!query) return jsonResponse(400, { error: 'Invalid request' });
         const result = await callIgdb(query);
         if (result.status !== 200) {
           const error = result.status === 429 ? 'Rate limit exceeded' : 'Upstream unavailable';
-          return json(result.status, { error });
+          return jsonResponse(result.status, { error });
         }
-        return new Response(result.body, { status: 200, headers: responseHeaders });
+        return new Response(result.body, { status: 200, headers: JSON_RESPONSE_HEADERS });
       } catch (error) {
         const message = error instanceof Error ? error.message : 'unknown_error';
         const name = error instanceof Error ? error.name : 'UnknownError';
         if (message !== 'body_too_large') logger.error('IGDB gateway failed', name, message);
-        return json(message === 'body_too_large' ? 413 : 502, {
+        return jsonResponse(message === 'body_too_large' ? 413 : 502, {
           error: message === 'body_too_large' ? 'Query too large' : 'Upstream unavailable',
         });
       }

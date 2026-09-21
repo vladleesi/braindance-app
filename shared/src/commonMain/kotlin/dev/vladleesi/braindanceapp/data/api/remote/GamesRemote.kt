@@ -14,10 +14,10 @@ import io.ktor.http.contentType
 class GamesRemote(
     ktorClientManager: KtorClientManager,
 ) {
-    private val igdbHttpClient = ktorClientManager.igdbHttpClient
+    private val backendHttpClient = ktorClientManager.backendHttpClient
 
     suspend fun gameDetails(id: Int): HttpResponse =
-        igdbHttpClient.post(ApiConfig.Endpoints.GAME_DETAILS) {
+        backendHttpClient.post(ApiConfig.Endpoints.GAME_DETAILS) {
             contentType(ContentType.Application.Json)
             setBody(GameDetailsRequest(id))
         }
@@ -26,7 +26,7 @@ class GamesRemote(
         currentTimestamp: Long,
         pageSize: Int,
     ): HttpResponse =
-        igdbHttpClient.post(ApiConfig.Endpoints.MOST_ANTICIPATED) {
+        backendHttpClient.post(ApiConfig.Endpoints.MOST_ANTICIPATED) {
             contentType(ContentType.Application.Json)
             setBody(MostAnticipatedRequest(currentTimestamp, pageSize))
         }
@@ -35,7 +35,7 @@ class GamesRemote(
         ids: List<Int>,
         pageSize: Int,
     ): HttpResponse =
-        igdbHttpClient.post(ApiConfig.Endpoints.POPULAR_GAMES) {
+        backendHttpClient.post(ApiConfig.Endpoints.POPULAR_GAMES) {
             contentType(ContentType.Application.Json)
             setBody(PopularGamesRequest(ids, pageSize))
         }
