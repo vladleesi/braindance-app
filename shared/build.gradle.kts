@@ -1,3 +1,5 @@
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+
 import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.StringReader
@@ -38,6 +40,10 @@ kotlin {
         it.binaries.framework {
             baseName = "shared"
         }
+    }
+
+    wasmJs {
+        browser()
     }
 
     sourceSets {
@@ -93,6 +99,10 @@ kotlin {
         iosMain.dependencies {
             // Network
             implementation(libs.ktor.client.darwin)
+        }
+        wasmJsMain.dependencies {
+            // Network
+            implementation(libs.ktor.client.js)
         }
         val iosArm64Test by getting
         val iosSimulatorArm64Test by getting

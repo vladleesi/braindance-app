@@ -9,15 +9,16 @@
 Braindance is a versatile game-tracking application that allows users to search, explore, and keep up with their favorite games. Powered by the extensive [IGDB database](https://api-docs.igdb.com/#getting-started), users can effortlessly find detailed information about any game, add them to their favorites, stay updated with release dates using the integrated calendar, and read the latest game news.
 
 ## Platforms
-Braindance is a multiplatform application that is available for Android and iOS. It is built using the [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html) (KMP).
+Braindance is a multiplatform application for Android, iOS, and the browser. It is built using
+[Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html) (KMP).
 
 ## Releases
 
 The current Android and iOS release is
-[Braindance Mobile 0.2.1](https://github.com/vladleesi/braindance-app/releases/tag/mobile-v0.2.1).
+[Braindance Mobile 0.3.0](https://github.com/vladleesi/braindance-app/releases/tag/mobile-v0.3.0).
 Both apps share the same `MAJOR.MINOR.PATCH` version and build number from `version.xcconfig`.
 
-The Cloudflare Worker is versioned independently from the mobile apps. Its current version is `0.2.0`.
+The Cloudflare Worker is versioned independently from the mobile apps. Its current version is `0.2.2`.
 After validation promotes a new mobile version to `master`, GitHub Actions publishes its shared Android/iOS
 source release. The Mobile Release workflow can also publish or retry the current version manually from `master`.
 
@@ -28,6 +29,7 @@ source release. The Mobile Release workflow can also publish or retry the curren
 | `androidApp` | Android application host |
 | `shared` | Shared Compose UI, app logic, networking, and Android/iOS targets |
 | `iosApp` | Xcode and SwiftUI host |
+| `webApp` | Compose Multiplatform browser host |
 | `backend` | JavaScript API deployed as a Cloudflare Worker that proxies IGDB and GamerPower |
 
 The mobile app calls the Worker for both IGDB and GamerPower data. The Worker URL is included in each mobile
@@ -67,6 +69,23 @@ Use the checked-in Gradle wrapper; a separate Gradle installation is unnecessary
 4. On macOS, open `iosApp/iosApp.xcodeproj` in Xcode, select an iOS Simulator, and run the `iosApp` target. Xcode
    invokes `:shared:embedAndSignAppleFrameworkForXcode`. For a physical device or distribution, select your own
    Apple development team and bundle identifier in Xcode.
+5. Run the browser client from the repository root:
+
+   ```sh
+   ./gradlew :webApp:wasmJsBrowserDevelopmentRun
+   ```
+
+   The development server prints the local URL. The browser client requires a browser with WasmGC support.
+
+## Web publication
+
+Pushes to `master` build the production browser app and replace the `web-app` branch with its static files. The
+develop validation workflow also publishes after it promotes a validated commit to `master`. Add the Worker URL as
+the repository Actions secret `BACKEND_BASE_URL`, then manually select the `web-app` branch and `/ (root)` in
+GitHub Pages settings. To use a custom domain, set the optional repository Actions variable `WEB_CUSTOM_DOMAIN` and
+configure the matching DNS record and Pages custom-domain setting. Include the deployed website origin in the
+Worker's `CORS_ALLOWED_ORIGINS` variable. The workflow preserves configured custom domains in the generated branch
+but does not change Pages, DNS, or Worker settings.
 
 The project can be built without a Worker URL. Configure a reachable Worker before running backend-powered flows,
 and add both Twitch secrets for IGDB requests. A fresh clone does not include anyone else's Worker URL or credentials.

@@ -1,6 +1,7 @@
 import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
+    base
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
@@ -19,7 +20,7 @@ allprojects {
     }
 }
 
-tasks.register("clean", Delete::class) {
+tasks.named<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
 

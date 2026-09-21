@@ -1,0 +1,81 @@
+name: Master Web App Publication
+
+on:
+  # Direct pushes to master build and publish the browser app branch.
+  push:
+    branches: [master]
+  # Develop validation calls this directly because its GITHUB_TOKEN promotion cannot trigger a push workflow.
+  workflow_call:
+    inputs:
+      promoted:
+        description: Publish the master revision promoted from develop
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      BACKEND_BASE_URL:
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: web-app-publication
+  cancel-in-progress: true
+
+jobs:
+  publish-web-app:
+    name: Build and Publish Web App Branch
+    # Reusable calls publish only revisions that the validation workflow promoted to master.
+    if: inputs.promoted || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL }}
+      WEB_CUSTOM_DOMAIN: ${{ vars.WEB_CUSTOM_DOMAIN }}
+
+    steps:
+      - name: Checkout Master
+        uses: actions/checkout@v7
+        with:
+          ref: master
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Validate Web Configuration
+        run: |
+          if [ -z "$ORG_GRADLE_PROJECT_BACKEND_BASE_URL" ]; then
+            echo "Repository secret BACKEND_BASE_URL is required." >&2
+            exit 1
+          fi
+
+      - name: Build Production Web App
+        run: ./gradlew :webApp:wasmJsBrowserDistribution --stacktrace
+
+      - name: Publish Web App Branch
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          publish_dir="$RUNNER_TEMP/web-app"
+          mkdir -p "$publish_dir"
+          cp -R webApp/build/dist/wasmJs/productionExecutable/. "$publish_dir/"
+
+          git switch --orphan web-app
+          git clean -fdx
+          cp -R "$publish_dir/." .
+          touch .nojekyll
+          if [ -n "$WEB_CUSTOM_DOMAIN" ]; then
+            printf '%s\n' "$WEB_CUSTOM_DOMAIN" > CNAME
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m "deploy(web): publish $SOURCE_SHA"
+          git push --force origin web-app

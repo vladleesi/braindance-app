@@ -175,3 +175,15 @@ jobs:
     uses: ./.github/workflows/release-mobile.yml
     with:
       promoted: true
+
+  publish-promoted-web-app:
+    name: Publish Promoted Web App
+    needs: promote-to-master
+    if: github.event_name == 'push'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/publish-web-app.yml
+    with:
+      promoted: true
+    secrets:
+      BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL }}

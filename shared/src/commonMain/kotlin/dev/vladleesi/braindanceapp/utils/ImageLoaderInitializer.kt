@@ -6,6 +6,7 @@ import coil3.PlatformContext
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
+import coil3.network.ktor3.KtorNetworkFetcherFactory
 import coil3.request.CachePolicy
 import coil3.request.crossfade
 import coil3.util.DebugLogger
@@ -20,17 +21,17 @@ object ImageLoaderInitializer {
 
 // Cache configuration constants
 private const val MEMORY_CACHE_PERCENTAGE = 0.3
-private const val DISK_CACHE_MAX_SIZE_BYTES = 512L * 1024 * 1024 // 512MB
+private const val DISK_CACHE_MAX_SIZE_BYTES = 512L * 1024 * 1024
 
 // Builds the ImageLoader with enabled caching policies
 private fun createImageLoader(context: PlatformContext) =
     ImageLoader
         .Builder(context)
+        .components { add(KtorNetworkFetcherFactory()) }
         .memoryCachePolicy(CachePolicy.ENABLED)
         .memoryCache { configureMemoryCache(context) }
-        .diskCachePolicy(CachePolicy.ENABLED)
         .networkCachePolicy(CachePolicy.ENABLED)
-        .diskCache { configureDiskCache() }
+        .configurePlatformCache()
         .crossfade(true)
         .logger(DebugLogger())
         .build()
@@ -43,10 +44,20 @@ private fun configureMemoryCache(context: PlatformContext) =
         .strongReferencesEnabled(true)
         .build()
 
-// Configures the disk cache with a specified size and directory
-private fun configureDiskCache() =
-    DiskCache
-        .Builder()
-        .directory(FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "image_cache")
-        .maxSizeBytes(DISK_CACHE_MAX_SIZE_BYTES)
-        .build()
+private fun ImageLoader.Builder.configurePlatformCache(): ImageLoader.Builder {
+    if (!isDiskCacheSupported) {
+        return diskCachePolicy(CachePolicy.ENABLED)
+            .diskCache(null)
+    }
+
+    return diskCachePolicy(CachePolicy.ENABLED)
+        .diskCache {
+            DiskCache
+                .Builder()
+                .directory(FileSystem.SYSTEM_TEMPORARY_DIRECTORY / "image_cache")
+                .maxSizeBytes(DISK_CACHE_MAX_SIZE_BYTES)
+                .build()
+        }
+}
+
+internal expect val isDiskCacheSupported: Boolean

@@ -5,8 +5,6 @@ import dev.vladleesi.braindanceapp.data.models.giveaways.GiveawayResponse
 import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
 import dev.vladleesi.braindanceapp.logger.BLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +24,7 @@ class GiveawayDetailsViewModel(
         }
 
     override fun onLoad() {
-        viewModelScope.launch(Dispatchers.IO + handler) {
+        viewModelScope.launch(handler) {
             runCatching {
                 _giveawayDetailsState.emit(GiveawayDetailsState.Loading)
                 if (giveawayId == null) {

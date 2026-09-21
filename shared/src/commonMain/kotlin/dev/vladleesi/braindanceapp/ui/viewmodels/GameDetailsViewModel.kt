@@ -13,8 +13,6 @@ import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import dev.vladleesi.braindanceapp.utils.toCoverUrl
 import dev.vladleesi.braindanceapp.utils.toStoreTypes
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,7 +32,7 @@ class GameDetailsViewModel(
         }
 
     override fun onLoad() {
-        viewModelScope.launch(Dispatchers.IO + handler) {
+        viewModelScope.launch(handler) {
             _gameDetailsState.emit(GameDetailsState.Loading)
             if (gameId == null) {
                 _gameDetailsState.emit(GameDetailsState.Error("Invalid game ID: $gameId"))

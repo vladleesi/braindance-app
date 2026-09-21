@@ -1,4 +1,5 @@
 import { DurableObject } from 'cloudflare:workers';
+import { preflightResponse, withCors } from './src/cors.mjs';
 import { createGamerPowerBackend } from './src/gamerpower-backend.mjs';
 import { createIgdbBackend, healthResponse } from './src/igdb-backend.mjs';
 
@@ -35,12 +36,20 @@ export class IgdbGateway extends DurableObject {
 }
 
 export default {
-  fetch(request, env) {
+  async fetch(request, env) {
     const path = new URL(request.url).pathname;
-    if (path === '/healthz' && request.method === 'GET') {
-      return healthResponse(Boolean(env.TWITCH_CLIENT_ID && env.TWITCH_CLIENT_SECRET));
+    if (request.method === 'OPTIONS' && path.startsWith('/v1/')) {
+      return preflightResponse(request, env.CORS_ALLOWED_ORIGINS);
     }
-    if (path.startsWith('/v1/giveaways')) return gamerPowerBackend.fetch(request);
-    return env.IGDB_GATEWAY.getByName('global').fetch(request);
+
+    let response;
+    if (path === '/healthz' && request.method === 'GET') {
+      response = healthResponse(Boolean(env.TWITCH_CLIENT_ID && env.TWITCH_CLIENT_SECRET));
+    } else if (path.startsWith('/v1/giveaways')) {
+      response = await gamerPowerBackend.fetch(request);
+    } else {
+      response = await env.IGDB_GATEWAY.getByName('global').fetch(request);
+    }
+    return withCors(request, response, env.CORS_ALLOWED_ORIGINS);
   },
 };

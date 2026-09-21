@@ -33,6 +33,10 @@ the first deployment. Later `npm run deploy` calls retain them. Do not put them 
 mobile build settings. For local Worker development, use an ignored `backend/.dev.vars` file with the same two
 variable names and run `npm run dev`.
 
+Browser requests from `http://localhost` and `http://127.0.0.1`, on any port, are allowed for local development.
+For a deployed web client, set `CORS_ALLOWED_ORIGINS` to a comma-separated list of exact origins, for example
+`https://example.com,https://www.example.com`. The Worker handles `OPTIONS` preflight requests for `/v1/` routes.
+
 The health endpoint is `GET /healthz`.
 
 | Endpoint | Request |
@@ -43,6 +47,7 @@ The health endpoint is `GET /healthz`.
 | `POST /v1/games/popularity` | `{"type": 34, "pageSize": 40}` |
 | `GET /v1/giveaways` | No body |
 | `GET /v1/giveaways/42` | No body |
+| `GET /v1/giveaways/image?url=...` | GamerPower images referenced by giveaway responses |
 
 POST requests use `Content-Type: application/json`. IDs and page sizes are bounded; the Worker generates IGDB
 queries and GamerPower URLs itself. A single Durable Object coordinates the app token and the IGDB limit of four

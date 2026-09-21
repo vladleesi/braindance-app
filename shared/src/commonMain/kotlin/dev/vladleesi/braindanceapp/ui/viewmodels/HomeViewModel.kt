@@ -16,8 +16,6 @@ import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import dev.vladleesi.braindanceapp.utils.toCoverUrl
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,7 +50,7 @@ class HomeViewModel(
     }
 
     fun loadMostAnticipated(pageSize: Int = PAGE_SIZE) {
-        viewModelScope.launch(Dispatchers.IO + handler) {
+        viewModelScope.launch(handler) {
             runCatching {
                 _mostAnticipated.emit(HomeState.Loading)
                 val gameItems = homeRepo.mostAnticipated(pageSize = pageSize, currentTimestamp = nowUnix)
@@ -66,7 +64,7 @@ class HomeViewModel(
     }
 
     fun loadGiveaways(pageSize: Int = PAGE_SIZE) {
-        viewModelScope.launch(Dispatchers.IO + handler) {
+        viewModelScope.launch(handler) {
             runCatching {
                 _giveaways.emit(HomeState.Loading)
                 val giveaways = gamerPowerRepo.giveaways(pageSize = pageSize)
@@ -80,7 +78,7 @@ class HomeViewModel(
     }
 
     fun loadPopularRightNow(pageSize: Int = PAGE_SIZE) {
-        viewModelScope.launch(Dispatchers.IO + handler) {
+        viewModelScope.launch(handler) {
             runCatching {
                 _popularRightNow.emit(HomeState.Loading)
                 val gameItems = homeRepo.popularRightNow(pageSize = pageSize)
