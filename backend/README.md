@@ -34,8 +34,9 @@ mobile build settings. For local Worker development, use an ignored `backend/.de
 variable names and run `npm run dev`.
 
 Browser requests from `http://localhost` and `http://127.0.0.1`, on any port, are allowed for local development.
-For a deployed web client, set `CORS_ALLOWED_ORIGINS` to a comma-separated list of exact origins, for example
-`https://example.com,https://www.example.com`. The Worker handles `OPTIONS` preflight requests for `/v1/` routes.
+For a deployed web client, set `CORS_ALLOWED_ORIGINS` in the Cloudflare dashboard to a comma-separated list of exact
+origins, for example `https://example.com,https://www.example.com`. Wrangler preserves dashboard variables during
+deployment. The Worker handles `OPTIONS` preflight requests for `/v1/` routes.
 
 The health endpoint is `GET /healthz`.
 
