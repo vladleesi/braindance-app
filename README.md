@@ -36,6 +36,13 @@ The mobile app calls the Worker for both IGDB and GamerPower data. The Worker UR
 build, so use your own deployment; its URL is not a secret. Keep Twitch credentials only in Cloudflare Worker
 secrets. See [backend setup](backend/README.md) for deployment and abuse-control notes.
 
+## API credentials
+
+IGDB does not issue a separate API key: it uses a Twitch developer application's client ID and client secret.
+GamerPower requires no API key. Cloudflare credentials are required only for automated Worker deployment. See the
+[backend credential guide](backend/README.md#credentials-and-external-services) for the exact registration steps,
+variable names, and storage locations.
+
 ## Requirements
 
 - JDK 21 and an Android SDK with API 37 installed for Android builds.

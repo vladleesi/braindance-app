@@ -12,14 +12,98 @@ HTTP response utilities live in `src/http.mjs`. The modules use standard Web API
 such as `fetch` and logging. `worker.mjs` is the Cloudflare adapter: it supplies Worker secrets and a Durable Object
 backed global IGDB rate limiter. A future Node.js adapter can reuse these modules without changing the API.
 
+## Credentials and external services
+
+| Service or value | Required | Where it comes from | Where it belongs |
+| --- | --- | --- | --- |
+| `TWITCH_CLIENT_ID` | Yes, for IGDB | Twitch developer application | Cloudflare Worker secret |
+| `TWITCH_CLIENT_SECRET` | Yes, for IGDB | Twitch developer application | Cloudflare Worker secret |
+| GamerPower API key | No | GamerPower does not require authentication | Nowhere |
+| `CLOUDFLARE_API_TOKEN` | Only for GitHub Actions deployment | Cloudflare API Tokens | GitHub Actions secret |
+| `CLOUDFLARE_ACCOUNT_ID` | Only for GitHub Actions deployment | Cloudflare account details | GitHub Actions secret |
+| `BACKEND_BASE_URL` | Yes, for app features | Deployed Worker URL | Local property or Actions secret |
+| `CORS_ALLOWED_ORIGINS` | Only for hosted web | Website origins | Cloudflare Worker variable |
+
+### IGDB and Twitch
+
+IGDB uses Twitch application credentials. There is no additional IGDB API key, and the Worker obtains and refreshes
+the OAuth access token automatically.
+
+1. Create or sign in to a [Twitch account](https://www.twitch.tv/signup), verify its email address, and enable
+   two-factor authentication.
+2. Open the [Twitch Developer Console](https://dev.twitch.tv/console/apps) and select **Register Your Application**.
+3. Enter a unique application name. For IGDB, use `http://localhost` as the OAuth redirect URL and select a suitable
+   application category. Set the client type to **Confidential** when that option is shown.
+4. Create the application, open **Manage**, and copy its **Client ID**.
+5. Select **New Secret** and immediately copy the generated client secret. Generating another secret invalidates the
+   previous one.
+6. Store both values directly in the deployed Worker. Wrangler prompts for each value without writing it to Git:
+
+   ```sh
+   cd backend
+   npx wrangler secret put TWITCH_CLIENT_ID
+   npx wrangler secret put TWITCH_CLIENT_SECRET
+   ```
+
+Never put the client secret or generated OAuth token in `local.properties`, `wrangler.jsonc`, GitHub variables, or
+mobile and browser builds. Follow the official [IGDB account guide](https://api-docs.igdb.com/#account-creation) and
+[Twitch application guide](https://dev.twitch.tv/docs/authentication/register-app/) if their console changes.
+
+### GamerPower
+
+[GamerPower](https://www.gamerpower.com/api-read) is public and requires no account, API key, or authorization
+header. Its terms require attribution with an active link to GamerPower. The Worker proxies its public API so every
+Braindance client uses the same backend boundary.
+
+### Cloudflare deployment credentials
+
+Local deployment uses browser authentication and does not require manually creating an API token:
+
+```sh
+cd backend
+npm ci
+npx wrangler login
+npm run deploy
+```
+
+GitHub Actions runs without an interactive login, so it needs two repository secrets:
+
+1. In Cloudflare, open **My Profile → API Tokens**, select **Create Token**, and use the
+   **Edit Cloudflare Workers** template. Restrict the token to the account that hosts this Worker.
+2. Copy the token when Cloudflare displays it. This becomes `CLOUDFLARE_API_TOKEN`.
+3. In **Workers & Pages**, copy **Account ID** from **Account Details**. This becomes
+   `CLOUDFLARE_ACCOUNT_ID`. Cloudflare also documents other ways to
+   [find the account ID](https://developers.cloudflare.com/fundamentals/account/find-account-and-zone-ids/).
+4. In GitHub, open **Repository Settings → Secrets and variables → Actions → Secrets** and create secrets with
+   those exact names.
+
+The API token authorizes deployments and must remain secret. The account ID identifies the Cloudflare account; keep
+it in Actions secrets as expected by the workflow. See Cloudflare's
+[GitHub Actions authentication guide](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/)
+for the current permission requirements.
+
+### URLs and browser CORS
+
+After `npm run deploy`, Wrangler prints the Worker URL. This URL is configuration rather than a credential. Set it as
+`BACKEND_BASE_URL` in the ignored root `local.properties`; for web publication, create a GitHub Actions secret with
+the same name.
+
+If a hosted browser client calls the Worker, deploy its exact origin as a regular Worker variable:
+
+```sh
+cd backend
+npm run deploy -- --var 'CORS_ALLOWED_ORIGINS:https://example.com'
+```
+
+Use a comma-separated value for multiple origins. Do not add paths or trailing slashes. Localhost browser origins are
+allowed automatically, and native Android and iOS clients do not use CORS.
+
 ## Deploy
 
-1. Create a Twitch developer application by following the
-   [IGDB authentication guide](https://api-docs.igdb.com/#account-creation) and keep its client ID and secret private.
+1. Create the Twitch application and obtain the two IGDB credentials as described above.
 2. From this directory, run `npm ci`, then `npx wrangler login` to connect your Cloudflare account.
 3. Run `npm run deploy`. Wrangler creates the Worker and prints its public URL.
-4. Add `TWITCH_CLIENT_ID` and `TWITCH_CLIENT_SECRET` as encrypted Worker secrets with
-   `npx wrangler secret put TWITCH_CLIENT_ID` and `npx wrangler secret put TWITCH_CLIENT_SECRET`. Each command
+4. Add `TWITCH_CLIENT_ID` and `TWITCH_CLIENT_SECRET` with the `wrangler secret put` commands above. Each command
    publishes a new Worker version. `/healthz` returns 503 until both secrets are configured.
 5. Set `BACKEND_BASE_URL` to the Worker URL in the ignored root `local.properties` for Android and iOS builds.
 
