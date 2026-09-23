@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="back_button_content_description">Button: Back</string>
+    <string name="horizontal_list_previous">Previous items</string>
+    <string name="horizontal_list_next">Next items</string>
 
     <!-- Home screen -->
     <string name="home_screen_popular_most_anticipated">Most Anticipated</string>

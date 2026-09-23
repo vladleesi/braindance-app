@@ -15,7 +15,7 @@ Braindance is a multiplatform application for Android, iOS, and the browser. It 
 ## Releases
 
 The current Android and iOS release is
-[Braindance Mobile 0.3.0](https://github.com/vladleesi/braindance-app/releases/tag/mobile-v0.3.0).
+[Braindance Mobile 0.3.1](https://github.com/vladleesi/braindance-app/releases/tag/mobile-v0.3.1).
 Both apps share the same `MAJOR.MINOR.PATCH` version and build number from `version.xcconfig`.
 
 The Cloudflare Worker is versioned independently from the mobile apps. Its current version is `0.2.3`.

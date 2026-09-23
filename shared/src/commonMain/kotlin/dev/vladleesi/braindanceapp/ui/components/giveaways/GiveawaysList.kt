@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -20,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import dev.vladleesi.braindanceapp.system.isLargeDevice
+import dev.vladleesi.braindanceapp.ui.components.HorizontalListControls
 import dev.vladleesi.braindanceapp.ui.components.StaticText
 import dev.vladleesi.braindanceapp.ui.components.home.CarouselErrorState
 import dev.vladleesi.braindanceapp.ui.style.Dimens
@@ -114,6 +117,7 @@ private fun GiveawaysList(
     onItemClick: (Int) -> Unit,
 ) {
     Column(modifier = modifier) {
+        val listState = rememberLazyListState()
         Box(modifier = Modifier.fillMaxWidth()) {
             StaticText(
                 text = title,
@@ -123,18 +127,24 @@ private fun GiveawaysList(
                         .align(Alignment.CenterStart),
                 style = MaterialTheme.typography.h2,
             )
-            Button(
-                onClick = {},
-                elevation = null,
+            Row(
                 modifier = Modifier.align(Alignment.CenterEnd),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = "See all",
-                    style = MaterialTheme.typography.subtitle2,
-                )
+                HorizontalListControls(listState = listState)
+                Button(
+                    onClick = {},
+                    elevation = null,
+                ) {
+                    Text(
+                        text = "See all",
+                        style = MaterialTheme.typography.subtitle2,
+                    )
+                }
             }
         }
         LazyRow(
+            state = listState,
             modifier = Modifier.padding(top = Dimens.small),
             horizontalArrangement = Arrangement.spacedBy(Dimens.small),
             contentPadding = PaddingValues(horizontal = Dimens.medium),
