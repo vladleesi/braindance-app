@@ -146,29 +146,40 @@ jobs:
       - name: Build Shared iOS Framework
         run: ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64 --stacktrace
 
-  worker-validation:
-    name: Worker Validation
+  backend-validation:
+    name: Backend Validation
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+    env:
+      TEST_REDIS_URL: redis://127.0.0.1:6379
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
         with:
-          node-version: '22'
-          cache: npm
-          cache-dependency-path: backend/package-lock.json
+          distribution: temurin
+          java-version: '21'
 
-      - name: Install Worker Dependencies
-        run: npm ci
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
 
-      - name: Validate Worker Deployment
-        run: npx --no-install wrangler deploy --dry-run
+      - name: Test and package backend
+        run: ./gradlew :backend:build :backend:installDist --stacktrace
+
+      - name: Build container
+        run: docker build -f backend/Dockerfile backend
 
   promote-to-master:
     name: Promote Develop to Master
@@ -178,7 +189,7 @@ jobs:
       - android-instrumented-tests
       - web-app-build
       - ios-framework-validation
-      - worker-validation
+      - backend-validation
     # Prevent pull-request and manual validation runs from changing master.
     if: github.event_name == 'push'
     permissions:
@@ -194,16 +205,16 @@ jobs:
         # Keep master as an exact promotion of the validated develop commit.
         run: git push --force origin HEAD:master
 
-  deploy-promoted-worker:
-    name: Deploy Promoted Worker
+  publish-promoted-backend:
+    name: Publish Promoted Backend Image
     needs: promote-to-master
     if: github.event_name == 'push'
-    uses: ./.github/workflows/deploy-worker.yml
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/publish-backend.yml
     with:
       promoted: true
-    secrets:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
   publish-promoted-mobile-release:
     name: Publish Promoted Mobile Release

@@ -7,9 +7,11 @@ captures
 .externalNativeBuild
 .cxx
 local.properties
-backend/.dev.vars*
-backend/.env*
-backend/node_modules/
-backend/.wrangler/
+.env
+.env.*
+!.env.example
+.deployment/
+gha-creds-*.json
+application_default_credentials.json
 xcuserdata
 .kotlin

@@ -1,0 +1,59 @@
+name: Publish Backend Image
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      promoted:
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    if: inputs.promoted || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+    env:
+      TEST_REDIS_URL: redis://127.0.0.1:6379
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew :backend:build :backend:installDist --stacktrace
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and publish
+        env:
+          IMAGE: ghcr.io/${{ github.repository }}/backend
+        run: |
+          version="$(sed -n 's/^version = "\([^"]*\)"/\1/p' backend/build.gradle.kts)"
+          image="$(printf '%s' "$IMAGE" | tr '[:upper:]' '[:lower:]')"
+          source_sha="$(git rev-parse HEAD)"
+          docker build -f backend/Dockerfile -t "$image:$version" -t "$image:${source_sha}" backend
+          docker push "$image:$version"
+          docker push "$image:${source_sha}"
