@@ -41,7 +41,7 @@ jobs:
       - name: Build Android App
         run: ./gradlew :androidApp:build --stacktrace
 
-      - name: Run Unit Tests
+      - name: Run Android Unit Tests
         run: ./gradlew :androidApp:testDebugUnitTest :shared:testAndroidHostTest --stacktrace
 
   web-app-build:
@@ -175,10 +175,10 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      - name: Test and package backend
+      - name: Test and Package Backend
         run: ./gradlew :backend:build :backend:installDist --stacktrace
 
-      - name: Build container
+      - name: Build Backend Container
         run: docker build -f backend/Dockerfile backend
 
   promote-to-master:
