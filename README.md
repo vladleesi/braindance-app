@@ -3,7 +3,7 @@
 > **Important:**
 > It is an ongoing project and is currently under development. However, I'm actively working on adding new features, enhancing existing functionality, and addressing any issues or bugs.
 
-![Braindance vibe](https://github.com/vladleesi/braindance-app/assets/30999008/cdb06536-ecbf-43ae-9336-3833a89a3718)
+![Braindance vibe](https://github.com/vladleesi/braindance/assets/30999008/cdb06536-ecbf-43ae-9336-3833a89a3718)
 
 ## Overview
 Braindance is a versatile game-tracking application that allows users to search, explore, and keep up with their favorite games. Powered by the extensive [IGDB database](https://api-docs.igdb.com/#getting-started), users can effortlessly find detailed information about any game, add them to their favorites, stay updated with release dates using the integrated calendar, and read the latest game news.
@@ -16,7 +16,7 @@ The backend runs Kotlin/JVM with Ktor.
 ## Releases
 
 The current frontend version for Android, iOS, and Web is `0.3.1`, with one shared
-[Braindance Frontend release](https://github.com/vladleesi/braindance-app/releases/tag/frontend-v0.3.1).
+[Braindance Frontend release](https://github.com/vladleesi/braindance/releases/tag/frontend-v0.3.1).
 All three platforms use the same `MAJOR.MINOR.PATCH` version from `version.xcconfig`; Android and iOS also use its
 shared build number. Existing `mobile-v*` releases remain available as historical releases.
 
@@ -125,4 +125,4 @@ and add both Twitch secrets for IGDB requests. A fresh clone does not include an
 ## License
 
 Braindance is licensed under [GPL-3.0](LICENSE). Report issues through the
-[GitHub issue tracker](https://github.com/vladleesi/braindance-app/issues).
+[GitHub issue tracker](https://github.com/vladleesi/braindance/issues).

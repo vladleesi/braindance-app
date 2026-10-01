@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "braindance-app"
+rootProject.name = "braindance"
 include(":shared")
 include(":androidApp")
 include(":webApp")
