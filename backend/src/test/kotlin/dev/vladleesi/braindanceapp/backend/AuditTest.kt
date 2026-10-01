@@ -1,5 +1,3 @@
-@file:Suppress("MagicNumber", "StringLiteralDuplication")
-
 package dev.vladleesi.braindanceapp.backend
 
 import io.ktor.client.HttpClient

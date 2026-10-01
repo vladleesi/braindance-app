@@ -35,7 +35,7 @@ class IgdbService(
         var accessToken = getToken()
         repeat(2) { attempt ->
             if (!rateLimiter.takeSlot()) return ApiResult(429)
-            val response = upstream.igdb(query.first, query.second, config.clientId!!, accessToken)
+            val response = upstream.igdb(query.first, query.second, checkNotNull(config.clientId), accessToken)
             if (response.status.value == 401 && attempt == 0) {
                 accessToken = getToken(rejectedToken = accessToken)
             } else {
@@ -56,7 +56,7 @@ class IgdbService(
                 expiresAt = 0
             }
             token?.takeIf { clock.millis() < expiresAt }?.let { return@withLock it }
-            val response = upstream.token(config.clientId!!, config.clientSecret!!)
+            val response = upstream.token(checkNotNull(config.clientId), checkNotNull(config.clientSecret))
             if (response.status.value !in 200..299) error("token_request_failed")
             val payload = Json.parseToJsonElement(response.body.decodeToString()) as? JsonObject
             val newToken =

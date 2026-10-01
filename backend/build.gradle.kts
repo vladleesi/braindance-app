@@ -1,10 +1,14 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
 plugins {
     application
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
 }
 
 group = "dev.vladleesi.braindanceapp"
-version = "0.3.2"
+version = "0.4.0"
 
 kotlin {
     compilerOptions {
@@ -27,14 +31,24 @@ dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines)
-    implementation("redis.clients:jedis:5.2.0")
+    implementation(libs.redis.jedis)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.client.mock)
-    testImplementation(kotlin("test"))
-    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(libs.unit.tests.kotlin)
+    testImplementation(libs.unit.tests.jupiter)
+    testRuntimeOnly(libs.unit.tests.launcher)
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.named("detekt") {
+    dependsOn("detektMain", "detektTest")
+}
+
+listOf("detektMain", "detektTest").forEach { taskName ->
+    tasks.named<Detekt>(taskName) {
+        config.setFrom(rootProject.files("config/detekt-nullability.yml"))
+    }
 }

@@ -12,6 +12,9 @@ style:
       - '**/*.gradle.kts'
       - '**/ui/style/icons/**'
       - '**/ui/style/Colors.kt'
+      - '**/src/test/**'
+      - '**/src/*Test/**'
+      - '**/src/androidTest/**'
   UnusedImports:
     active: true
   WildcardImport:
@@ -26,6 +29,10 @@ potential-bugs:
   active: true
   EqualsAlwaysReturnsTrueOrFalse:
     active: true
+  UnsafeCallOnNullableType:
+    active: true
+    excludes:
+      - '**/ui/style/icons/**'
 
 naming:
   active: true
@@ -156,6 +163,10 @@ complexity:
     threshold: 7
   StringLiteralDuplication:
     active: true
+    excludes:
+      - '**/src/test/**'
+      - '**/src/*Test/**'
+      - '**/src/androidTest/**'
     threshold: 3
     ignoreAnnotation: true
     excludeStringsWithLessThan5Characters: true

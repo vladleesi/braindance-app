@@ -1,6 +1,7 @@
 @file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.StringReader
 import java.util.Properties
@@ -15,6 +16,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.android.kotlin.multiplatform.library)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
 }
 
 kotlin {
@@ -84,7 +87,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel.navigation)
         }
         commonTest.dependencies {
-            implementation(kotlin("test"))
+            implementation(libs.unit.tests.kotlin)
         }
         androidMain.dependencies {
             // Network
@@ -95,8 +98,8 @@ kotlin {
                 implementation(libs.unit.tests.junit)
             }
         }
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
+        val iosArm64Main = getByName("iosArm64Main")
+        val iosSimulatorArm64Main = getByName("iosSimulatorArm64Main")
         iosMain.dependencies {
             // Network
             implementation(libs.ktor.client.darwin)
@@ -105,8 +108,8 @@ kotlin {
             // Network
             implementation(libs.ktor.client.js)
         }
-        val iosArm64Test by getting
-        val iosSimulatorArm64Test by getting
+        val iosArm64Test = getByName("iosArm64Test")
+        val iosSimulatorArm64Test = getByName("iosSimulatorArm64Test")
     }
 }
 
@@ -139,4 +142,13 @@ buildkonfig {
                 .orEmpty()
         buildConfigField(FieldSpec.Type.STRING, backendBaseUrlProperty, backendUrl)
     }
+}
+
+tasks.named("detekt") {
+    dependsOn("detektAndroidMain")
+}
+
+tasks.named<Detekt>("detektAndroidMain") {
+    setSource(files("src/commonMain/kotlin", "src/androidMain/kotlin"))
+    config.setFrom(rootProject.files("config/detekt-nullability.yml"))
 }

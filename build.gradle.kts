@@ -1,27 +1,42 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 
 plugins {
     base
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.compose.multiplatform) apply false
     alias(libs.plugins.kotlin.compose.compiler) apply false
-    alias(libs.plugins.ktlint) apply false
-    alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
     alias(libs.plugins.buildkonfig) apply false
 }
 
+val detektTaskName = "detekt"
+
 allprojects {
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "io.gitlab.arturbosch.detekt").also {
+    pluginManager.withPlugin("io.gitlab.arturbosch.detekt") {
+        extensions.configure<DetektExtension> {
+            config.setFrom(rootProject.files("config/detekt-config.yml"))
+        }
         configureDetektTasks(tasks)
     }
 }
 
 tasks.named<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
+}
+
+// The built-in nullable-call rules require the classpath supplied by these platform tasks.
+tasks.named(detektTaskName) {
+    dependsOn(
+        ":backend:detektMain",
+        ":backend:detektTest",
+        ":shared:detektAndroidMain",
+    )
 }
 
 fun configureDetektTasks(tasks: NamedDomainObjectContainer<Task>) {
@@ -42,7 +57,7 @@ fun configureDetektTasks(tasks: NamedDomainObjectContainer<Task>) {
         }
     }
     tasks.withType<Detekt> {
-        setSource(files(project.projectDir))
+        if (name == detektTaskName) setSource(files(project.projectDir))
         exclude("**/build/**")
         exclude {
             val buildDirPath =

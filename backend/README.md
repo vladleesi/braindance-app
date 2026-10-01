@@ -1,7 +1,7 @@
 # Braindance API
 
 The Kotlin/JVM Ktor service proxies IGDB and GamerPower without exposing Twitch credentials to clients. Its
-independent version is `0.3.2` in `build.gradle.kts`.
+independent version is `0.4.0` in `build.gradle.kts`.
 The single-instance setup uses an in-memory IGDB limiter and needs no Redis service.
 
 ## Configuration
@@ -14,6 +14,8 @@ The single-instance setup uses an in-memory IGDB limiter and needs no Redis serv
 | `REDIS_URL` | Shared Redis connection URL, required only in Redis mode |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated exact hosted web origins; local HTTP origins are allowed automatically |
 | `PUBLIC_BASE_URL` | External API origin used in image proxy URLs, required behind a TLS reverse proxy |
+| `PUBLIC_CACHE_ENABLED` | Default `false`; `true` enables only the public giveaway list policy described below |
+| `CLOUDFLARE_ORIGIN_SECRET` | Optional origin guard; bind a pinned secret, at least 32 non-space ASCII characters |
 | `PORT` | Listening port, default `8080` |
 
 Create a confidential application in the [Twitch Developer Console](https://dev.twitch.tv/console/apps). IGDB uses
@@ -32,10 +34,10 @@ See [optional shared rate limiting](#optional-shared-rate-limiting) before incre
 The application reads exported environment variables; it does not load env files automatically. For local use,
 copy `backend/example.env` to the ignored `backend/.env`, edit it, then run
 `set -a; . backend/.env; set +a` before starting Gradle. Set `PUBLIC_BASE_URL=http://localhost:8080` locally.
-Docker can load the same file with `docker run --env-file backend/.env -p 8080:8080 braindance-api:0.3.2`.
+Docker can load the same file with `docker run --env-file backend/.env -p 8080:8080 braindance-api:0.4.0`.
 
 Run `./gradlew :backend:test :backend:installDist` to test and create a distribution. Build a container with
-`docker build -f backend/Dockerfile -t braindance-api:0.3.2 backend`. Inject environment variables at runtime and
+`docker build -f backend/Dockerfile -t braindance-api:0.4.0 backend`. Inject environment variables at runtime and
 publish port 8080 through the hosting provider's HTTPS proxy. GitHub Actions validates the distribution and builds
 the image. After all checks pass, backend-impacting changes pushed or promoted to `master` publish version and
 commit tagged images to GitHub Container Registry and deploy the published image digest to the existing Cloud Run
@@ -80,9 +82,16 @@ required `GCP_*` repository variables are missing; it does not automatically ski
 | `GET /v1/giveaways/image?url=...` | Images under `https://www.gamerpower.com/offers/` |
 
 Game POST bodies are capped at 2 KiB. IGDB JSON is capped at 1 MiB, GamerPower JSON at 2 MiB, and images at 5 MiB.
-Token requests time out after 5 seconds; other upstream requests after 8 seconds. JSON responses have `no-store`
-and `nosniff`; images have one day public caching and `nosniff`. Browser preflight is supported for `/v1/` routes.
+Token requests time out after 5 seconds; other upstream requests after 8 seconds. Responses default to
+`private, no-store`, including images. Only anonymous, query-free, non-browser `GET /v1/giveaways` successes can
+opt into `public, max-age=60, stale-while-revalidate=30, stale-if-error=0`. No credentials or unknown response
+headers are allowed on that path when caching. All responses have `nosniff`, `no-referrer`, frame protection,
+and a restrictive API content security policy. Browser preflight is supported for `/v1/` routes.
 Set `CORS_ALLOWED_ORIGINS` to exact production site origins, without paths or trailing slashes.
+Keep this allowlist free of wildcards; credentials are not enabled. Loopback HTTP origins remain supported.
+
+See [Cloudflare DNS/CDN setup and security verification](cloudflare.md) before enabling public caching or the
+origin guard. Cloud Run remains the origin; no Worker or additional Google Cloud service is required.
 
 [IGDB API](https://api-docs.igdb.com/) · [Twitch application registration](https://dev.twitch.tv/docs/authentication/register-app/)
 

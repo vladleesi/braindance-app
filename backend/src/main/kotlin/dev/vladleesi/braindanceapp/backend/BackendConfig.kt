@@ -10,6 +10,8 @@ data class BackendConfig(
     val port: Int,
     val publicBaseUrl: String? = null,
     val rateLimiterMode: String = "redis",
+    val publicCacheEnabled: Boolean = false,
+    val cloudflareOriginSecret: String? = null,
 ) {
     val credentialsAvailable: Boolean get() = !clientId.isNullOrEmpty() && !clientSecret.isNullOrEmpty()
 
@@ -29,6 +31,8 @@ data class BackendConfig(
                 port = env["PORT"]?.toIntOrNull()?.takeIf { it in 1..65535 } ?: 8080,
                 publicBaseUrl = env["PUBLIC_BASE_URL"]?.trimEnd('/')?.takeIf(String::isNotEmpty),
                 rateLimiterMode = env["IGDB_RATE_LIMITER"] ?: "redis",
+                publicCacheEnabled = env["PUBLIC_CACHE_ENABLED"] == "true",
+                cloudflareOriginSecret = env["CLOUDFLARE_ORIGIN_SECRET"],
             )
     }
 }

@@ -1,5 +1,3 @@
-@file:Suppress("MagicNumber")
-
 package dev.vladleesi.braindanceapp.backend
 
 import kotlinx.coroutines.async

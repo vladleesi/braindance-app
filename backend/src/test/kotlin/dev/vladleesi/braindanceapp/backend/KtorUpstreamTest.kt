@@ -1,5 +1,3 @@
-@file:Suppress("MagicNumber", "StringLiteralDuplication")
-
 package dev.vladleesi.braindanceapp.backend
 
 import io.ktor.client.HttpClient
@@ -50,7 +48,7 @@ class KtorUpstreamTest {
                 upstream.close()
                 upstream.close()
             }
-            val clientJob = requireNotNull(client).coroutineContext[Job]!!
+            val clientJob = checkNotNull(requireNotNull(client).coroutineContext[Job])
             clientJob.join()
             assertFalse(clientJob.isActive)
         }
@@ -70,7 +68,7 @@ class KtorUpstreamTest {
     fun suppliedClientClosesWithoutRequests(): Unit =
         runBlocking {
             val client = HttpClient(MockEngine { respond("[]") })
-            val clientJob = client.coroutineContext[Job]!!
+            val clientJob = checkNotNull(client.coroutineContext[Job])
             KtorUpstream(client).close()
             clientJob.join()
             assertFalse(clientJob.isActive)

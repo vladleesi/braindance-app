@@ -47,7 +47,8 @@ jobs:
           # These root inputs also affect backend compilation and build checks.
           if git diff --quiet "$BEFORE_SHA" HEAD -- backend/ \
             build.gradle.kts settings.gradle.kts gradle.properties gradlew gradlew.bat \
-            gradle/wrapper/ gradle/libs.versions.toml .editorconfig config/detekt-config.yml; then
+            gradle/wrapper/ gradle/libs.versions.toml .editorconfig config/detekt-config.yml \
+            config/detekt-nullability.yml; then
             echo "deploy=false" >> "$GITHUB_OUTPUT"
           else
             status=$?

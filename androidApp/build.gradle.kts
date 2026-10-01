@@ -9,6 +9,8 @@ val mobileVersionProperties =
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
 }
 
 android {

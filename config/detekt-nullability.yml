@@ -1,0 +1,7 @@
+# Other rules run with detekt-config.yml; these classpath checks only enforce nullable calls.
+potential-bugs:
+  active: true
+  UnsafeCallOnNullableType:
+    active: true
+    excludes:
+      - '**/ui/style/icons/**'

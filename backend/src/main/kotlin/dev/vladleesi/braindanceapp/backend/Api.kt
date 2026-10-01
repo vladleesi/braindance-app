@@ -5,7 +5,6 @@ package dev.vladleesi.braindanceapp.backend
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.request.host
 import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
@@ -34,9 +33,14 @@ fun Application.api(
     igdb: IgdbService,
     giveaways: GiveawayService,
 ) {
+    installApiCachePolicy(config)
     routing {
         route("{...}") {
             handle {
+                if (!call.hasValidOriginSecret(config)) {
+                    respondJson(403, """{"error":"Forbidden"}""")
+                    return@handle
+                }
                 val path = call.request.path()
                 val method = call.request.httpMethod.value
                 val origin = call.request.headers[HttpHeaders.Origin]
@@ -71,7 +75,10 @@ fun Application.api(
                                 val base = config.publicBaseUrl ?: requestBase
                                 val result = giveaways.giveaway(path, base)
                                 when (result.status) {
-                                    200 -> respondJson(200, result.body!!.decodeToString())
+                                    200 -> {
+                                        if (path == "/v1/giveaways") call.attributes.put(publicGiveawayResponse, true)
+                                        respondJson(200, checkNotNull(result.body).decodeToString())
+                                    }
                                     404 -> respondJson(404, """{"error":"Giveaway not found"}""")
                                     429 -> respondJson(429, """{"error":"Rate limit exceeded"}""")
                                     else -> respondJson(502, """{"error":"Upstream unavailable"}""")
@@ -128,7 +135,7 @@ private suspend fun io.ktor.server.routing.RoutingContext.respondGame(
             return
         }
     when (result.status) {
-        200 -> respondJson(200, result.body!!.decodeToString())
+        200 -> respondJson(200, checkNotNull(result.body).decodeToString())
         400 -> respondJson(400, """{"error":"Invalid request"}""")
         429 -> respondJson(429, """{"error":"Rate limit exceeded"}""")
         else -> respondJson(502, """{"error":"Upstream unavailable"}""")
@@ -148,12 +155,10 @@ private suspend fun io.ktor.server.routing.RoutingContext.respondImage(giveaways
     val (result, contentType) = imageResult
     when (result.status) {
         200 -> {
-            call.response.headers.append(HttpHeaders.CacheControl, "public, max-age=86400")
-            call.response.headers.append("X-Content-Type-Options", "nosniff")
             call.respondBytes(
-                result.body!!,
+                checkNotNull(result.body),
                 io.ktor.http.ContentType
-                    .parse(contentType!!),
+                    .parse(checkNotNull(contentType)),
             )
         }
         400 -> respondJson(400, """{"error":"Invalid image URL"}""")
@@ -164,15 +169,19 @@ private suspend fun io.ktor.server.routing.RoutingContext.respondImage(giveaways
 private fun isAllowedOrigin(
     origin: String,
     configured: Set<String>,
-): Boolean {
-    if (origin in configured) return true
-    return try {
+): Boolean =
+    try {
         val url = URI(origin)
-        url.scheme == "http" && url.host in setOf("localhost", "127.0.0.1")
+        url.scheme in setOf("http", "https") &&
+            url.host != null &&
+            url.userInfo == null &&
+            url.path.isNullOrEmpty() &&
+            url.query == null &&
+            url.fragment == null &&
+            (origin in configured || (url.scheme == "http" && url.host in setOf("localhost", "127.0.0.1")))
     } catch (_: Exception) {
         false
     }
-}
 
 private fun validGiveawayId(path: String): Boolean {
     val digits = Regex("^/v1/giveaways/([0-9]+)$").matchEntire(path)?.groupValues?.get(1) ?: return false
@@ -191,8 +200,6 @@ private suspend fun io.ktor.server.routing.RoutingContext.respondJson(
     status: Int,
     text: String,
 ) {
-    call.response.headers.append(HttpHeaders.CacheControl, "no-store")
-    call.response.headers.append("X-Content-Type-Options", "nosniff")
     call.respondText(
         text,
         io.ktor.http.ContentType

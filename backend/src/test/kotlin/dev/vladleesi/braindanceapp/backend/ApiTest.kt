@@ -1,5 +1,3 @@
-@file:Suppress("MagicNumber", "StringLiteralDuplication")
-
 package dev.vladleesi.braindanceapp.backend
 
 import io.ktor.client.HttpClient
@@ -22,6 +20,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class ApiTest {
     private val config = BackendConfig("id", "secret", null, setOf("https://app.example"), 8080)
@@ -143,14 +142,15 @@ class ApiTest {
                     Json.parseToJsonElement("""{"id":42}""") as JsonObject,
                 )
             assertEquals("/v4/games", details?.first)
-            assertContains(details!!.second, "where id = 42;limit 15;")
+            assertNotNull(details)
+            assertContains(details.second, "where id = 42;limit 15;")
             assertContains(
-                service
-                    .buildQuery(
+                assertNotNull(
+                    service.buildQuery(
                         "/v1/games/details",
                         Json.parseToJsonElement("""{"id":42.0}""") as JsonObject,
-                    )!!
-                    .second,
+                    ),
+                ).second,
                 "where id = 42;",
             )
             val popularity =
@@ -159,7 +159,8 @@ class ApiTest {
                     Json.parseToJsonElement("""{"type":34,"pageSize":40}""") as JsonObject,
                 )
             assertEquals("/v4/popularity_primitives", popularity?.first)
-            assertContains(popularity!!.second, "where popularity_type = 34;sort value desc;limit 40;")
+            assertNotNull(popularity)
+            assertContains(popularity.second, "where popularity_type = 34;sort value desc;limit 40;")
             http.close()
         }
 
@@ -242,7 +243,7 @@ class ApiTest {
             )
             val image = client.get("/v1/giveaways/image?url=https%3A%2F%2Fwww.gamerpower.com%2Foffers%2Fa.png")
             assertEquals(HttpStatusCode.OK, image.status)
-            assertEquals("public, max-age=86400", image.headers[HttpHeaders.CacheControl])
+            assertEquals(PRIVATE_CACHE_CONTROL, image.headers[HttpHeaders.CacheControl])
             http.close()
         }
 

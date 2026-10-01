@@ -54,7 +54,7 @@ JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=50.0"
 
 Replace the example origins locally. Production CORS must be an exact origin without a trailing slash. HTTP
 `localhost` and `127.0.0.1` with arbitrary ports are already allowed; no wildcard is needed. `PUBLIC_BASE_URL` must
-be the generated HTTPS service origin so proxied image links remain HTTPS behind the Cloud Run TLS proxy.
+be the external HTTPS API origin so proxied image links remain HTTPS behind the Cloud Run TLS proxy.
 For the initial deployment, omit `PUBLIC_BASE_URL`, keep the service authenticated, obtain its URL, and update the
 runtime file and service before granting public access. Cloud Run supplies `PORT`; the server binds `0.0.0.0`.
 
@@ -123,9 +123,25 @@ Configure repository Actions variables `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_CLOU
 on the existing service and Service Account User on its runtime identity. Restrict Workload Identity Federation
 to this repository's numeric IDs and the backend publication workflow on `master` and validated `develop` promotions.
 
+The provider's workflow-path conditions must use the current repository name. After a repository rename, update
+both `job_workflow_ref` (reusable workflow calls) and `workflow_ref` (direct manual runs) from the previous
+`OWNER/REPOSITORY/.github/workflows/publish-backend.yml@refs/heads/BRANCH` paths to the new name. Preserve the
+numeric repository/owner ID checks, exact workflow file, allowed branches, issuer, audience, attribute mappings,
+and service-account bindings. A checked-out `master` commit does not change the caller's OIDC branch claim:
+validated promotions still run with `refs/heads/develop`. Use `job_workflow_ref` to identify the called backend
+workflow; `workflow_ref` identifies its caller during reusable runs. Never remove the attribute condition to
+resolve `unauthorized_client`. See [GitHub's reusable workflow claims](https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-with-reusable-workflows).
+
 Adding a Secret Manager version still requires updating the service's pinned secret references separately.
 Recheck health, an IGDB request, giveaways, and an image after deployment or a secret update.
 An unchanged service URL requires no frontend rebuild; changing `BACKEND_BASE_URL` requires a new client build.
+
+## Cloudflare DNS/CDN
+
+Follow [the Cloudflare guide](cloudflare.md) for the exact DNS, TLS, origin-guard, cache-rule, and verification steps.
+It preserves this service and all cost settings, including minimum instances of zero. Domain mapping is required
+for the custom hostname; a CNAME pointing directly at `run.app` alone is insufficient. Do not enable the origin
+guard until clients and health monitors have migrated to the proxied hostname. Keep the guard unset locally.
 
 [Instance limits](https://docs.cloud.google.com/run/docs/configuring/max-instances-limits) ·
 [Secret integration](https://docs.cloud.google.com/run/docs/configuring/services/secrets) ·
