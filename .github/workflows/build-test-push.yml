@@ -194,6 +194,8 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     permissions:
       contents: write
+    outputs:
+      before_sha: ${{ steps.promote.outputs.before_sha }}
 
     steps:
       - name: Checkout Code
@@ -202,8 +204,12 @@ jobs:
           fetch-depth: 0
 
       - name: Push Changes to Master
+        id: promote
         # Keep master as an exact promotion of the validated develop commit.
-        run: git push --force origin HEAD:master
+        run: |
+          before_sha="$(git rev-parse --verify refs/remotes/origin/master 2>/dev/null || true)"
+          echo "before_sha=$before_sha" >> "$GITHUB_OUTPUT"
+          git push --force origin HEAD:master
 
   publish-promoted-backend:
     name: Publish and Deploy Promoted Backend
@@ -215,7 +221,24 @@ jobs:
       id-token: write
     uses: ./.github/workflows/publish-backend.yml
     with:
-      promoted: true
+      before_sha: ${{ needs.promote-to-master.outputs.before_sha }}
+
+  publish-master-backend:
+    name: Publish and Deploy Validated Master Backend
+    needs:
+      - android-build-and-unit-tests
+      - android-instrumented-tests
+      - web-app-build
+      - ios-framework-validation
+      - backend-validation
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/publish-backend.yml
+    with:
+      before_sha: ${{ github.event.before }}
 
   publish-promoted-frontend-release:
     name: Publish Promoted Frontend Release

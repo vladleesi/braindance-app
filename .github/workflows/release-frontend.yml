@@ -66,8 +66,33 @@ jobs:
           echo "build_number=$build_number" >> "$GITHUB_OUTPUT"
           echo "tag=frontend-v$version" >> "$GITHUB_OUTPUT"
 
-      - name: Publish GitHub Release
+      - name: Check Frontend Version Change
+        # Compare with the caller's push baseline: develop before promotion, master on direct pushes.
         if: steps.source.outputs.current == 'true'
+        id: version-change
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          FRONTEND_VERSION: ${{ steps.version.outputs.name }}
+        run: |
+          previous_revision="$BEFORE_SHA"
+          if [ -n "$previous_revision" ] && [ "$previous_revision" != "0000000000000000000000000000000000000000" ]; then
+            git fetch origin "$previous_revision" --no-tags
+          else
+            previous_revision="$(git rev-parse HEAD^ 2>/dev/null || true)"
+          fi
+
+          # An unreadable previous version counts as a change so the first release can be published.
+          previous_config="$(git show "$previous_revision:version.xcconfig" 2>/dev/null || true)"
+          previous_version="$(printf '%s\n' "$previous_config" | sed -n 's/^MARKETING_VERSION[[:space:]]*=[[:space:]]*//p')"
+          if [ "$FRONTEND_VERSION" != "$previous_version" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Skipping frontend release because the version is unchanged."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish GitHub Release
+        if: steps.source.outputs.current == 'true' && steps.version-change.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           FRONTEND_VERSION: ${{ steps.version.outputs.name }}

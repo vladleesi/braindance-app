@@ -23,9 +23,11 @@ shared build number. Existing `mobile-v*` releases remain available as historica
 The backend is versioned independently from the frontend. Its current version is `0.3.2`.
 GitHub Actions publishes one frontend source release tagged `frontend-vMAJOR.MINOR.PATCH` only after Android,
 iOS, Web, and backend checks succeed. Validated `develop` pushes are promoted to `master`; direct `master` pushes
-run the same checks before release publication. The release targets the exact validated commit and skips publication
-if `master` has advanced or that version's release already exists. Retry a failed publication by rerunning the
-validation workflow's failed jobs; pull requests and manual validation runs do not publish releases.
+run the same checks before release publication. Frontend releases publish only when `MARKETING_VERSION` differs
+from the caller's pre-push revision (`develop` before promotion or `master` on direct pushes). An unreadable previous
+version allows the first release. The release targets the exact validated commit and skips publication if `master`
+has advanced or that version's release already exists. Retry a failed publication by rerunning the validation
+workflow's failed jobs; pull requests and manual validation runs do not publish releases.
 
 Release notes come from the matching `## MAJOR.MINOR.PATCH` entry in [CHANGELOG.md](CHANGELOG.md). Maintain concise
 change bullets under `### Android`, `### iOS`, and `### Web` headings only for platforms with user-visible changes.
@@ -44,9 +46,11 @@ with the frontend version change; the release workflow fails if that version's e
 
 The clients call the backend for both IGDB and GamerPower data. Its URL is included in client builds and is not a
 secret. Keep Twitch credentials in the backend runtime secret store. See [backend setup](backend/README.md).
-GitHub Actions tests and packages the backend, then publishes a container image to GHCR from `master`.
-When the backend version changes, the current workflow also deploys the image to an existing Cloud Run service.
-Manual runs of **Publish and Deploy Backend** on `master` deploy even when the backend version is unchanged.
+After all validation checks succeed, backend-impacting changes pushed or promoted to `master` publish a GHCR
+image and deploy its digest to the existing Cloud Run service. Publication builds the exact validated commit;
+frontend and documentation changes outside `backend` do not trigger it. Backend-impacting files include `backend/**`,
+root Gradle build/settings/properties files, wrapper scripts/files, the version catalog, and backend lint configuration.
+Manual runs of **Publish and Deploy Backend** on `master` force deployment of the current `master` backend.
 The backend can run on other container hosts or a Java 21 server; see
 [hosting elsewhere or from a fork](backend/README.md#hosting-elsewhere-or-from-a-fork) for configuration and workflow changes.
 See the [Cloud Run deployment guide](backend/cloud-run.md) for runtime configuration and cost controls.

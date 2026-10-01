@@ -37,11 +37,10 @@ Docker can load the same file with `docker run --env-file backend/.env -p 8080:8
 Run `./gradlew :backend:test :backend:installDist` to test and create a distribution. Build a container with
 `docker build -f backend/Dockerfile -t braindance-api:0.3.2 backend`. Inject environment variables at runtime and
 publish port 8080 through the hosting provider's HTTPS proxy. GitHub Actions validates the distribution and builds
-the image; after promotion to `master`, it publishes version and commit tagged images to GitHub Container Registry
-and, when the backend version changes, deploys the published image digest to the existing Cloud Run service using
-keyless authentication.
-Manual runs of **Publish and Deploy Backend** on `master` also deploy when the version is unchanged; version
-comparison applies only to automatic push-triggered publication and promotion calls.
+the image. After all checks pass, backend-impacting changes pushed or promoted to `master` publish version and
+commit tagged images to GitHub Container Registry and deploy the published image digest to the existing Cloud Run
+service using keyless authentication. Publication builds the exact validated commit.
+Manual runs of **Publish and Deploy Backend** on `master` force deployment of the current `master` backend.
 See [Cloud Run deployment](cloud-run.md) for a conservative configuration, secret handling, and verification.
 
 The Docker build trains a JVM class-data archive using placeholder credentials and only the local health route.
@@ -63,8 +62,8 @@ For one instance, explicitly set `IGDB_RATE_LIMITER=in-memory`; multiple instanc
 
 The `publish` job in [the backend workflow](../.github/workflows/publish-backend.yml) builds and publishes to your
 repository's GHCR package. Replace or remove its `deploy` job to deploy elsewhere while keeping image publication.
-That job targets Cloud Run on backend version changes or manual runs on `master`, and fails if the required `GCP_*`
-repository variables are missing; it does not automatically skip deployment for an unconfigured fork.
+That job targets Cloud Run for validated backend-impacting changes or manual runs on `master`, and fails if the
+required `GCP_*` repository variables are missing; it does not automatically skip deployment for an unconfigured fork.
 
 ## API
 
