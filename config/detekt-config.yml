@@ -48,6 +48,10 @@ naming:
   FunctionMaxLength:
     active: true
     maximumFunctionNameLength: 40
+    excludes:
+      - '**/src/test/**'
+      - '**/src/*Test/**'
+      - '**/src/androidTest/**'
   FunctionMinLength:
     active: true
     minimumFunctionNameLength: 3
