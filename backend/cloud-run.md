@@ -2,8 +2,9 @@
 
 This guide contains reusable configuration only. Keep project IDs, service identities, image URLs, runtime origins,
 secret references, and generated service URLs in environment variables or the ignored root `.deployment/` directory.
-Do not commit service exports, credentials, or populated environment files. Deployment is local; CI publishes images
-and does not authenticate to Google Cloud. Use interactive authentication, not service-account JSON keys.
+Do not commit service exports, credentials, or populated environment files. CI publishes images and updates the
+existing Cloud Run service through Workload Identity Federation. Use interactive authentication locally and
+keyless federation in CI, not service-account JSON keys.
 
 ## Prerequisites and rate limiting
 
@@ -109,9 +110,18 @@ IGDB view and giveaway image. A successful curl request alone does not verify th
 
 ## Updating a deployment
 
-CI publishes backend images; it does not update Cloud Run. For backend changes, deploy the new image digest using
-the same runtime configuration and instance limits. Adding a Secret Manager version also requires updating the
-service's pinned secret references. Recheck health, an IGDB request, giveaways, and an image after either update.
+CI deploys the published GHCR image by digest only when `backend/build.gradle.kts` changes its `version` value
+in a push to `master` or a validated promotion. Manual publication compares against the preceding commit.
+The GHCR package must be public. The workflow updates only the image of the existing service; it does not create
+a service or change runtime settings, secrets, IAM access, or instance limits. Outdated publications are skipped.
+
+Configure repository Actions variables `GCP_PROJECT_ID`, `GCP_REGION`, `GCP_CLOUD_RUN_SERVICE`,
+`GCP_WORKLOAD_IDENTITY_PROVIDER`, and `GCP_DEPLOY_SERVICE_ACCOUNT`. The deployment identity needs Cloud Run Developer
+on the existing service and Service Account User on its runtime identity. Restrict Workload Identity Federation
+to this repository's numeric IDs and the backend publication workflow on `master` and validated `develop` promotions.
+
+Adding a Secret Manager version still requires updating the service's pinned secret references separately.
+Recheck health, an IGDB request, giveaways, and an image after deployment or a secret update.
 An unchanged service URL requires no frontend rebuild; changing `BACKEND_BASE_URL` requires a new client build.
 
 [Instance limits](https://docs.cloud.google.com/run/docs/configuring/max-instances-limits) ·

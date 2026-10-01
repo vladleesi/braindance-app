@@ -1,4 +1,4 @@
-name: Publish Backend Image
+name: Publish and Deploy Backend
 
 on:
   push:
@@ -14,6 +14,10 @@ on:
 permissions:
   contents: read
   packages: write
+
+concurrency:
+  group: backend-publication
+  cancel-in-progress: false
 
 jobs:
   publish:
@@ -31,10 +35,38 @@ jobs:
           --health-retries 5
     env:
       TEST_REDIS_URL: redis://127.0.0.1:6379
+    outputs:
+      image: ${{ steps.publish.outputs.image }}
+      source_sha: ${{ steps.publish.outputs.source_sha }}
+      version_changed: ${{ steps.version.outputs.changed }}
     steps:
       - uses: actions/checkout@v7
         with:
           ref: master
+          fetch-depth: 2
+      - name: Check backend version change
+        id: version
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          previous_revision="$BEFORE_SHA"
+          if [ -n "$previous_revision" ] && [ "$previous_revision" != "0000000000000000000000000000000000000000" ]; then
+            git fetch origin "$previous_revision" --no-tags
+          else
+            previous_revision="$(git rev-parse HEAD^ 2>/dev/null || true)"
+          fi
+          previous_build="$(git show "$previous_revision:backend/build.gradle.kts" 2>/dev/null || true)"
+          previous_version="$(printf '%s\n' "$previous_build" | sed -n 's/^version = "\([^"]*\)"/\1/p')"
+          current_version="$(sed -n 's/^version = "\([^"]*\)"/\1/p' backend/build.gradle.kts)"
+          if [ -z "$current_version" ]; then
+            echo "Backend version is missing." >&2
+            exit 1
+          fi
+          if [ "$current_version" != "$previous_version" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
@@ -48,6 +80,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and publish
+        id: publish
         env:
           IMAGE: ghcr.io/${{ github.repository }}/backend
         run: |
@@ -57,3 +90,62 @@ jobs:
           docker build -f backend/Dockerfile -t "$image:$version" -t "$image:${source_sha}" backend
           docker push "$image:$version"
           docker push "$image:${source_sha}"
+          published_image="$(docker image inspect "$image:${source_sha}" --format '{{index .RepoDigests 0}}')"
+          echo "image=$published_image" >> "$GITHUB_OUTPUT"
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Deploy Published Backend
+    needs: publish
+    if: needs.publish.outputs.version_changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      GCP_REGION: ${{ vars.GCP_REGION }}
+      GCP_CLOUD_RUN_SERVICE: ${{ vars.GCP_CLOUD_RUN_SERVICE }}
+      GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      GCP_DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      PUBLISHED_IMAGE: ${{ needs.publish.outputs.image }}
+      SOURCE_SHA: ${{ needs.publish.outputs.source_sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.publish.outputs.source_sha }}
+      - name: Check deployment configuration and source revision
+        id: validate
+        run: |
+          for name in GCP_PROJECT_ID GCP_REGION GCP_CLOUD_RUN_SERVICE \
+            GCP_WORKLOAD_IDENTITY_PROVIDER GCP_DEPLOY_SERVICE_ACCOUNT; do
+            if [ -z "${!name}" ]; then
+              echo "Repository variable $name is required for deployment." >&2
+              exit 1
+            fi
+          done
+          git fetch origin master --no-tags
+          if [ "$(git rev-parse origin/master)" != "$SOURCE_SHA" ]; then
+            echo "::notice::Skipping deployment because master has advanced past the published revision."
+            echo "current=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Authenticate to Google Cloud
+        if: steps.validate.outputs.current == 'true'
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - name: Set up Google Cloud CLI
+        if: steps.validate.outputs.current == 'true'
+        uses: google-github-actions/setup-gcloud@v3
+      - name: Update existing Cloud Run image
+        if: steps.validate.outputs.current == 'true'
+        run: |
+          gcloud run services update "$GCP_CLOUD_RUN_SERVICE" \
+            --project "$GCP_PROJECT_ID" \
+            --region "$GCP_REGION" \
+            --image "$PUBLISHED_IMAGE" \
+            --quiet

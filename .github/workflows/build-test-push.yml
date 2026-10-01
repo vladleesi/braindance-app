@@ -206,12 +206,13 @@ jobs:
         run: git push --force origin HEAD:master
 
   publish-promoted-backend:
-    name: Publish Promoted Backend Image
+    name: Publish and Deploy Promoted Backend
     needs: promote-to-master
     if: github.event_name == 'push'
     permissions:
       contents: read
       packages: write
+      id-token: write
     uses: ./.github/workflows/publish-backend.yml
     with:
       promoted: true

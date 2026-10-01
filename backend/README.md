@@ -37,8 +37,9 @@ Docker can load the same file with `docker run --env-file backend/.env -p 8080:8
 Run `./gradlew :backend:test :backend:installDist` to test and create a distribution. Build a container with
 `docker build -f backend/Dockerfile -t braindance-api:0.3.2 backend`. Inject environment variables at runtime and
 publish port 8080 through the hosting provider's HTTPS proxy. GitHub Actions validates the distribution and builds
-the image; after promotion to `master`, it publishes version and commit tagged images to GitHub Container Registry.
-Deployment from that registry to a host is provider specific.
+the image; after promotion to `master`, it publishes version and commit tagged images to GitHub Container Registry
+and, when the backend version changes, deploys the published image digest to the existing Cloud Run service using
+keyless authentication.
 See [Cloud Run deployment](cloud-run.md) for a conservative configuration, secret handling, and verification.
 
 The Docker build trains a JVM class-data archive using placeholder credentials and only the local health route.
