@@ -19,7 +19,7 @@ The current Android and iOS release is
 [Braindance Mobile 0.3.1](https://github.com/vladleesi/braindance-app/releases/tag/mobile-v0.3.1).
 Both apps share the same `MAJOR.MINOR.PATCH` version and build number from `version.xcconfig`.
 
-The backend is versioned independently from the mobile apps. Its current version is `0.3.0`.
+The backend is versioned independently from the mobile apps. Its current version is `0.3.2`.
 After validation promotes a new mobile version to `master`, GitHub Actions publishes its shared Android/iOS
 source release. The Mobile Release workflow can also publish or retry the current version manually from `master`.
 

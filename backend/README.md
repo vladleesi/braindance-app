@@ -1,7 +1,7 @@
 # Braindance API
 
 The Kotlin/JVM Ktor service proxies IGDB and GamerPower without exposing Twitch credentials to clients. Its
-independent version is `0.3.0` in `build.gradle.kts`.
+independent version is `0.3.2` in `build.gradle.kts`.
 The single-instance setup uses an in-memory IGDB limiter and needs no Redis service.
 
 ## Configuration
@@ -32,14 +32,20 @@ See [optional shared rate limiting](#optional-shared-rate-limiting) before incre
 The application reads exported environment variables; it does not load env files automatically. For local use,
 copy `backend/example.env` to the ignored `backend/.env`, edit it, then run
 `set -a; . backend/.env; set +a` before starting Gradle. Set `PUBLIC_BASE_URL=http://localhost:8080` locally.
-Docker can load the same file with `docker run --env-file backend/.env -p 8080:8080 braindance-api:0.3.0`.
+Docker can load the same file with `docker run --env-file backend/.env -p 8080:8080 braindance-api:0.3.2`.
 
 Run `./gradlew :backend:test :backend:installDist` to test and create a distribution. Build a container with
-`docker build -f backend/Dockerfile -t braindance-api:0.3.0 backend`. Inject environment variables at runtime and
+`docker build -f backend/Dockerfile -t braindance-api:0.3.2 backend`. Inject environment variables at runtime and
 publish port 8080 through the hosting provider's HTTPS proxy. GitHub Actions validates the distribution and builds
 the image; after promotion to `master`, it publishes version and commit tagged images to GitHub Container Registry.
 Deployment from that registry to a host is provider specific.
 See [Cloud Run deployment](cloud-run.md) for a conservative configuration, secret handling, and verification.
+
+The Docker build trains a JVM class-data archive using placeholder credentials and only the local health route.
+The image loads this archive on startup to reduce repeated JVM class-loading work. It uses the same JRE and JAR
+paths for training and runtime; no real secrets or external API calls are involved. No Cloud Run settings change.
+`JAVA_OPTS` defaults to `-Xshare:auto -XX:SharedArchiveFile=/app/startup.jsa`; overriding `JAVA_OPTS` disables this
+default, and Java can fall back to normal class loading if the archive is incompatible.
 
 Twitch tokens are cached per process, refreshed before expiry, and refreshed once on an IGDB 401.
 The API is public; apply host level abuse controls as needed.

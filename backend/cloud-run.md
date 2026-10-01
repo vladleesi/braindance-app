@@ -35,7 +35,8 @@ Do not grant the runtime identity build, registry write, IAM administration, or 
 
 Build with JDK 21 using `./gradlew :backend:build :backend:installDist`. Build and push the existing Dockerfile to
 Artifact Registry for `linux/amd64`; on an ARM developer machine use Docker Buildx with `--platform linux/amd64`.
-If using Cloud Build, upload a temporary directory containing only `Dockerfile` and `build/install/backend/`.
+If using Cloud Build, upload a temporary directory containing only `Dockerfile`, `docker/prepare-startup-archive.sh`,
+and `build/install/backend/`.
 Do not upload the repository or ignored developer configuration. Use an image digest for deployment.
 Set an Artifact Registry cleanup policy to retain a small rollback history rather than accumulating images.
 

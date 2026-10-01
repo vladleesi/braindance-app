@@ -61,8 +61,31 @@ interface Upstream {
 }
 
 class KtorUpstream(
-    private val client: HttpClient,
-) : Upstream {
+    createClient: () -> HttpClient,
+) : Upstream,
+    AutoCloseable {
+    constructor(client: HttpClient) : this({ client }) {
+        clientDelegate.value
+    }
+
+    private val clientLock = Any()
+    private var closed = false
+    private val clientDelegate =
+        lazy(clientLock) {
+            check(!closed) { "Upstream is closed" }
+            createClient()
+        }
+    private val client by clientDelegate
+
+    override fun close() {
+        synchronized(clientLock) {
+            if (!closed) {
+                closed = true
+                if (clientDelegate.isInitialized()) client.close()
+            }
+        }
+    }
+
     override suspend fun token(
         clientId: String,
         clientSecret: String,
