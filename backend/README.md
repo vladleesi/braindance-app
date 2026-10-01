@@ -40,6 +40,8 @@ publish port 8080 through the hosting provider's HTTPS proxy. GitHub Actions val
 the image; after promotion to `master`, it publishes version and commit tagged images to GitHub Container Registry
 and, when the backend version changes, deploys the published image digest to the existing Cloud Run service using
 keyless authentication.
+Manual runs of **Publish and Deploy Backend** on `master` also deploy when the version is unchanged; version
+comparison applies only to automatic push-triggered publication and promotion calls.
 See [Cloud Run deployment](cloud-run.md) for a conservative configuration, secret handling, and verification.
 
 The Docker build trains a JVM class-data archive using placeholder credentials and only the local health route.
@@ -50,6 +52,19 @@ default, and Java can fall back to normal class loading if the archive is incomp
 
 Twitch tokens are cached per process, refreshed before expiry, and refreshed once on an IGDB 401.
 The API is public; apply host level abuse controls as needed.
+
+## Hosting elsewhere or from a fork
+
+The backend has no Google Cloud runtime dependency. Run the container on your chosen host or run the packaged
+distribution with Java 21. The server binds `0.0.0.0` and reads `PORT`, defaulting to `8080`.
+Supply your own Twitch credentials and the environment variables above. Set `PUBLIC_BASE_URL` to the external
+HTTPS API origin, `CORS_ALLOWED_ORIGINS` to your website origins, and the clients' `BACKEND_BASE_URL` before building.
+For one instance, explicitly set `IGDB_RATE_LIMITER=in-memory`; multiple instances require shared Redis rate limiting.
+
+The `publish` job in [the backend workflow](../.github/workflows/publish-backend.yml) builds and publishes to your
+repository's GHCR package. Replace or remove its `deploy` job to deploy elsewhere while keeping image publication.
+That job targets Cloud Run on backend version changes or manual runs on `master`, and fails if the required `GCP_*`
+repository variables are missing; it does not automatically skip deployment for an unconfigured fork.
 
 ## API
 

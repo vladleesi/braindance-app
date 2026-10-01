@@ -1,0 +1,115 @@
+name: Frontend Release
+
+on:
+  # Validation calls this only after all checks pass for the exact source revision.
+  workflow_call:
+    inputs:
+      source_sha:
+        description: Validated master revision to release
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: frontend-release
+  cancel-in-progress: false
+
+jobs:
+  publish-frontend-release:
+    name: Publish Android, iOS, and Web Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Validated Revision
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+
+      - name: Check Source Revision
+        id: source
+        env:
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          git fetch origin master --no-tags
+          if [ "$(git rev-parse HEAD)" != "$SOURCE_SHA" ]; then
+            echo "Checkout does not match the validated source revision." >&2
+            exit 1
+          fi
+          if [ "$(git rev-parse origin/master)" != "$SOURCE_SHA" ]; then
+            echo "::notice::Skipping release because master has advanced past the validated revision."
+            echo "current=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Read Frontend Version
+        if: steps.source.outputs.current == 'true'
+        id: version
+        shell: bash
+        run: |
+          version="$(sed -n 's/^MARKETING_VERSION[[:space:]]*=[[:space:]]*//p' version.xcconfig)"
+          build_number="$(sed -n 's/^CURRENT_PROJECT_VERSION[[:space:]]*=[[:space:]]*//p' version.xcconfig)"
+
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid frontend version: $version" >&2
+            exit 1
+          fi
+          if [[ ! "$build_number" =~ ^[1-9][0-9]*$ ]]; then
+            echo "Invalid frontend build number: $build_number" >&2
+            exit 1
+          fi
+
+          echo "name=$version" >> "$GITHUB_OUTPUT"
+          echo "build_number=$build_number" >> "$GITHUB_OUTPUT"
+          echo "tag=frontend-v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        if: steps.source.outputs.current == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FRONTEND_VERSION: ${{ steps.version.outputs.name }}
+          FRONTEND_BUILD_NUMBER: ${{ steps.version.outputs.build_number }}
+          FRONTEND_TAG: ${{ steps.version.outputs.tag }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          if gh release view "$FRONTEND_TAG" >/dev/null 2>&1; then
+            echo "GitHub Release $FRONTEND_TAG already exists."
+            exit 0
+          fi
+
+          if git show-ref --verify --quiet "refs/tags/$FRONTEND_TAG"; then
+            if [ "$(git rev-parse "$FRONTEND_TAG^{commit}")" != "$SOURCE_SHA" ]; then
+              echo "Tag $FRONTEND_TAG points to another revision. Increment the frontend version." >&2
+              exit 1
+            fi
+          fi
+
+          notes_file="$RUNNER_TEMP/frontend-release-notes.md"
+          changelog_entry="$RUNNER_TEMP/frontend-changelog-entry.md"
+          if ! awk -v heading="## $FRONTEND_VERSION" '
+            $0 == heading { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+            END { if (!found) exit 1 }
+          ' CHANGELOG.md > "$changelog_entry"; then
+            echo "CHANGELOG.md is missing the entry for $FRONTEND_VERSION." >&2
+            exit 1
+          fi
+          if ! grep -Eq '^### (Android|iOS|Web)$' "$changelog_entry" || \
+            ! grep -Eq '^- .+' "$changelog_entry"; then
+            echo "The changelog entry must include platform headings and change bullets." >&2
+            exit 1
+          fi
+          {
+            printf 'Android, iOS, and Web release %s. Build number: %s.\n\n' \
+              "$FRONTEND_VERSION" "$FRONTEND_BUILD_NUMBER"
+            cat "$changelog_entry"
+          } > "$notes_file"
+
+          gh release create "$FRONTEND_TAG" \
+            --target "$SOURCE_SHA" \
+            --title "Braindance Frontend $FRONTEND_VERSION" \
+            --notes-file "$notes_file"

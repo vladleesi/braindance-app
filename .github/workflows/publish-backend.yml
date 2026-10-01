@@ -45,6 +45,8 @@ jobs:
           ref: master
           fetch-depth: 2
       - name: Check backend version change
+        # Reusable workflows retain the caller's event: automatic promotion calls arrive as push.
+        if: github.event_name == 'push'
         id: version
         env:
           BEFORE_SHA: ${{ github.event.before }}
@@ -97,7 +99,8 @@ jobs:
   deploy:
     name: Deploy Published Backend
     needs: publish
-    if: needs.publish.outputs.version_changed == 'true'
+    # Manual master runs deploy even when the version is unchanged.
+    if: github.event_name == 'workflow_dispatch' || needs.publish.outputs.version_changed == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read

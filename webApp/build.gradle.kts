@@ -1,10 +1,18 @@
 @file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
 
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.compose.compiler)
 }
+
+val frontendVersionProperties =
+    Properties().apply {
+        rootProject.file("version.xcconfig").inputStream().use(::load)
+    }
+version = frontendVersionProperties.getProperty("MARKETING_VERSION")
 
 kotlin {
     wasmJs {

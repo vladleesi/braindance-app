@@ -1,9 +1,9 @@
-name: Develop Validation and Promotion
+name: Validation and Promotion
 
 on:
-  # Develop pushes run every check and promote only after all jobs succeed.
+  # Both branches run every check; only validated develop pushes promote to master.
   push:
-    branches: [develop]
+    branches: [develop, master]
   # Pull requests run the same checks but never promote or deploy.
   pull_request:
     branches: [develop]
@@ -190,8 +190,8 @@ jobs:
       - web-app-build
       - ios-framework-validation
       - backend-validation
-    # Prevent pull-request and manual validation runs from changing master.
-    if: github.event_name == 'push'
+    # Only develop pushes change master; direct master pushes validate in place.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
     permissions:
       contents: write
 
@@ -217,15 +217,30 @@ jobs:
     with:
       promoted: true
 
-  publish-promoted-mobile-release:
-    name: Publish Promoted Mobile Release
+  publish-promoted-frontend-release:
+    name: Publish Promoted Frontend Release
     needs: promote-to-master
     if: github.event_name == 'push'
     permissions:
       contents: write
-    uses: ./.github/workflows/release-mobile.yml
+    uses: ./.github/workflows/release-frontend.yml
     with:
-      promoted: true
+      source_sha: ${{ github.sha }}
+
+  publish-master-frontend-release:
+    name: Publish Validated Master Frontend Release
+    needs:
+      - android-build-and-unit-tests
+      - android-instrumented-tests
+      - web-app-build
+      - ios-framework-validation
+      - backend-validation
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release-frontend.yml
+    with:
+      source_sha: ${{ github.sha }}
 
   publish-promoted-web-app:
     name: Publish Promoted Web App

@@ -110,8 +110,10 @@ IGDB view and giveaway image. A successful curl request alone does not verify th
 
 ## Updating a deployment
 
-CI deploys the published GHCR image by digest only when `backend/build.gradle.kts` changes its `version` value
-in a push to `master` or a validated promotion. Manual publication compares against the preceding commit.
+Automatic pushes to `master` and validated promotions deploy the published GHCR image by digest only when
+`backend/build.gradle.kts` changes its `version` value. Manual runs skip version comparison and deploy the published
+image even when the version is unchanged. In GitHub Actions, select **Publish and Deploy Backend → Run workflow**
+and choose the `master` branch. The workflow builds, validates, publishes, and deploys the current `master` backend.
 The GHCR package must be public. The workflow updates only the image of the existing service; it does not create
 a service or change runtime settings, secrets, IAM access, or instance limits. Outdated publications are skipped.
 

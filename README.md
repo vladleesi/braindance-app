@@ -15,13 +15,22 @@ The backend runs Kotlin/JVM with Ktor.
 
 ## Releases
 
-The current Android and iOS release is
-[Braindance Mobile 0.3.1](https://github.com/vladleesi/braindance-app/releases/tag/mobile-v0.3.1).
-Both apps share the same `MAJOR.MINOR.PATCH` version and build number from `version.xcconfig`.
+The current frontend version for Android, iOS, and Web is `0.3.1`, with one shared
+[Braindance Frontend release](https://github.com/vladleesi/braindance-app/releases/tag/frontend-v0.3.1).
+All three platforms use the same `MAJOR.MINOR.PATCH` version from `version.xcconfig`; Android and iOS also use its
+shared build number. Existing `mobile-v*` releases remain available as historical releases.
 
-The backend is versioned independently from the mobile apps. Its current version is `0.3.2`.
-After validation promotes a new mobile version to `master`, GitHub Actions publishes its shared Android/iOS
-source release. The Mobile Release workflow can also publish or retry the current version manually from `master`.
+The backend is versioned independently from the frontend. Its current version is `0.3.2`.
+GitHub Actions publishes one frontend source release tagged `frontend-vMAJOR.MINOR.PATCH` only after Android,
+iOS, Web, and backend checks succeed. Validated `develop` pushes are promoted to `master`; direct `master` pushes
+run the same checks before release publication. The release targets the exact validated commit and skips publication
+if `master` has advanced or that version's release already exists. Retry a failed publication by rerunning the
+validation workflow's failed jobs; pull requests and manual validation runs do not publish releases.
+
+Release notes come from the matching `## MAJOR.MINOR.PATCH` entry in [CHANGELOG.md](CHANGELOG.md). Maintain concise
+change bullets under `### Android`, `### iOS`, and `### Web` headings only for platforms with user-visible changes.
+Describe shared changes in every affected platform's section and exclude backend-only changes. Update the entry
+with the frontend version change; the release workflow fails if that version's entry or platform notes are missing.
 
 ## Project layout
 
@@ -36,7 +45,10 @@ source release. The Mobile Release workflow can also publish or retry the curren
 The clients call the backend for both IGDB and GamerPower data. Its URL is included in client builds and is not a
 secret. Keep Twitch credentials in the backend runtime secret store. See [backend setup](backend/README.md).
 GitHub Actions tests and packages the backend, then publishes a container image to GHCR from `master`.
-Run that image on your chosen host; image publication does not deploy a running service.
+When the backend version changes, the current workflow also deploys the image to an existing Cloud Run service.
+Manual runs of **Publish and Deploy Backend** on `master` deploy even when the backend version is unchanged.
+The backend can run on other container hosts or a Java 21 server; see
+[hosting elsewhere or from a fork](backend/README.md#hosting-elsewhere-or-from-a-fork) for configuration and workflow changes.
 See the [Cloud Run deployment guide](backend/cloud-run.md) for runtime configuration and cost controls.
 
 ## API credentials
@@ -101,6 +113,11 @@ Select the `web-app` branch and `/ (root)` in GitHub Pages settings, then config
 custom-domain setting. Include the deployed website origin in the backend's `CORS_ALLOWED_ORIGINS` variable. The
 workflow preserves configured custom domains in the generated branch but does not change Pages, DNS, or backend
 settings.
+
+For another static host, build with `./gradlew :webApp:wasmJsBrowserDistribution` and deploy the contents of
+`webApp/build/dist/wasmJs/productionExecutable`. Configure `BACKEND_BASE_URL` before building and include the
+website origin in the backend's `CORS_ALLOWED_ORIGINS`. Serve over HTTPS with `application/wasm` for Wasm files.
+Replace or disable `.github/workflows/publish-web-app.yml` if GitHub Pages publication is unnecessary.
 
 The project can be built without a backend URL. Configure a reachable backend before running backend-powered flows,
 and add both Twitch secrets for IGDB requests. A fresh clone does not include anyone else's URL or credentials.
