@@ -222,6 +222,12 @@ jobs:
     uses: ./.github/workflows/publish-backend.yml
     with:
       before_sha: ${{ needs.promote-to-master.outputs.before_sha }}
+    secrets:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_REGION: ${{ secrets.GCP_REGION }}
+      GCP_CLOUD_RUN_SERVICE: ${{ secrets.GCP_CLOUD_RUN_SERVICE }}
+      GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      GCP_DEPLOY_SERVICE_ACCOUNT: ${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}
 
   publish-master-backend:
     name: Publish and Deploy Validated Master Backend
@@ -239,6 +245,12 @@ jobs:
     uses: ./.github/workflows/publish-backend.yml
     with:
       before_sha: ${{ github.event.before }}
+    secrets:
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_REGION: ${{ secrets.GCP_REGION }}
+      GCP_CLOUD_RUN_SERVICE: ${{ secrets.GCP_CLOUD_RUN_SERVICE }}
+      GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      GCP_DEPLOY_SERVICE_ACCOUNT: ${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}
 
   publish-promoted-frontend-release:
     name: Publish Promoted Frontend Release

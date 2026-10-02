@@ -22,7 +22,9 @@ internal val publicGiveawayResponse = AttributeKey<Boolean>("PublicGiveawayRespo
 internal const val PRIVATE_CACHE_CONTROL = "private, no-store"
 internal const val PUBLIC_CACHE_CONTROL = "public, max-age=60, stale-while-revalidate=30, stale-if-error=0"
 internal const val ORIGIN_SECRET_HEADER = "X-Origin-Verify"
+internal const val PUBLIC_CACHE_ELIGIBLE_HEADER = "X-Public-Cache-Eligible"
 private const val MIN_ORIGIN_SECRET_LENGTH = 32
+private val proxyTransportHeaders = setOf("forwarded", "x-forwarded-host", "transfer-encoding")
 
 // Keep the Cloudflare expression in cloudflare.md in sync. Presence, including an empty value, bypasses cache.
 internal val cacheBypassHeaders =
@@ -80,11 +82,27 @@ private fun ApplicationCall.canCachePublicResponse(
     // A route must explicitly attest to a public body. New routes are private even if they return GET/200.
     if (!config.publicCacheEnabled || attributes.getOrNull(publicGiveawayResponse) != true) return false
     if (request.httpMethod != HttpMethod.Get || request.uri != "/v1/giveaways") return false
-    if (cacheBypassHeaders.any { request.headers.getAll(it) != null }) return false
-    val lengths = request.headers.getAll(HttpHeaders.ContentLength)
-    if (lengths != null && lengths != listOf("0")) return false
-    val publicBaseUrl = config.publicBaseUrl ?: return false
-    if (request.headers.getAll(HttpHeaders.Host) != listOf(URI(publicBaseUrl).rawAuthority)) return false
+    // Cloud Run can rewrite transport headers. A guarded Cloudflare attestation checks the original request.
+    val guarded = config.cloudflareOriginSecret != null
+    if (
+        guarded &&
+        (!hasValidOriginSecret(config) || request.headers.getAll(PUBLIC_CACHE_ELIGIBLE_HEADER) != listOf("1"))
+    ) {
+        return false
+    }
+    if (
+        cacheBypassHeaders.any {
+            !(guarded && it in proxyTransportHeaders) && request.headers.getAll(it) != null
+        }
+    ) {
+        return false
+    }
+    if (!guarded) {
+        val lengths = request.headers.getAll(HttpHeaders.ContentLength)
+        if (lengths != null && lengths != listOf("0")) return false
+        val publicBaseUrl = config.publicBaseUrl ?: return false
+        if (request.headers.getAll(HttpHeaders.Host) != listOf(URI(publicBaseUrl).rawAuthority)) return false
+    }
     if ((content.status ?: response.status()) != HttpStatusCode.OK) return false
     // Unknown response headers (cookies, identity, tokens, debug, Vary, existing cache directives) fail closed.
     val safeHeaders = setOf("content-type", "content-length")

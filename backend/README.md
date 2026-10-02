@@ -12,10 +12,10 @@ The single-instance setup uses an in-memory IGDB limiter and needs no Redis serv
 | `TWITCH_CLIENT_SECRET` | Twitch developer application secret for IGDB |
 | `IGDB_RATE_LIMITER` | Set `in-memory` for one instance; `redis` is the default if omitted |
 | `REDIS_URL` | Shared Redis connection URL, required only in Redis mode |
-| `CORS_ALLOWED_ORIGINS` | Comma-separated exact hosted web origins; local HTTP origins are allowed automatically |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated exact web origins, including local HTTP origins when needed |
 | `PUBLIC_BASE_URL` | External API origin used in image proxy URLs, required behind a TLS reverse proxy |
 | `PUBLIC_CACHE_ENABLED` | Default `false`; `true` enables only the public giveaway list policy described below |
-| `CLOUDFLARE_ORIGIN_SECRET` | Optional origin guard; bind a pinned secret, at least 32 non-space ASCII characters |
+| `CLOUDFLARE_ORIGIN_SECRET` | Optional origin guard; private value with at least 32 non-space ASCII characters |
 | `PORT` | Listening port, default `8080` |
 
 Create a confidential application in the [Twitch Developer Console](https://dev.twitch.tv/console/apps). IGDB uses
@@ -65,7 +65,7 @@ For one instance, explicitly set `IGDB_RATE_LIMITER=in-memory`; multiple instanc
 The `publish` job in [the backend workflow](../.github/workflows/publish-backend.yml) builds and publishes to your
 repository's GHCR package. Replace or remove its `deploy` job to deploy elsewhere while keeping image publication.
 That job targets Cloud Run for validated backend-impacting changes or manual runs on `master`, and fails if the
-required `GCP_*` repository variables are missing; it does not automatically skip deployment for an unconfigured fork.
+required `GCP_*` repository secrets are missing; it does not automatically skip deployment for an unconfigured fork.
 
 ## API
 

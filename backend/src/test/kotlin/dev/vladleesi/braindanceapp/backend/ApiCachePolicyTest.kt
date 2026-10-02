@@ -86,11 +86,13 @@ class ApiCachePolicyTest {
             assertEquals("https://app.example", browser.headers["Access-Control-Allow-Origin"])
             assertEquals(PRIVATE_CACHE_CONTROL, browser.headers[HttpHeaders.CacheControl])
             assertNull(browser.headers["Access-Control-Allow-Credentials"])
-            val deniedBrowser =
-                client.get("$base/v1/giveaways") {
-                    header(HttpHeaders.Origin, "https://evil.example")
-                }
-            assertNull(deniedBrowser.headers["Access-Control-Allow-Origin"])
+            for (origin in listOf("https://evil.example", "http://localhost:12345", "http://127.0.0.1:12345")) {
+                val deniedBrowser =
+                    client.get("$base/v1/giveaways") {
+                        header(HttpHeaders.Origin, origin)
+                    }
+                assertNull(deniedBrowser.headers["Access-Control-Allow-Origin"], origin)
+            }
         }
 
     @Test
@@ -162,6 +164,62 @@ class ApiCachePolicyTest {
                     assertContains(cacheControl, PRIVATE_CACHE_CONTROL, name)
                 }
             }
+        }
+
+    @Test
+    fun cloudflareAttestationRequiresGuardAndStillRejectsCredentials() =
+        testApplication {
+            val client = publicClient()
+            val secret = "a".repeat(32)
+            val guarded = config.copy(cloudflareOriginSecret = secret)
+            val remote = PublicUpstream()
+            application { api(guarded, IgdbService(remote, RateLimiter { true }, guarded), GiveawayService(remote)) }
+            for (marker in listOf(null, "0", "forged")) {
+                val response =
+                    client.get("$base/v1/giveaways") {
+                        header(ORIGIN_SECRET_HEADER, secret)
+                        marker?.let { header(PUBLIC_CACHE_ELIGIBLE_HEADER, it) }
+                    }
+                assertEquals(PRIVATE_CACHE_CONTROL, response.headers[HttpHeaders.CacheControl])
+            }
+            val spoofed = client.get("$base/v1/giveaways") { header(PUBLIC_CACHE_ELIGIBLE_HEADER, "1") }
+            assertEquals(HttpStatusCode.Forbidden, spoofed.status)
+            assertEquals(PRIVATE_CACHE_CONTROL, spoofed.headers[HttpHeaders.CacheControl])
+            val attested =
+                client.get("$base/v1/giveaways") {
+                    header(ORIGIN_SECRET_HEADER, secret)
+                    header(PUBLIC_CACHE_ELIGIBLE_HEADER, "1")
+                    header(HttpHeaders.Host, "internal.example")
+                    header("X-Forwarded-Host", "internal.example")
+                    header("Forwarded", "host=internal.example")
+                }
+            assertEquals(PUBLIC_CACHE_CONTROL, attested.headers[HttpHeaders.CacheControl])
+            assertNull(attested.headers[PUBLIC_CACHE_ELIGIBLE_HEADER])
+            assertFalse(attested.bodyAsText().contains("internal.example"))
+            for (name in cacheBypassHeaders - setOf("forwarded", "x-forwarded-host", "transfer-encoding")) {
+                val response =
+                    client.get("$base/v1/giveaways") {
+                        header(ORIGIN_SECRET_HEADER, secret)
+                        header(PUBLIC_CACHE_ELIGIBLE_HEADER, "1")
+                        header(name, "sensitive-test-value")
+                    }
+                assertEquals(PRIVATE_CACHE_CONTROL, response.headers[HttpHeaders.CacheControl], name)
+            }
+            for (path in listOf("/v1/giveaways?token=secret", "/v1/giveaways/file.css", "/v1/favorites")) {
+                val response =
+                    client.get("$base$path") {
+                        header(ORIGIN_SECRET_HEADER, secret)
+                        header(PUBLIC_CACHE_ELIGIBLE_HEADER, "1")
+                    }
+                assertEquals(PRIVATE_CACHE_CONTROL, response.headers[HttpHeaders.CacheControl], path)
+            }
+            val duplicate =
+                client.get("$base/v1/giveaways") {
+                    header(ORIGIN_SECRET_HEADER, secret)
+                    header(PUBLIC_CACHE_ELIGIBLE_HEADER, "1")
+                    header(PUBLIC_CACHE_ELIGIBLE_HEADER, "1")
+                }
+            assertEquals(PRIVATE_CACHE_CONTROL, duplicate.headers[HttpHeaders.CacheControl])
         }
 
     @Test

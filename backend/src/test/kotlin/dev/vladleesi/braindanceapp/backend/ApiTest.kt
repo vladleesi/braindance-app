@@ -278,9 +278,9 @@ class ApiTest {
         }
 
     @Test
-    fun missingCredentialsAndLocalCors() =
+    fun missingCredentialsAndConfiguredLocalCors() =
         testApplication {
-            val missing = config.copy(clientSecret = null)
+            val missing = config.copy(clientSecret = null, allowedOrigins = setOf("http://localhost:8765"))
             val (remote, http) = upstream { respond("[]") }
             application { api(missing, IgdbService(remote, RateLimiter { true }, missing), GiveawayService(remote)) }
             assertEquals(HttpStatusCode.ServiceUnavailable, client.get("/healthz").status)
@@ -297,6 +297,13 @@ class ApiTest {
                 client
                     .options("/v1/games/details") {
                         header(HttpHeaders.Origin, "http://localhost:8765")
+                    }.status,
+            )
+            assertEquals(
+                HttpStatusCode.Forbidden,
+                client
+                    .options("/v1/games/details") {
+                        header(HttpHeaders.Origin, "http://localhost:8766")
                     }.status,
             )
             http.close()

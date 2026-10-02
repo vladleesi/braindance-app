@@ -178,7 +178,7 @@ private fun isAllowedOrigin(
             url.path.isNullOrEmpty() &&
             url.query == null &&
             url.fragment == null &&
-            (origin in configured || (url.scheme == "http" && url.host in setOf("localhost", "127.0.0.1")))
+            origin in configured
     } catch (_: Exception) {
         false
     }

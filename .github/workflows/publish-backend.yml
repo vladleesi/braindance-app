@@ -9,6 +9,17 @@ on:
         description: Master revision before the validated push or promotion
         required: true
         type: string
+    secrets:
+      GCP_PROJECT_ID:
+        required: false
+      GCP_REGION:
+        required: false
+      GCP_CLOUD_RUN_SERVICE:
+        required: false
+      GCP_WORKLOAD_IDENTITY_PROVIDER:
+        required: false
+      GCP_DEPLOY_SERVICE_ACCOUNT:
+        required: false
 
 permissions:
   contents: read
@@ -137,11 +148,11 @@ jobs:
       contents: read
       id-token: write
     env:
-      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
-      GCP_REGION: ${{ vars.GCP_REGION }}
-      GCP_CLOUD_RUN_SERVICE: ${{ vars.GCP_CLOUD_RUN_SERVICE }}
-      GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-      GCP_DEPLOY_SERVICE_ACCOUNT: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_REGION: ${{ secrets.GCP_REGION }}
+      GCP_CLOUD_RUN_SERVICE: ${{ secrets.GCP_CLOUD_RUN_SERVICE }}
+      GCP_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      GCP_DEPLOY_SERVICE_ACCOUNT: ${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}
       PUBLISHED_IMAGE: ${{ needs.publish.outputs.image }}
       SOURCE_SHA: ${{ needs.changes.outputs.source_sha }}
     steps:
@@ -156,10 +167,13 @@ jobs:
           for name in GCP_PROJECT_ID GCP_REGION GCP_CLOUD_RUN_SERVICE \
             GCP_WORKLOAD_IDENTITY_PROVIDER GCP_DEPLOY_SERVICE_ACCOUNT; do
             if [ -z "${!name}" ]; then
-              echo "Repository variable $name is required for deployment." >&2
+              echo "Repository secret $name is required for deployment." >&2
               exit 1
             fi
           done
+          if [[ "$GCP_WORKLOAD_IDENTITY_PROVIDER" =~ projects/([0-9]+)/ ]]; then
+            printf '::add-mask::%s\n' "${BASH_REMATCH[1]}"
+          fi
           master_sha="$(git ls-remote origin refs/heads/master | cut -f1)"
           if [ "$master_sha" != "$SOURCE_SHA" ]; then
             echo "::notice::Skipping deployment because master has advanced past the published revision."
@@ -171,17 +185,21 @@ jobs:
         if: steps.validate.outputs.current == 'true'
         uses: google-github-actions/auth@v3
         with:
-          project_id: ${{ vars.GCP_PROJECT_ID }}
-          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_DEPLOY_SERVICE_ACCOUNT }}
       - name: Set up Google Cloud CLI
         if: steps.validate.outputs.current == 'true'
         uses: google-github-actions/setup-gcloud@v3
       - name: Update existing Cloud Run image
         if: steps.validate.outputs.current == 'true'
         run: |
-          gcloud run services update "$GCP_CLOUD_RUN_SERVICE" \
-            --project "$GCP_PROJECT_ID" \
-            --region "$GCP_REGION" \
-            --image "$PUBLISHED_IMAGE" \
-            --quiet
+          umask 077
+          if ! gcloud run services update "$GCP_CLOUD_RUN_SERVICE" \
+              --project "$GCP_PROJECT_ID" \
+              --region "$GCP_REGION" \
+              --image "$PUBLISHED_IMAGE" \
+              --quiet > "$RUNNER_TEMP/cloud-run-update.log" 2>&1; then
+            echo "::error::Cloud Run image update failed. Inspect the private Google Cloud deployment logs."
+            exit 1
+          fi

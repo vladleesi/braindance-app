@@ -29,6 +29,7 @@ def main():
             "Arguments must be exact HTTPS origins without a trailing slash",
         )
     opener = urllib.request.build_opener(NoRedirect())
+    opener.addheaders = [("User-Agent", "BraindanceCacheCheck/1.0")]
 
     def request(path, method="GET", headers=None):
         req = urllib.request.Request(base + path, headers=headers or {}, method=method)
@@ -73,6 +74,8 @@ def main():
         ("/v1/giveaways", "GET", {"X-HTTP-Method-Override": "POST"}),
         ("/v1/giveaways", "GET", {"Origin": web_origin}),
         ("/v1/giveaways", "GET", {"Origin": "https://evil.example"}),
+        ("/v1/giveaways", "GET", {"Authorization": "Bearer dummy", "X-Public-Cache-Eligible": "1"}),
+        ("/v1/giveaways", "GET", {"Forwarded": "host=evil.example", "X-Public-Cache-Eligible": "1"}),
         ("/v1/giveaways?token=dummy", "GET", {}),
         ("/v1/giveaways?a=1&a=2", "GET", {}),
         ("/v1/giveaways/42", "GET", {}),
@@ -90,6 +93,7 @@ def main():
             require(cache_status in ("BYPASS", "DYNAMIC"), "Excluded request entered the shared-cache path")
             require(headers.get("Age") is None, "Excluded request has cached Age")
             require(headers.get("X-Origin-Verify") is None, "Origin verification header leaked")
+            require(headers.get("X-Public-Cache-Eligible") is None, "Cache attestation header leaked")
             require(headers.get("Authorization") is None, "Authorization response header leaked")
             origin = request_headers.get("Origin")
             if origin:
