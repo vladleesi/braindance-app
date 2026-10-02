@@ -2,6 +2,7 @@
 
 package dev.vladleesi.braindanceapp.backend
 
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -10,22 +11,29 @@ import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.request.port
 import io.ktor.server.request.receiveChannel
+import io.ktor.server.request.uri
 import io.ktor.server.response.respondBytes
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.utils.io.readAvailable
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import java.io.ByteArrayOutputStream
 import java.net.URI
+import java.time.Instant
 
-private val gamePaths =
-    setOf(
-        "/v1/games/details",
-        "/v1/games/anticipated",
-        "/v1/games/popular",
-        "/v1/games/popularity",
+internal val gameQueryParameters =
+    mapOf(
+        "/v1/games/details" to setOf("id"),
+        "/v1/games/anticipated" to setOf("currentTimestamp", "pageSize"),
+        "/v1/games/popular" to setOf("ids", "pageSize"),
+        "/v1/games/popularity" to setOf("type", "pageSize"),
     )
 
 fun Application.api(
@@ -34,6 +42,7 @@ fun Application.api(
     giveaways: GiveawayService,
 ) {
     installApiCachePolicy(config)
+    installRequestTiming()
     routing {
         route("{...}") {
             handle {
@@ -43,9 +52,14 @@ fun Application.api(
                 }
                 val path = call.request.path()
                 val method = call.request.httpMethod.value
-                val origin = call.request.headers[HttpHeaders.Origin]
+                val origin =
+                    call.request.headers
+                        .getAll(HttpHeaders.Origin)
+                        ?.singleOrNull()
                 val allowed = origin?.let { isAllowedOrigin(it, config.allowedOrigins) } == true
-                if (method == "OPTIONS" && path.startsWith("/v1/")) {
+                // Include absent and denied origins so downstream caches cannot reuse a different CORS variant.
+                call.response.headers.append(HttpHeaders.Vary, "Origin")
+                if (method == "OPTIONS" && (path.startsWith("/v1/") || path == "/health")) {
                     if (allowed) {
                         cors(origin)
                         call.respondText("", status = HttpStatusCode.NoContent)
@@ -57,14 +71,15 @@ fun Application.api(
                 if (allowed) cors(origin)
                 try {
                     when {
-                        path in setOf("/healthz", "/health") && method == "GET" -> {
+                        path == "/health" && method == "GET" -> respondJson(200, """{"ok":true}""")
+                        path == "/healthz" && method == "GET" -> {
                             if (config.credentialsAvailable) {
                                 respondJson(200, """{"ok":true}""")
                             } else {
                                 respondJson(503, """{"error":"Backend credentials unavailable"}""")
                             }
                         }
-                        path in gamePaths && method == "POST" -> respondGame(path, igdb, config)
+                        path in gameQueryParameters && method in setOf("GET", "POST") -> respondGame(path, igdb, config)
                         path.startsWith("/v1/giveaways") && method == "GET" -> {
                             if (path == "/v1/giveaways/image") {
                                 respondImage(giveaways)
@@ -76,7 +91,7 @@ fun Application.api(
                                 val result = giveaways.giveaway(path, base)
                                 when (result.status) {
                                     200 -> {
-                                        if (path == "/v1/giveaways") call.attributes.put(publicGiveawayResponse, true)
+                                        call.attributes.put(publicResponsePolicy, PublicCachePolicy.GIVEAWAY)
                                         respondJson(200, checkNotNull(result.body).decodeToString())
                                     }
                                     404 -> respondJson(404, """{"error":"Giveaway not found"}""")
@@ -99,13 +114,14 @@ fun Application.api(
     }
 }
 
-private suspend fun io.ktor.server.routing.RoutingContext.respondGame(
+private suspend fun RoutingContext.respondGame(
     path: String,
     igdb: IgdbService,
     config: BackendConfig,
 ) {
+    val get = call.request.httpMethod.value == "GET"
     val contentType = call.request.headers[HttpHeaders.ContentType].orEmpty()
-    if (!contentType.startsWith("application/json")) {
+    if (!get && !contentType.startsWith("application/json")) {
         respondJson(415, """{"error":"Expected application/json"}""")
         return
     }
@@ -113,19 +129,26 @@ private suspend fun io.ktor.server.routing.RoutingContext.respondGame(
         respondJson(503, """{"error":"Backend credentials unavailable"}""")
         return
     }
-    val body =
-        try {
-            readRequest(2048)
-        } catch (_: BodyTooLarge) {
-            respondJson(413, """{"error":"Query too large"}""")
-            return
-        }
     val input =
-        try {
-            Json.parseToJsonElement(body.decodeToString())
-        } catch (_: Exception) {
-            respondJson(400, """{"error":"Invalid JSON"}""")
-            return
+        if (get) {
+            gameInput(path) ?: run {
+                respondJson(400, """{"error":"Invalid request"}""")
+                return
+            }
+        } else {
+            val body =
+                try {
+                    readRequest(2048)
+                } catch (_: BodyTooLarge) {
+                    respondJson(413, """{"error":"Query too large"}""")
+                    return
+                }
+            try {
+                Json.parseToJsonElement(body.decodeToString())
+            } catch (_: Exception) {
+                respondJson(400, """{"error":"Invalid JSON"}""")
+                return
+            }
         }
     val result =
         try {
@@ -135,14 +158,43 @@ private suspend fun io.ktor.server.routing.RoutingContext.respondGame(
             return
         }
     when (result.status) {
-        200 -> respondJson(200, checkNotNull(result.body).decodeToString())
+        200 -> {
+            if (get) {
+                val policy = if (path == "/v1/games/details") PublicCachePolicy.GAME_DETAILS else PublicCachePolicy.FEED
+                call.attributes.put(publicResponsePolicy, policy)
+            }
+            respondJson(200, checkNotNull(result.body).decodeToString())
+        }
         400 -> respondJson(400, """{"error":"Invalid request"}""")
         429 -> respondJson(429, """{"error":"Rate limit exceeded"}""")
         else -> respondJson(502, """{"error":"Upstream unavailable"}""")
     }
 }
 
-private suspend fun io.ktor.server.routing.RoutingContext.respondImage(giveaways: GiveawayService) {
+private fun RoutingContext.gameInput(path: String): JsonObject? {
+    val parameters = call.request.queryParameters
+    val names = checkNotNull(gameQueryParameters[path])
+    if (call.request.uri.length > 2048 || parameters.entries().any { it.key !in names || it.value.size != 1 }) {
+        return null
+    }
+    val input = mutableMapOf<String, JsonElement>()
+    for ((name, values) in parameters.entries()) {
+        if (name == "ids") {
+            val ids = values.single().split(',')
+            if (ids.isEmpty() || ids.size > 50) return null
+            input[name] = JsonArray(ids.map { JsonPrimitive(it.toLongOrNull() ?: return null) })
+        } else {
+            input[name] = JsonPrimitive(values.single().toLongOrNull() ?: return null)
+        }
+    }
+    // A stable feed URL lets different startups share an edge entry; explicit timestamps remain supported.
+    if (path == "/v1/games/anticipated" && "currentTimestamp" !in input) {
+        input["currentTimestamp"] = JsonPrimitive(Instant.now().epochSecond)
+    }
+    return JsonObject(input)
+}
+
+private suspend fun RoutingContext.respondImage(giveaways: GiveawayService) {
     val imageResult =
         try {
             giveaways.image(call.request.queryParameters["url"])
@@ -155,10 +207,11 @@ private suspend fun io.ktor.server.routing.RoutingContext.respondImage(giveaways
     val (result, contentType) = imageResult
     when (result.status) {
         200 -> {
+            call.attributes.put(publicResponsePolicy, PublicCachePolicy.IMAGE)
             call.respondBytes(
                 checkNotNull(result.body),
-                io.ktor.http.ContentType
-                    .parse(checkNotNull(contentType)),
+                ContentType.parse(checkNotNull(contentType)),
+                status = HttpStatusCode.OK,
             )
         }
         400 -> respondJson(400, """{"error":"Invalid image URL"}""")
@@ -166,7 +219,7 @@ private suspend fun io.ktor.server.routing.RoutingContext.respondImage(giveaways
     }
 }
 
-private fun isAllowedOrigin(
+internal fun isAllowedOrigin(
     origin: String,
     configured: Set<String>,
 ): Boolean =
@@ -183,34 +236,32 @@ private fun isAllowedOrigin(
         false
     }
 
-private fun validGiveawayId(path: String): Boolean {
+internal fun validGiveawayId(path: String): Boolean {
     val digits = Regex("^/v1/giveaways/([0-9]+)$").matchEntire(path)?.groupValues?.get(1) ?: return false
     return digits.toLongOrNull()?.let { it in 1..Int.MAX_VALUE.toLong() } == true
 }
 
-private fun io.ktor.server.routing.RoutingContext.cors(origin: String) {
+private fun RoutingContext.cors(origin: String) {
     call.response.headers.append("Access-Control-Allow-Origin", origin)
     call.response.headers.append("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
     call.response.headers.append("Access-Control-Allow-Headers", "Content-Type")
     call.response.headers.append("Access-Control-Max-Age", "86400")
-    call.response.headers.append(HttpHeaders.Vary, "Origin")
 }
 
-private suspend fun io.ktor.server.routing.RoutingContext.respondJson(
+private suspend fun RoutingContext.respondJson(
     status: Int,
     text: String,
 ) {
     call.respondText(
         text,
-        io.ktor.http.ContentType
-            .parse("application/json; charset=utf-8"),
+        ContentType.parse("application/json; charset=utf-8"),
         HttpStatusCode.fromValue(status),
     )
 }
 
-private suspend fun io.ktor.server.routing.RoutingContext.readRequest(limit: Int): ByteArray {
+private suspend fun RoutingContext.readRequest(limit: Int): ByteArray {
     val channel = call.receiveChannel()
-    val output = java.io.ByteArrayOutputStream()
+    val output = ByteArrayOutputStream()
     val buffer = ByteArray(8192)
     while (true) {
         val count = channel.readAvailable(buffer)

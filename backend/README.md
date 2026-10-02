@@ -1,7 +1,7 @@
 # Braindance API
 
 The Kotlin/JVM Ktor service proxies IGDB and GamerPower without exposing Twitch credentials to clients. Its
-independent version is `0.4.0` in `build.gradle.kts`.
+independent version is `0.5.0` in `build.gradle.kts`.
 The single-instance setup uses an in-memory IGDB limiter and needs no Redis service.
 
 ## Configuration
@@ -14,7 +14,7 @@ The single-instance setup uses an in-memory IGDB limiter and needs no Redis serv
 | `REDIS_URL` | Shared Redis connection URL, required only in Redis mode |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated exact web origins, including local HTTP origins when needed |
 | `PUBLIC_BASE_URL` | External API origin used in image proxy URLs, required behind a TLS reverse proxy |
-| `PUBLIC_CACHE_ENABLED` | Default `false`; `true` enables only the public giveaway list policy described below |
+| `PUBLIC_CACHE_ENABLED` | Default `false`; `true` enables the public GET policies in `cloudflare.md` |
 | `CLOUDFLARE_ORIGIN_SECRET` | Optional origin guard; private value with at least 32 non-space ASCII characters |
 | `PORT` | Listening port, default `8080` |
 
@@ -34,10 +34,10 @@ See [optional shared rate limiting](#optional-shared-rate-limiting) before incre
 The application reads exported environment variables; it does not load env files automatically. For local use,
 copy `backend/example.env` to the ignored `backend/.env`, edit it, then run
 `set -a; . backend/.env; set +a` before starting Gradle. Set `PUBLIC_BASE_URL=http://localhost:8080` locally.
-Docker can load the same file with `docker run --env-file backend/.env -p 8080:8080 braindance-api:0.4.0`.
+Docker can load the same file with `docker run --env-file backend/.env -p 8080:8080 braindance-api:0.5.0`.
 
 Run `./gradlew :backend:test :backend:installDist` to test and create a distribution. Build a container with
-`docker build -f backend/Dockerfile -t braindance-api:0.4.0 backend`. Inject environment variables at runtime and
+`docker build -f backend/Dockerfile -t braindance-api:0.5.0 backend`. Inject environment variables at runtime and
 publish port 8080 through the hosting provider's HTTPS proxy. GitHub Actions validates the distribution and builds
 the image. After all checks pass, backend-impacting changes pushed or promoted to `master` publish version and
 commit tagged images to GitHub Container Registry and deploy the published image digest to the existing Cloud Run
@@ -72,21 +72,24 @@ required `GCP_*` repository secrets are missing; it does not automatically skip 
 | Endpoint | Request |
 | --- | --- |
 | `GET /healthz` | Health and credential availability |
-| `GET /health` | Same health check for hosts that reserve `/healthz` |
-| `POST /v1/games/details` | `{"id":42}` |
-| `POST /v1/games/anticipated` | `{"currentTimestamp":1780000000,"pageSize":20}` |
-| `POST /v1/games/popular` | `{"ids":[42,43],"pageSize":20}` |
-| `POST /v1/games/popularity` | `{"type":34,"pageSize":40}` |
+| `GET /health` | Application ready; no credentials, client creation or external calls |
+| `GET /v1/games/details?id=42` | Game details |
+| `GET /v1/games/anticipated?pageSize=20` | Upcoming games; optional `currentTimestamp` overrides server time |
+| `GET /v1/games/popular?ids=42,43&pageSize=20` | Up to 50 comma-separated game IDs |
+| `GET /v1/games/popularity?type=34&pageSize=40` | Popularity primitives |
 | `GET /v1/giveaways` | Giveaway list |
 | `GET /v1/giveaways/42` | Giveaway details |
 | `GET /v1/giveaways/image?url=...` | Images under `https://www.gamerpower.com/offers/` |
 
-Game POST bodies are capped at 2 KiB. IGDB JSON is capped at 1 MiB, GamerPower JSON at 2 MiB, and images at 5 MiB.
+Legacy game POSTs retain their existing JSON bodies and behavior for installed clients and remain no-store.
+GET parameters reject unknown/duplicate keys and retain the same integer bounds. Game URLs and POST bodies
+are capped at 2 KiB. IGDB JSON is capped at 1 MiB, GamerPower JSON at 2 MiB, and images at 5 MiB.
 Token requests time out after 5 seconds; other upstream requests after 8 seconds. Responses default to
-`private, no-store`, including images. Only anonymous, query-free, non-browser `GET /v1/giveaways` successes can
-opt into `public, max-age=60, stale-while-revalidate=30, stale-if-error=0`. No credentials or unknown response
-headers are allowed on that path when caching. All responses have `nosniff`, `no-referrer`, frame protection,
-and a restrictive API content security policy. Browser preflight is supported for `/v1/` routes.
+`private, no-store`. Explicit anonymous GET successes can opt into the per-endpoint policies in
+[the Cloudflare guide](cloudflare.md#cache-policy), including browser requests from exact allowed origins.
+Health, preflight, errors, legacy POST, credentials and unknown response headers remain no-store.
+All responses have `nosniff`, `no-referrer`, frame protection and a restrictive API content security policy.
+Browser preflight is supported for `/v1/` and `/health` routes.
 Set `CORS_ALLOWED_ORIGINS` to exact production site origins, without paths or trailing slashes.
 Keep this allowlist free of wildcards; credentials are not enabled. Loopback HTTP origins remain supported.
 
@@ -94,6 +97,25 @@ See [Cloudflare DNS/CDN setup and security verification](cloudflare.md) before e
 origin guard. Cloud Run remains the origin; no Worker or additional Google Cloud service is required.
 
 [IGDB API](https://api-docs.igdb.com/) · [Twitch application registration](https://dev.twitch.tv/docs/authentication/register-app/)
+
+## Cold-start timing
+
+Clients launch one best-effort `/health` request from shared Koin startup without awaiting it or retrying.
+It can overlap UI startup with instance activation; it cannot guarantee a warm instance before the first data request.
+There is no periodic traffic, and minimum instances remain zero.
+
+Startup logs report JVM uptime at entry to `main`, environment/config validation, optional Redis pool creation,
+service creation, server creation, application route installation, and server readiness. HTTP client initialization
+is timed separately on its first use; it is already lazy and shared. A bounded first-completion log per route
+reports request time, and the first token/IGDB/giveaway/image operation reports upstream time without URLs,
+headers, credentials or payloads. No application database or runtime Secret Manager client exists; optional Redis
+network work happens on the IGDB limiter path. Container provisioning and platform secret injection occur before
+these application measurements and need Cloud Run request/startup logs for attribution.
+
+To compare a real cold request with a warm request, let the service naturally scale to zero, then time a no-store
+health GET and a game GET (or use staging with public caching disabled). Do not change scaling or add keep-alives.
+Edge HIT/UPDATING timing measures CDN delivery rather than origin startup. Inspect startup and first-operation logs
+from the same instance to separate JVM/application readiness, HTTP initialization and upstream latency.
 
 ## Optional shared rate limiting
 

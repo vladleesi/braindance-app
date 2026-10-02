@@ -94,9 +94,9 @@ Inspect the deployed service to verify CPU, memory, concurrency, timeout, reques
 identity, pinned secret references, and both service/revision instance limits. Confirm logs contain no secret values
 or upstream bodies without copying sensitive logs into Git or shared reports. Perform only a few smoke requests:
 
-- `/health`: 200 (credential presence only; this does not prove Twitch authentication).
+- `/health`: 200 once the application is ready; no credential checks or upstream calls.
   `/healthz` is preserved in the application, but the Google edge intercepts that path with a 404 on `run.app`.
-- `POST /v1/games/details` with JSON `{"id":42}`: successful IGDB response.
+- `GET /v1/games/details?id=42`: successful IGDB response; legacy JSON POST remains supported.
 - `/v1/giveaways`: successful JSON with HTTPS image proxy URLs; request one returned image URL.
 - Invalid game ID: 400; invalid image URL: 400; missing JSON content type: 415.
 - Preflight from the configured production origin and both local hosts: 204 and exact allow-origin header.

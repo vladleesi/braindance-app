@@ -12,15 +12,25 @@ import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.hooks.ResponseBodyReadyForSend
 import io.ktor.server.application.install
 import io.ktor.server.request.httpMethod
+import io.ktor.server.request.path
 import io.ktor.server.request.uri
 import io.ktor.util.AttributeKey
 import java.net.URI
 import java.security.MessageDigest
 
-internal val publicGiveawayResponse = AttributeKey<Boolean>("PublicGiveawayResponse")
+internal val publicResponsePolicy = AttributeKey<PublicCachePolicy>("PublicResponsePolicy")
+
+internal enum class PublicCachePolicy(
+    val control: String,
+) {
+    FEED("public, max-age=300, stale-while-revalidate=86400"),
+    GAME_DETAILS("public, max-age=3600, stale-while-revalidate=86400"),
+    GIVEAWAY("public, max-age=300, stale-while-revalidate=3600"),
+    IMAGE("public, max-age=86400, stale-while-revalidate=604800"),
+}
 
 internal const val PRIVATE_CACHE_CONTROL = "private, no-store"
-internal const val PUBLIC_CACHE_CONTROL = "public, max-age=60, stale-while-revalidate=30, stale-if-error=0"
+internal val PUBLIC_CACHE_CONTROL = PublicCachePolicy.GIVEAWAY.control
 internal const val ORIGIN_SECRET_HEADER = "X-Origin-Verify"
 internal const val PUBLIC_CACHE_ELIGIBLE_HEADER = "X-Public-Cache-Eligible"
 private const val MIN_ORIGIN_SECRET_LENGTH = 32
@@ -32,7 +42,6 @@ internal val cacheBypassHeaders =
         "authorization",
         "proxy-authorization",
         "cookie",
-        "origin",
         "x-api-key",
         "x-auth-token",
         "x-user-id",
@@ -64,7 +73,11 @@ internal fun Application.installApiCachePolicy(config: BackendConfig) {
                 val cacheable = call.canCachePublicResponse(config, content)
                 call.response.headers.append(
                     HttpHeaders.CacheControl,
-                    if (cacheable) PUBLIC_CACHE_CONTROL else PRIVATE_CACHE_CONTROL,
+                    if (cacheable) {
+                        checkNotNull(call.attributes.getOrNull(publicResponsePolicy)).control
+                    } else {
+                        PRIVATE_CACHE_CONTROL
+                    },
                 )
                 call.response.headers.append("X-Content-Type-Options", "nosniff")
                 call.response.headers.append("Referrer-Policy", "no-referrer")
@@ -80,8 +93,14 @@ private fun ApplicationCall.canCachePublicResponse(
     content: OutgoingContent,
 ): Boolean {
     // A route must explicitly attest to a public body. New routes are private even if they return GET/200.
-    if (!config.publicCacheEnabled || attributes.getOrNull(publicGiveawayResponse) != true) return false
-    if (request.httpMethod != HttpMethod.Get || request.uri != "/v1/giveaways") return false
+    if (!config.publicCacheEnabled || attributes.getOrNull(publicResponsePolicy) == null) return false
+    if (request.httpMethod != HttpMethod.Get || !hasPublicQuery()) return false
+    val origins = request.headers.getAll(HttpHeaders.Origin)
+    if (origins != null &&
+        (origins.size != 1 || !isAllowedOrigin(origins.single(), config.allowedOrigins))
+    ) {
+        return false
+    }
     // Cloud Run can rewrite transport headers. A guarded Cloudflare attestation checks the original request.
     val guarded = config.cloudflareOriginSecret != null
     if (
@@ -104,9 +123,35 @@ private fun ApplicationCall.canCachePublicResponse(
         if (request.headers.getAll(HttpHeaders.Host) != listOf(URI(publicBaseUrl).rawAuthority)) return false
     }
     if ((content.status ?: response.status()) != HttpStatusCode.OK) return false
-    // Unknown response headers (cookies, identity, tokens, debug, Vary, existing cache directives) fail closed.
+    // Only the exact CORS headers emitted by this API are safe; other variations still fail closed.
     val safeHeaders = setOf("content-type", "content-length")
-    return (response.headers.allValues().names() + content.headers.names()).all { it.lowercase() in safeHeaders }
+    val corsHeaders =
+        mapOf(
+            "vary" to "Origin",
+            "access-control-allow-origin" to origins?.singleOrNull(),
+            "access-control-allow-methods" to "GET, POST, OPTIONS",
+            "access-control-allow-headers" to "Content-Type",
+            "access-control-max-age" to "86400",
+        )
+    return listOf(response.headers.allValues(), content.headers).all { headers ->
+        headers.names().all { name ->
+            name.lowercase() in safeHeaders ||
+                corsHeaders[name.lowercase()]?.let { headers.getAll(name) == listOf(it) } == true
+        }
+    }
+}
+
+private fun ApplicationCall.hasPublicQuery(): Boolean {
+    val path = request.path()
+    // Do not cache path aliases or unknown/duplicate query parameters, even when a handler ignores them.
+    if (request.uri.substringBefore('?') != path) return false
+    val names =
+        when {
+            path == "/v1/giveaways" || validGiveawayId(path) -> emptySet()
+            path == "/v1/giveaways/image" -> setOf("url")
+            else -> gameQueryParameters[path] ?: return false
+        }
+    return request.queryParameters.entries().all { (name, values) -> name in names && values.size == 1 }
 }
 
 internal fun ApplicationCall.hasValidOriginSecret(config: BackendConfig): Boolean {

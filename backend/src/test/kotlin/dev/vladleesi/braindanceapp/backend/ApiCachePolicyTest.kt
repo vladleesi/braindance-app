@@ -27,7 +27,15 @@ import kotlin.test.assertNull
 class ApiCachePolicyTest {
     private val base = "https://localhost"
     private val config =
-        BackendConfig("id", "secret", null, setOf("https://app.example"), 8080, base, publicCacheEnabled = true)
+        BackendConfig(
+            clientId = "id",
+            clientSecret = "secret",
+            redisUrl = null,
+            allowedOrigins = setOf("https://app.example", "https://second.example"),
+            port = 8080,
+            publicBaseUrl = base,
+            publicCacheEnabled = true,
+        )
 
     private fun ApplicationTestBuilder.publicClient() =
         createClient {
@@ -46,7 +54,7 @@ class ApiCachePolicyTest {
             assertNull(public.headers[HttpHeaders.SetCookie])
             assertNull(public.headers[HttpHeaders.Authorization])
             assertNull(public.headers[ORIGIN_SECRET_HEADER])
-            assertNull(public.headers[HttpHeaders.Vary])
+            assertEquals("Origin", public.headers[HttpHeaders.Vary])
             assertEquals("nosniff", public.headers["X-Content-Type-Options"])
             for (name in cacheBypassHeaders - "transfer-encoding") {
                 val response = client.get("$base/v1/giveaways") { header(name, "sensitive-test-value") }
@@ -66,8 +74,6 @@ class ApiCachePolicyTest {
                 "/v1/giveaways?token=secret",
                 "/v1/giveaways?user_id=42",
                 "/v1/giveaways?a=1&a=2",
-                "/v1/giveaways/42",
-                "/v1/giveaways/image?url=https%3A%2F%2Fwww.gamerpower.com%2Foffers%2Fa.png",
                 "/v1/giveaways/file.css",
                 "/v1/giveaways/",
                 "/v1/auth",
@@ -84,7 +90,8 @@ class ApiCachePolicyTest {
             }
             val browser = client.get("$base/v1/giveaways") { header(HttpHeaders.Origin, "https://app.example") }
             assertEquals("https://app.example", browser.headers["Access-Control-Allow-Origin"])
-            assertEquals(PRIVATE_CACHE_CONTROL, browser.headers[HttpHeaders.CacheControl])
+            assertEquals(PUBLIC_CACHE_CONTROL, browser.headers[HttpHeaders.CacheControl])
+            assertEquals("Origin", browser.headers[HttpHeaders.Vary])
             assertNull(browser.headers["Access-Control-Allow-Credentials"])
             for (origin in listOf("https://evil.example", "http://localhost:12345", "http://127.0.0.1:12345")) {
                 val deniedBrowser =
@@ -92,7 +99,50 @@ class ApiCachePolicyTest {
                         header(HttpHeaders.Origin, origin)
                     }
                 assertNull(deniedBrowser.headers["Access-Control-Allow-Origin"], origin)
+                assertEquals(PRIVATE_CACHE_CONTROL, deniedBrowser.headers[HttpHeaders.CacheControl], origin)
+                assertEquals("Origin", deniedBrowser.headers[HttpHeaders.Vary], origin)
             }
+        }
+
+    @Test
+    fun successfulPublicGetsUseTheirRoutePolicy() =
+        testApplication {
+            val client = publicClient()
+            val remote = PublicUpstream()
+            application { api(config, IgdbService(remote, RateLimiter { true }, config), GiveawayService(remote)) }
+            val cases =
+                mapOf(
+                    "/v1/games/details?id=42" to PublicCachePolicy.GAME_DETAILS,
+                    "/v1/games/anticipated?pageSize=20" to PublicCachePolicy.FEED,
+                    "/v1/games/popular?ids=42,43&pageSize=20" to PublicCachePolicy.FEED,
+                    "/v1/games/popularity?type=34&pageSize=40" to PublicCachePolicy.FEED,
+                    "/v1/giveaways/42" to PublicCachePolicy.GIVEAWAY,
+                    "/v1/giveaways/image?url=https%3A%2F%2Fwww.gamerpower.com%2Foffers%2Fa.png" to
+                        PublicCachePolicy.IMAGE,
+                )
+            for ((path, policy) in cases) {
+                for (origin in listOf(null, "https://app.example", "https://second.example")) {
+                    val response = client.get("$base$path") { origin?.let { header(HttpHeaders.Origin, it) } }
+                    assertEquals(HttpStatusCode.OK, response.status, path)
+                    assertEquals(policy.control, response.headers[HttpHeaders.CacheControl], path)
+                    assertEquals(origin, response.headers["Access-Control-Allow-Origin"], path)
+                    val authenticated = client.get("$base$path") { header(HttpHeaders.Authorization, "Bearer dummy") }
+                    assertEquals(PRIVATE_CACHE_CONTROL, authenticated.headers[HttpHeaders.CacheControl], path)
+                }
+            }
+            for (path in listOf(
+                "/v1/giveaways/42?user=1",
+                "/v1/giveaways/image?url=https%3A%2F%2Fwww.gamerpower.com%2Foffers%2Fa.png&token=dummy",
+            )) {
+                assertEquals(PRIVATE_CACHE_CONTROL, client.get("$base$path").headers[HttpHeaders.CacheControl], path)
+            }
+            val duplicateOrigin =
+                client.get("$base/v1/giveaways") {
+                    header(HttpHeaders.Origin, "https://app.example")
+                    header(HttpHeaders.Origin, "https://evil.example")
+                }
+            assertEquals(PRIVATE_CACHE_CONTROL, duplicateOrigin.headers[HttpHeaders.CacheControl])
+            assertNull(duplicateOrigin.headers["Access-Control-Allow-Origin"])
         }
 
     @Test
@@ -131,7 +181,7 @@ class ApiCachePolicyTest {
                 installApiCachePolicy(config)
                 routing {
                     get("/v1/giveaways") {
-                        call.attributes.put(publicGiveawayResponse, true)
+                        call.attributes.put(publicResponsePolicy, PublicCachePolicy.GIVEAWAY)
                         val name = extraHeader
                         if (contentHeader && name != null) {
                             call.respond(
@@ -196,6 +246,14 @@ class ApiCachePolicyTest {
             assertEquals(PUBLIC_CACHE_CONTROL, attested.headers[HttpHeaders.CacheControl])
             assertNull(attested.headers[PUBLIC_CACHE_ELIGIBLE_HEADER])
             assertFalse(attested.bodyAsText().contains("internal.example"))
+            val browser =
+                client.get("$base/v1/giveaways") {
+                    header(ORIGIN_SECRET_HEADER, secret)
+                    header(PUBLIC_CACHE_ELIGIBLE_HEADER, "1")
+                    header(HttpHeaders.Origin, "https://app.example")
+                }
+            assertEquals(PUBLIC_CACHE_CONTROL, browser.headers[HttpHeaders.CacheControl])
+            assertEquals("https://app.example", browser.headers["Access-Control-Allow-Origin"])
             for (name in cacheBypassHeaders - setOf("forwarded", "x-forwarded-host", "transfer-encoding")) {
                 val response =
                     client.get("$base/v1/giveaways") {
@@ -271,13 +329,23 @@ class ApiCachePolicyTest {
         override suspend fun token(
             clientId: String,
             clientSecret: String,
-        ): UpstreamResponse = error("Unexpected token")
+        ): UpstreamResponse =
+            UpstreamResponse(
+                HttpStatusCode.OK,
+                headersOf(HttpHeaders.ContentType, "application/json"),
+                """{"access_token":"dummy","expires_in":3600}""".encodeToByteArray(),
+            )
 
         override suspend fun igdb(
             path: String,
             query: String,
             clientId: String,
             token: String,
-        ): UpstreamResponse = error("Unexpected IGDB call")
+        ): UpstreamResponse =
+            UpstreamResponse(
+                HttpStatusCode.OK,
+                headersOf(HttpHeaders.ContentType, "application/json"),
+                "[]".encodeToByteArray(),
+            )
     }
 }

@@ -3,6 +3,12 @@
 Release notes for Android, iOS, and Web. Each version includes only platforms with user-visible changes.
 History begins with the introduction of shared version tracking in `version.xcconfig`.
 
+## 0.3.2
+
+### Android, iOS, and Web
+
+- Use cacheable game reads and start a background backend wake-up request to reduce loading delays.
+
 ## 0.3.1
 
 ### Web

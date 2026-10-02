@@ -5,6 +5,7 @@ import dev.vladleesi.braindanceapp.data.api.clients.BackendClient
 import dev.vladleesi.braindanceapp.data.api.remote.GamerPowerRemote
 import dev.vladleesi.braindanceapp.data.api.remote.GamesRemote
 import dev.vladleesi.braindanceapp.data.api.remote.PopularityPrimitivesRemote
+import dev.vladleesi.braindanceapp.data.api.warmUpBackend
 import dev.vladleesi.braindanceapp.data.repository.GameDetailsRepo
 import dev.vladleesi.braindanceapp.data.repository.GamerPowerRepo
 import dev.vladleesi.braindanceapp.data.repository.HomeRepo
@@ -25,10 +26,12 @@ fun initKoin(
     androidConfig: KoinAppDeclaration? = null,
     debugHttpLogging: Boolean = false,
 ) {
-    startKoin {
-        androidConfig?.invoke(this)
-        koinModules(debugHttpLogging)
-    }
+    val application =
+        startKoin {
+            androidConfig?.invoke(this)
+            koinModules(debugHttpLogging)
+        }
+    warmUpBackend { application.koin.get(named(KtorClientManager.BACKEND_HTTP_CLIENT)) }
 }
 
 private fun KoinApplication.koinModules(debugHttpLogging: Boolean) =

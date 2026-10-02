@@ -9,11 +9,8 @@ class HomeRepo(
     private val gamesRemote: GamesRemote,
     private val primitivesRepo: PopularityPrimitivesRepo,
 ) {
-    suspend fun mostAnticipated(
-        pageSize: Int,
-        currentTimestamp: Long,
-    ): List<GameItem>? {
-        val response = gamesRemote.mostAnticipated(currentTimestamp = currentTimestamp, pageSize = pageSize)
+    suspend fun mostAnticipated(pageSize: Int): List<GameItem>? {
+        val response = gamesRemote.mostAnticipated(pageSize = pageSize)
         return response.body()
     }
 

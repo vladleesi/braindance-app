@@ -123,7 +123,8 @@ jobs:
             echo "CHANGELOG.md is missing the entry for $FRONTEND_VERSION." >&2
             exit 1
           fi
-          if ! grep -Eq '^### (Android|iOS|Web)$' "$changelog_entry" || \
+          platform_heading='^### (Android|iOS|Web|Android and (iOS|Web)|iOS and Web|Android, iOS, and Web)$'
+          if ! grep -Eq "$platform_heading" "$changelog_entry" || \
             ! grep -Eq '^- .+' "$changelog_entry"; then
             echo "The changelog entry must include platform headings and change bullets." >&2
             exit 1

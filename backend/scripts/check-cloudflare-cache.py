@@ -32,6 +32,9 @@ def main():
     opener.addheaders = [("User-Agent", "BraindanceCacheCheck/1.0")]
 
     def request(path, method="GET", headers=None):
+        # Keep a burst of uncached verification keys below the existing four-per-second IGDB limit.
+        if path.startswith("/v1/games/"):
+            time.sleep(0.3)
         req = urllib.request.Request(base + path, headers=headers or {}, method=method)
         try:
             response = opener.open(req, timeout=40)
@@ -47,17 +50,36 @@ def main():
         print(f"{method} {path.split('?')[0]}: HTTP {status}, CF-Cache-Status={cache_status or 'absent'}")
         return status, result, cache_status
 
-    saw_hit = False
-    for _ in range(5):
-        status, headers, cache_status = request("/v1/giveaways")
-        require(status == 200, "Public list unavailable; verify origin secret, upstream, TLS and WAF")
-        require("public" in headers.get("Cache-Control", ""), "Origin public caching is not enabled")
-        require(not headers.get("Set-Cookie"), "Public response contains a cookie; inspect before accepting cache")
-        if cache_status == "HIT":
-            saw_hit = True
-            break
-        time.sleep(1)
-    require(saw_hit, "No warm HIT observed; check rules, Origin Cache Control, Development Mode and Tiered Cache")
+    def verify_public(path, origin=None):
+        saw_hit = False
+        for _ in range(5):
+            status, headers, cache_status = request(path, headers={"Origin": origin} if origin else {})
+            require(status == 200, "Public data unavailable; verify origin, upstream, TLS and WAF")
+            require("public" in headers.get("Cache-Control", ""), "Origin public caching is not enabled")
+            require(not headers.get("Set-Cookie"), "Public response contains a cookie")
+            require(headers.get("Access-Control-Allow-Origin") == origin, "Cached CORS variant mismatch")
+            require("origin" in {value.strip().lower() for value in headers.get("Vary", "").split(",")},
+                    "Missing Vary: Origin")
+            require(headers.get("Access-Control-Allow-Credentials") is None, "Credentialed CORS is enabled")
+            require(headers.get("X-Origin-Verify") is None, "Origin verification header leaked")
+            require(headers.get("X-Public-Cache-Eligible") is None, "Cache attestation header leaked")
+            if cache_status == "HIT":
+                saw_hit = True
+                break
+            time.sleep(1)
+        require(saw_hit, "No warm HIT; check cache/attestation rules, Origin Cache Control and Development Mode")
+
+    public_paths = [
+        "/v1/giveaways",
+        "/v1/games/details?id=42",
+        "/v1/games/anticipated?pageSize=20",
+        "/v1/games/popularity?type=34&pageSize=40",
+        "/v1/games/popular?ids=42,43&pageSize=20",
+    ]
+    for path in public_paths:
+        verify_public(path)
+        verify_public(path, web_origin)
+        verify_public(path)  # Browser CORS headers must not leak into the absent-Origin variant.
 
     cases = [
         ("/v1/giveaways", "GET", {"Authorization": "Bearer dummy-cdn-check"}),
@@ -72,17 +94,19 @@ def main():
         ("/v1/giveaways", "GET", {"X-Forwarded-Host": "evil.example"}),
         ("/v1/giveaways", "GET", {"X-Original-URL": "/v1/favorites"}),
         ("/v1/giveaways", "GET", {"X-HTTP-Method-Override": "POST"}),
-        ("/v1/giveaways", "GET", {"Origin": web_origin}),
         ("/v1/giveaways", "GET", {"Origin": "https://evil.example"}),
         ("/v1/giveaways", "GET", {"Authorization": "Bearer dummy", "X-Public-Cache-Eligible": "1"}),
         ("/v1/giveaways", "GET", {"Forwarded": "host=evil.example", "X-Public-Cache-Eligible": "1"}),
         ("/v1/giveaways?token=dummy", "GET", {}),
         ("/v1/giveaways?a=1&a=2", "GET", {}),
-        ("/v1/giveaways/42", "GET", {}),
         ("/v1/giveaways/image?url=https%3A%2F%2Fevil.example%2Foffers%2Fa.png", "GET", {}),
         ("/v1/giveaways/file.css", "GET", {}),
         ("/v1/favorites/file.css", "GET", {}),
         ("/health", "GET", {}),
+        ("/v1/games/details?id=42&token=dummy", "GET", {}),
+        ("/v1/games/details?id=42&id=43", "GET", {}),
+        ("/v1/games/details?id=42", "GET", {"Authorization": "Bearer dummy"}),
+        ("/v1/games/details?id=42", "GET", {"Cookie": "session=dummy"}),
     ]
     cases.extend(("/v1/giveaways", method, {}) for method in ("POST", "PUT", "PATCH", "DELETE", "HEAD"))
     for path, method, request_headers in cases:
@@ -104,7 +128,7 @@ def main():
     status, headers, cache_status = request("/v1/giveaways")
     require(status == 200 and cache_status in ("HIT", "UPDATING"), "Public entry changed after excluded probes")
     require(headers.get("Access-Control-Allow-Origin") is None, "Browser headers contaminated public entry")
-    print("PASS: warm public entry and repeated excluded requests stayed separated at this edge.")
+    print("PASS: public GET/CORS variants and excluded requests stayed separated at this edge.")
 
 
 if __name__ == "__main__":

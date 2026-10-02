@@ -11,7 +11,6 @@ import dev.vladleesi.braindanceapp.ui.components.home.MiniGameCardModel
 import dev.vladleesi.braindanceapp.utils.CoverSize
 import dev.vladleesi.braindanceapp.utils.formatEndDate
 import dev.vladleesi.braindanceapp.utils.giveawayPlatforms
-import dev.vladleesi.braindanceapp.utils.nowUnix
 import dev.vladleesi.braindanceapp.utils.orZero
 import dev.vladleesi.braindanceapp.utils.parentPlatformTypes
 import dev.vladleesi.braindanceapp.utils.toCoverUrl
@@ -53,7 +52,7 @@ class HomeViewModel(
         viewModelScope.launch(handler) {
             runCatching {
                 _mostAnticipated.emit(HomeState.Loading)
-                val gameItems = homeRepo.mostAnticipated(pageSize = pageSize, currentTimestamp = nowUnix)
+                val gameItems = homeRepo.mostAnticipated(pageSize = pageSize)
                 gameItems.orEmpty().mapperMiniGameCardModel()
             }.onSuccess { result ->
                 _mostAnticipated.emit(HomeState.Success(result))

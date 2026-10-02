@@ -8,22 +8,37 @@ Examples use placeholders; keep actual hostnames, identifiers, and secrets in ig
 
 Shared caching is disabled by default (`PUBLIC_CACHE_ENABLED=false`); the origin guard is unset until configured.
 
-| Response | Cache-Control |
+| Successful anonymous GET | Cache-Control |
 | --- | --- |
-| Explicitly public, anonymous `GET /v1/giveaways`, HTTP 200, verified HTTPS host | `public, max-age=60, stale-while-revalidate=30, stale-if-error=0` |
+| `/v1/games/details?id=42` | `public, max-age=3600, stale-while-revalidate=86400` |
+| `/v1/games/anticipated?pageSize=20` | `public, max-age=300, stale-while-revalidate=86400` |
+| `/v1/games/popular?ids=42,43&pageSize=20` | `public, max-age=300, stale-while-revalidate=86400` |
+| `/v1/games/popularity?type=34&pageSize=40` | `public, max-age=300, stale-while-revalidate=86400` |
+| `/v1/giveaways` and `/v1/giveaways/{id}` | `public, max-age=300, stale-while-revalidate=3600` |
+| `/v1/giveaways/image?url=...` | `public, max-age=86400, stale-while-revalidate=604800` |
 | Everything else | `private, no-store` |
 
-All queries, Origin/credential/identity headers, other paths, and non-GET methods—including HEAD—bypass lookup
-and storage. This includes auth, favorites, sync, personalized data, images, game POSTs, and errors (401/403/404/429/5xx).
-Cookies, tokens, Vary, debug/internal headers, and any unexpected response header prevent public caching.
+Game feeds change slowly; their stale window can hide an origin restart. Game details get a longer freshness
+period. Giveaway availability changes more often, so stale offers are limited to one hour; redemption still
+happens at the provider. Image URLs identify public assets and can tolerate longer staleness.
+Only HTTP 200 responses explicitly marked public by a handler can be stored. Authentication, cookies, identity,
+method overrides, suspicious forwarding headers, unknown/duplicate query parameters, errors, health, preflight,
+and non-GET methods (including legacy POST and HEAD) remain uncached. New routes default to private.
 
-The public handler fetches GamerPower without forwarding user context or upstream headers. Image URLs use fixed
-`PUBLIC_BASE_URL`. Its public marker attests to safe JSON; it does not automatically detect secrets in the body.
-Before adding user context or sensitive fields, remove that marker and disable/purge its edge rule.
-Keep new authentication headers aligned with `cacheBypassHeaders` in `ApiCachePolicy.kt` and the expression below.
-Browser requests carrying Origin remain uncached; this setup does not eliminate cold starts for game POSTs.
-With the origin guard enabled, Cloudflare must attest to the original safe request using the transform below.
-This accommodates Cloud Run transport-header rewrites without trusting visitor forwarding headers.
+The API never forwards visitor context or upstream response headers. Rewritten image links use fixed
+`PUBLIC_BASE_URL`. Before adding sensitive fields or user context, remove the public marker and disable/purge
+its edge rule. Keep authentication headers aligned with `cacheBypassHeaders` in `ApiCachePolicy.kt` and the rule below.
+Cloudflare must attest to the original safe request using the guarded transform; this accommodates Cloud Run
+transport-header rewrites without trusting visitor forwarding headers.
+
+Browser GETs with a single exact allowed Origin are now eligible too. CORS keeps the existing allowlist and no
+credential support. Every handled response varies on Origin, including requests without Origin or from a denied
+origin. Denied, malformed and duplicate origins remain no-store. Allow only the exact CORS response headers the
+handler emits; cookies, identity, tokens, debugging headers, other Vary values and cache overrides fail closed.
+Cloudflare's default cache key includes Origin; preserve it and configure `Vary: Origin` as passthrough where
+Cache Rules Vary is configured. Never ignore/normalize Origin or add wildcard CORS transforms.
+[Cloudflare CORS](https://developers.cloudflare.com/cache/cache-security/cors/) and
+[Vary](https://developers.cloudflare.com/cache/concepts/vary/).
 
 ## 1. Prepare the origin
 
@@ -56,20 +71,26 @@ Create these rules in order after unrelated rules; allow no later rule to overri
 http.host eq "api.example.com"
 ```
 
-**Rule 2 — Public giveaway list.** Create **disabled** until cutover:
+**Rule 2 — Public reads.** Create **disabled** until cutover:
 
 ```text
 (http.host eq "api.example.com"
  and ssl
  and http.request.method eq "GET"
- and raw.http.request.uri eq "/v1/giveaways"
- and http.request.uri eq "/v1/giveaways"
+ and raw.http.request.uri.path eq http.request.uri.path
+ and (http.request.uri.path in {
+   "/v1/giveaways" "/v1/games/details" "/v1/games/anticipated"
+   "/v1/games/popular" "/v1/games/popularity"
+ } or starts_with(http.request.uri.path, "/v1/giveaways/"))
+ and (not any(lower(http.request.headers.names[*])[*] eq "origin")
+      or (len(http.request.headers["origin"]) eq 1
+          and http.request.headers["origin"][0] in {"https://app.example.com"}))
  and not http.request.headers.truncated
  and (not any(lower(http.request.headers.names[*])[*] eq "content-length")
       or (len(http.request.headers["content-length"]) eq 1
           and http.request.headers["content-length"][0] eq "0"))
  and not any(lower(http.request.headers.names[*])[*] in {
-   "authorization" "proxy-authorization" "cookie" "origin"
+   "authorization" "proxy-authorization" "cookie"
    "x-api-key" "x-auth-token" "x-user-id" "x-session-id"
    "range" "transfer-encoding"
    "x-http-method-override" "x-http-method" "x-method-override"
@@ -81,12 +102,15 @@ http.host eq "api.example.com"
 - Edge TTL: **Use cache-control header if present, bypass cache if not** (`bypass_by_default`).
 - Browser TTL: **Respect origin**. Serve stale content while revalidating: **Enabled**.
 - Keep Origin Cache Control enabled. No TTL overrides, Status Code TTLs, or **Ignore cache-control header**.
-- Keep the default URL-based cache key; do not ignore queries or add cookies, identity, device, or arbitrary headers.
+- Preserve the default cache key, including the complete query string and Origin. Do not ignore queries/Origin
+  or add cookies, identity, device, or arbitrary headers. If Vary settings are present, use Origin passthrough.
+- Match the exact origin list to `CORS_ALLOWED_ORIGINS` in both this rule and its attestation transform.
 
-Exact raw/normalized URI matching prevents path aliases and extension tricks from entering the public rule.
+Raw/normalized path matching excludes encoded aliases. The origin separately validates endpoint paths and query
+schemas; an unknown path or query cannot obtain a public marker/cache policy. Keep the full query in the cache key.
 Empty/case-varied bypass headers and truncated inspection fail closed; only absent or single `Content-Length: 0`
 is allowed. Do not add `s-maxage`, `must-revalidate`, or `proxy-revalidate`: Cloudflare disables stale revalidation
-with those directives. Only a previous public 200 may be served during the 30-second revalidation window.
+with those directives. Only a previous public 200 may be served during that endpoint's stale window.
 [Cache settings](https://developers.cloudflare.com/cache/how-to/cache-rules/settings/) and
 [Origin Cache Control](https://developers.cloudflare.com/cache/concepts/cache-control/).
 
@@ -132,14 +156,18 @@ curl --silent --show-error --dump-header - --output /dev/null https://api.exampl
 Repeat the GET; HEAD (`curl -I`) deliberately bypasses caching. Expected `CF-Cache-Status`:
 
 - **MISS:** eligible response fetched from origin. **HIT:** cached response served.
-- **UPDATING:** stale public response served during revalidation after 60 seconds, for at most 30 more seconds.
+- **UPDATING:** a previous public response served during its stale revalidation window.
   Fast refreshes can make it hard to observe; Tiered Cache can make the first local request a HIT.
 - **BYPASS/DYNAMIC:** excluded request. Require `private, no-store`, no `Age`, and no leaked credentials/cookies.
   Cloudflare-generated errors may omit this header.
 
 Test the old `run.app`, tags/aliases, and mapped origin directly using `curl --resolve api.example.com:443:ORIGIN_IP`
 with TLS verification and forged Cloudflare/secret headers. Require 403, or Google 404 for a disabled URL.
-Check normal browser/game requests, exact CORS origins, no credentialed CORS, and existing security headers.
+Check each GET in the policy table twice, with and without an allowed Origin. Require HIT on a warm entry,
+correct allow-origin, and `Vary: Origin`. Alternate two allowed origins, an unrelated origin and no Origin to check
+separation. CORS header changes require purging every cached Origin variant; a purge of only the bare URL can
+leave variants behind. Follow Cloudflare's CORS purge instructions or plan a full purge accounting for other apps.
+Check legacy POST compatibility, exact CORS origins, no credentialed CORS, and existing security headers.
 Use staging to inject 401/403/429/5xx; require no-store and no cache hits. Repeat from another network.
 [Cache statuses](https://developers.cloudflare.com/cache/concepts/cache-responses/).
 

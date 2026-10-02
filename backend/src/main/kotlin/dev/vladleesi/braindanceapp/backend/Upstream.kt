@@ -17,6 +17,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.encodeURLParameter
 import io.ktor.utils.io.readAvailable
 import java.io.ByteArrayOutputStream
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 
 private const val JSON_CONTENT_TYPE = "application/json"
 
@@ -76,6 +78,7 @@ class KtorUpstream(
             createClient()
         }
     private val client by clientDelegate
+    private val measuredOperations = ConcurrentHashMap.newKeySet<String>()
 
     override fun close() {
         synchronized(clientLock) {
@@ -89,43 +92,71 @@ class KtorUpstream(
     override suspend fun token(
         clientId: String,
         clientSecret: String,
-    ) = client
-        .preparePost("https://id.twitch.tv/oauth2/token") {
-            header(HttpHeaders.ContentType, "application/x-www-form-urlencoded")
-            timeout { requestTimeoutMillis = 5000 }
-            setBody(
-                "client_id=${clientId.encodeURLParameter()}&client_secret=" +
-                    "${clientSecret.encodeURLParameter()}&grant_type=client_credentials",
-            )
-        }.bounded(2048, null)
+    ) = measured("twitch_token") {
+        client
+            .preparePost("https://id.twitch.tv/oauth2/token") {
+                header(HttpHeaders.ContentType, "application/x-www-form-urlencoded")
+                timeout { requestTimeoutMillis = 5000 }
+                setBody(
+                    "client_id=${clientId.encodeURLParameter()}&client_secret=" +
+                        "${clientSecret.encodeURLParameter()}&grant_type=client_credentials",
+                )
+            }.bounded(2048, null)
+    }
 
     override suspend fun igdb(
         path: String,
         query: String,
         clientId: String,
         token: String,
-    ) = client
-        .preparePost("https://api.igdb.com$path") {
-            header("Client-ID", clientId)
-            header(HttpHeaders.Authorization, "Bearer $token")
-            header(HttpHeaders.ContentType, "text/plain")
-            timeout { requestTimeoutMillis = 8000 }
-            setBody(query)
-        }.bounded(1024 * 1024, JSON_CONTENT_TYPE)
+    ) = measured("igdb") {
+        client
+            .preparePost("https://api.igdb.com$path") {
+                header("Client-ID", clientId)
+                header(HttpHeaders.Authorization, "Bearer $token")
+                header(HttpHeaders.ContentType, "text/plain")
+                timeout { requestTimeoutMillis = 8000 }
+                setBody(query)
+            }.bounded(1024 * 1024, JSON_CONTENT_TYPE)
+    }
 
     override suspend fun giveaway(url: String) =
-        client
-            .prepareGet(url) {
-                header(HttpHeaders.Accept, JSON_CONTENT_TYPE)
-                timeout { requestTimeoutMillis = 8000 }
-            }.bounded(2 * 1024 * 1024, JSON_CONTENT_TYPE)
+        measured("giveaway") {
+            client
+                .prepareGet(url) {
+                    header(HttpHeaders.Accept, JSON_CONTENT_TYPE)
+                    timeout { requestTimeoutMillis = 8000 }
+                }.bounded(2 * 1024 * 1024, JSON_CONTENT_TYPE)
+        }
 
     override suspend fun image(url: String) =
+        measured("image") {
+            client
+                .prepareGet(url) {
+                    header(HttpHeaders.Accept, "image/*")
+                    timeout { requestTimeoutMillis = 8000 }
+                }.bounded(5 * 1024 * 1024, "image/")
+        }
+
+    private suspend fun measured(
+        operation: String,
+        block: suspend () -> UpstreamResponse,
+    ): UpstreamResponse {
+        if (!measuredOperations.add(operation)) return block()
+        // Resolve the shared client first, keeping its initialization out of the upstream duration.
         client
-            .prepareGet(url) {
-                header(HttpHeaders.Accept, "image/*")
-                timeout { requestTimeoutMillis = 8000 }
-            }.bounded(5 * 1024 * 1024, "image/")
+        val started = System.nanoTime()
+        var status: Int? = null
+        try {
+            return block().also { status = it.status.value }
+        } finally {
+            val duration = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started)
+            println(
+                "{\"event\":\"backend_first_upstream\",\"operation\":\"$operation\"," +
+                    "\"duration_ms\":$duration,\"status\":$status}",
+            )
+        }
+    }
 }
 
 private suspend fun HttpStatement.bounded(

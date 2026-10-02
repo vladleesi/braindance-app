@@ -14,19 +14,12 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 private const val DAYS_OF_MONTH = 30
-private const val MILLIS_IN_SECOND = 1000
 
 val currentYear: Int
     get() = GMTDate().year
 
 val lastYear: Int
     get() = GMTDate().year.dec()
-
-val now: Long
-    get() = GMTDate().timestamp
-
-val nowUnix: Long
-    get() = now / MILLIS_IN_SECOND
 
 // TODO: Add reusable formats
 @OptIn(ExperimentalTime::class)

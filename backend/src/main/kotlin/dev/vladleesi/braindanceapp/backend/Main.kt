@@ -34,16 +34,18 @@ fun main() {
                 null
             }
         }
-    val limiter = redis?.let(::RedisRateLimiter) ?: InMemoryRateLimiter()
+    val limiter = startup.measure("rate_limiter_creation") { redis?.let(::RedisRateLimiter) ?: InMemoryRateLimiter() }
     val upstream =
         KtorUpstream {
-            HttpClient(CIO) {
-                expectSuccess = false
-                install(HttpTimeout)
+            startup.measure("http_client_initialization") {
+                HttpClient(CIO) {
+                    expectSuccess = false
+                    install(HttpTimeout)
+                }
             }
         }
-    val igdb = IgdbService(upstream, limiter, config)
-    val giveaways = GiveawayService(upstream)
+    val igdb = startup.measure("igdb_service_creation") { IgdbService(upstream, limiter, config) }
+    val giveaways = startup.measure("giveaway_service_creation") { GiveawayService(upstream) }
     val server =
         startup.measure("server_create") {
             embeddedServer(Netty, port = config.port, host = "0.0.0.0") {

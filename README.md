@@ -15,12 +15,12 @@ The backend runs Kotlin/JVM with Ktor.
 
 ## Releases
 
-The current frontend version for Android, iOS, and Web is `0.3.1`, with one shared
-[Braindance Frontend release](https://github.com/vladleesi/braindance/releases/tag/frontend-v0.3.1).
+The current frontend version for Android, iOS, and Web is `0.3.2`, with one shared
+[Braindance Frontend release](https://github.com/vladleesi/braindance/releases/tag/frontend-v0.3.2).
 All three platforms use the same `MAJOR.MINOR.PATCH` version from `version.xcconfig`; Android and iOS also use its
 shared build number. Existing `mobile-v*` releases remain available as historical releases.
 
-The backend is versioned independently from the frontend. Its current version is `0.4.1`.
+The backend is versioned independently from the frontend. Its current version is `0.5.0`.
 GitHub Actions publishes one frontend source release tagged `frontend-vMAJOR.MINOR.PATCH` only after Android,
 iOS, Web, and backend checks succeed. Validated `develop` pushes are promoted to `master`; direct `master` pushes
 run the same checks before release publication. Frontend releases publish only when `MARKETING_VERSION` differs
@@ -30,9 +30,10 @@ has advanced or that version's release already exists. Retry a failed publicatio
 workflow's failed jobs; pull requests and manual validation runs do not publish releases.
 
 Release notes come from the matching `## MAJOR.MINOR.PATCH` entry in [CHANGELOG.md](CHANGELOG.md). Maintain concise
-change bullets under `### Android`, `### iOS`, and `### Web` headings only for platforms with user-visible changes.
-Describe shared changes in every affected platform's section and exclude backend-only changes. Update the entry
-with the frontend version change; the release workflow fails if that version's entry or platform notes are missing.
+change bullets only for platforms with user-visible changes. Group identical notes under a combined heading, such
+as `### Android and iOS` or `### Android, iOS, and Web`; separate sections only when notes differ. Exclude backend-only
+changes. Update the entry with the frontend version change; the release workflow fails if that version's entry or
+platform notes are missing.
 
 ## Project layout
 

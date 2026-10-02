@@ -2,14 +2,9 @@ package dev.vladleesi.braindanceapp.data.api.remote
 
 import dev.vladleesi.braindanceapp.data.api.KtorClientManager
 import dev.vladleesi.braindanceapp.data.config.ApiConfig
-import dev.vladleesi.braindanceapp.data.models.request.GameDetailsRequest
-import dev.vladleesi.braindanceapp.data.models.request.MostAnticipatedRequest
-import dev.vladleesi.braindanceapp.data.models.request.PopularGamesRequest
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 
 class GamesRemote(
     ktorClientManager: KtorClientManager,
@@ -17,26 +12,21 @@ class GamesRemote(
     private val backendHttpClient = ktorClientManager.backendHttpClient
 
     suspend fun gameDetails(id: Int): HttpResponse =
-        backendHttpClient.post(ApiConfig.Endpoints.GAME_DETAILS) {
-            contentType(ContentType.Application.Json)
-            setBody(GameDetailsRequest(id))
+        backendHttpClient.get(ApiConfig.Endpoints.GAME_DETAILS) {
+            parameter("id", id)
         }
 
-    suspend fun mostAnticipated(
-        currentTimestamp: Long,
-        pageSize: Int,
-    ): HttpResponse =
-        backendHttpClient.post(ApiConfig.Endpoints.MOST_ANTICIPATED) {
-            contentType(ContentType.Application.Json)
-            setBody(MostAnticipatedRequest(currentTimestamp, pageSize))
+    suspend fun mostAnticipated(pageSize: Int): HttpResponse =
+        backendHttpClient.get(ApiConfig.Endpoints.MOST_ANTICIPATED) {
+            parameter("pageSize", pageSize)
         }
 
     suspend fun popularGames(
         ids: List<Int>,
         pageSize: Int,
     ): HttpResponse =
-        backendHttpClient.post(ApiConfig.Endpoints.POPULAR_GAMES) {
-            contentType(ContentType.Application.Json)
-            setBody(PopularGamesRequest(ids, pageSize))
+        backendHttpClient.get(ApiConfig.Endpoints.POPULAR_GAMES) {
+            parameter("ids", ids.joinToString(","))
+            parameter("pageSize", pageSize)
         }
 }

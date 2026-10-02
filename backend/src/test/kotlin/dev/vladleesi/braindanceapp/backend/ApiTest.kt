@@ -12,6 +12,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.TextContent
 import io.ktor.http.headersOf
 import io.ktor.server.testing.testApplication
 import kotlinx.coroutines.runBlocking
@@ -39,6 +40,68 @@ class ApiTest {
     }
 
     @Test
+    fun getQueriesMatchLegacyPostAndRejectInvalidParameters() =
+        testApplication {
+            val queries = mutableListOf<String>()
+            val (remote, http) =
+                upstream { request ->
+                    if (request.url.host == "id.twitch.tv") {
+                        respond(
+                            """{"access_token":"abc","expires_in":3600}""",
+                            headers = headersOf(HttpHeaders.ContentType, "application/json"),
+                        )
+                    } else {
+                        queries += (request.body as TextContent).text
+                        respond("[]", headers = headersOf(HttpHeaders.ContentType, "application/json"))
+                    }
+                }
+            application { api(config, IgdbService(remote, RateLimiter { true }, config), GiveawayService(remote)) }
+            val cases =
+                mapOf(
+                    "details?id=42" to """{"id":42}""",
+                    "anticipated?currentTimestamp=1780000000&pageSize=20" to
+                        """{"currentTimestamp":1780000000,"pageSize":20}""",
+                    "popular?ids=42,43&pageSize=20" to """{"ids":[42,43],"pageSize":20}""",
+                    "popularity?type=34&pageSize=40" to """{"type":34,"pageSize":40}""",
+                )
+            for ((endpoint, body) in cases) {
+                val get = client.get("/v1/games/$endpoint")
+                val post =
+                    client.post("/v1/games/${endpoint.substringBefore('?')}") {
+                        header(HttpHeaders.ContentType, "application/json")
+                        setBody(body)
+                    }
+                assertEquals(HttpStatusCode.OK, get.status)
+                assertEquals(post.bodyAsText(), get.bodyAsText())
+                assertEquals(queries[queries.lastIndex - 1], queries.last())
+                assertEquals(PRIVATE_CACHE_CONTROL, post.headers[HttpHeaders.CacheControl])
+            }
+            val count = queries.size
+            for (endpoint in listOf(
+                "details?id=0",
+                "details?id=42&id=43",
+                "details?id=42&token=dummy",
+                "details?id=2147483648",
+                "anticipated?pageSize=51",
+                "popular?ids=1,0&pageSize=20",
+                "popular?ids=${(1..51).joinToString(",")}&pageSize=20",
+                "popularity?type=1&pageSize=20",
+            )) {
+                val response = client.get("/v1/games/$endpoint")
+                assertEquals(HttpStatusCode.BadRequest, response.status, endpoint)
+                assertEquals(PRIVATE_CACHE_CONTROL, response.headers[HttpHeaders.CacheControl])
+            }
+            assertEquals(count, queries.size)
+            assertEquals(HttpStatusCode.OK, client.get("/v1/games/anticipated?pageSize=20").status)
+            assertContains(queries.last(), "first_release_date > ")
+            assertEquals(
+                HttpStatusCode.OK,
+                client.get("/v1/games/popular?ids=${(1..50).joinToString(",")}&pageSize=50").status,
+            )
+            http.close()
+        }
+
+    @Test
     fun healthValidationCorsAndMissingRoutes() =
         testApplication {
             val (remote, http) =
@@ -48,7 +111,7 @@ class ApiTest {
             application { api(config, IgdbService(remote, RateLimiter { true }, config), GiveawayService(remote)) }
             assertEquals(HttpStatusCode.OK, client.get("/healthz").status)
             assertEquals(HttpStatusCode.OK, client.get("/health").status)
-            assertEquals(HttpStatusCode.NotFound, client.get("/v1/games/details").status)
+            assertEquals(HttpStatusCode.BadRequest, client.get("/v1/games/details").status)
             assertEquals(HttpStatusCode.UnsupportedMediaType, client.post("/v1/games/details").status)
             assertEquals(
                 HttpStatusCode.BadRequest,
@@ -284,6 +347,7 @@ class ApiTest {
             val (remote, http) = upstream { respond("[]") }
             application { api(missing, IgdbService(remote, RateLimiter { true }, missing), GiveawayService(remote)) }
             assertEquals(HttpStatusCode.ServiceUnavailable, client.get("/healthz").status)
+            assertEquals(HttpStatusCode.OK, client.get("/health").status)
             assertEquals(
                 HttpStatusCode.ServiceUnavailable,
                 client
