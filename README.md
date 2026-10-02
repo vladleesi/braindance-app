@@ -16,12 +16,12 @@ The backend runs Kotlin/JVM with Ktor.
 ## Releases
 
 The current frontend version for Android, iOS, and Web is `0.3.2`, with one shared
-[Braindance Frontend release](https://github.com/vladleesi/braindance/releases/tag/frontend-v0.3.2).
+[Braindance App release](https://github.com/vladleesi/braindance/releases/tag/app-v0.3.2).
 All three platforms use the same `MAJOR.MINOR.PATCH` version from `version.xcconfig`; Android and iOS also use its
 shared build number. Existing `mobile-v*` releases remain available as historical releases.
 
 The backend is versioned independently from the frontend. Its current version is `0.5.0`.
-GitHub Actions publishes one frontend source release tagged `frontend-vMAJOR.MINOR.PATCH` only after Android,
+GitHub Actions publishes one frontend source release tagged `app-vMAJOR.MINOR.PATCH` only after Android,
 iOS, Web, and backend checks succeed. Validated `develop` pushes are promoted to `master`; direct `master` pushes
 run the same checks before release publication. Frontend releases publish only when `MARKETING_VERSION` differs
 from the caller's pre-push revision (`develop` before promotion or `master` on direct pushes). An unreadable previous

@@ -64,7 +64,7 @@ jobs:
 
           echo "name=$version" >> "$GITHUB_OUTPUT"
           echo "build_number=$build_number" >> "$GITHUB_OUTPUT"
-          echo "tag=frontend-v$version" >> "$GITHUB_OUTPUT"
+          echo "tag=app-v$version" >> "$GITHUB_OUTPUT"
 
       - name: Check Frontend Version Change
         # Compare with the caller's push baseline: develop before promotion, master on direct pushes.
@@ -137,5 +137,5 @@ jobs:
 
           gh release create "$FRONTEND_TAG" \
             --target "$SOURCE_SHA" \
-            --title "Braindance Frontend $FRONTEND_VERSION" \
+            --title "Braindance App $FRONTEND_VERSION" \
             --notes-file "$notes_file"
