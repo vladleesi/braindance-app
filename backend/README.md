@@ -1,7 +1,7 @@
 # Braindance API
 
 The Kotlin/JVM Ktor service proxies IGDB and GamerPower without exposing Twitch credentials to clients. Its
-independent version is `0.5.0` in `build.gradle.kts`.
+independent version is `0.5.1` in `build.gradle.kts`.
 The single-instance setup uses an in-memory IGDB limiter and needs no Redis service.
 
 ## Configuration
@@ -14,7 +14,7 @@ The single-instance setup uses an in-memory IGDB limiter and needs no Redis serv
 | `REDIS_URL` | Shared Redis connection URL, required only in Redis mode |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated exact web origins, including local HTTP origins when needed |
 | `PUBLIC_BASE_URL` | External API origin used in image proxy URLs, required behind a TLS reverse proxy |
-| `PUBLIC_CACHE_ENABLED` | Default `false`; `true` enables the public GET policies in `cloudflare.md` |
+| `PUBLIC_CACHE_ENABLED` | Default `false`; `true` enables the public GET policy in `cloudflare.md` |
 | `CLOUDFLARE_ORIGIN_SECRET` | Optional origin guard; private value with at least 32 non-space ASCII characters |
 | `PORT` | Listening port, default `8080` |
 
@@ -34,10 +34,10 @@ See [optional shared rate limiting](#optional-shared-rate-limiting) before incre
 The application reads exported environment variables; it does not load env files automatically. For local use,
 copy `backend/example.env` to the ignored `backend/.env`, edit it, then run
 `set -a; . backend/.env; set +a` before starting Gradle. Set `PUBLIC_BASE_URL=http://localhost:8080` locally.
-Docker can load the same file with `docker run --env-file backend/.env -p 8080:8080 braindance-api:0.5.0`.
+Docker can load the same file with `docker run --env-file backend/.env -p 8080:8080 braindance-api:0.5.1`.
 
 Run `./gradlew :backend:test :backend:installDist` to test and create a distribution. Build a container with
-`docker build -f backend/Dockerfile -t braindance-api:0.5.0 backend`. Inject environment variables at runtime and
+`docker build -f backend/Dockerfile -t braindance-api:0.5.1 backend`. Inject environment variables at runtime and
 publish port 8080 through the hosting provider's HTTPS proxy. GitHub Actions validates the distribution and builds
 the image. After all checks pass, backend-impacting changes pushed or promoted to `master` publish version and
 commit tagged images to GitHub Container Registry and deploy the published image digest to the existing Cloud Run
@@ -85,7 +85,7 @@ Legacy game POSTs retain their existing JSON bodies and behavior for installed c
 GET parameters reject unknown/duplicate keys and retain the same integer bounds. Game URLs and POST bodies
 are capped at 2 KiB. IGDB JSON is capped at 1 MiB, GamerPower JSON at 2 MiB, and images at 5 MiB.
 Token requests time out after 5 seconds; other upstream requests after 8 seconds. Responses default to
-`private, no-store`. Explicit anonymous GET successes can opt into the per-endpoint policies in
+`private, no-store`. Explicit anonymous GET successes can opt into the 20-minute policy in
 [the Cloudflare guide](cloudflare.md#cache-policy), including browser requests from exact allowed origins.
 Health, preflight, errors, legacy POST, credentials and unknown response headers remain no-store.
 All responses have `nosniff`, `no-referrer`, frame protection and a restrictive API content security policy.

@@ -18,19 +18,10 @@ import io.ktor.util.AttributeKey
 import java.net.URI
 import java.security.MessageDigest
 
-internal val publicResponsePolicy = AttributeKey<PublicCachePolicy>("PublicResponsePolicy")
-
-internal enum class PublicCachePolicy(
-    val control: String,
-) {
-    FEED("public, max-age=300, stale-while-revalidate=86400"),
-    GAME_DETAILS("public, max-age=3600, stale-while-revalidate=86400"),
-    GIVEAWAY("public, max-age=300, stale-while-revalidate=3600"),
-    IMAGE("public, max-age=86400, stale-while-revalidate=604800"),
-}
+internal val publicResponse = AttributeKey<Unit>("PublicResponse")
 
 internal const val PRIVATE_CACHE_CONTROL = "private, no-store"
-internal val PUBLIC_CACHE_CONTROL = PublicCachePolicy.GIVEAWAY.control
+internal const val PUBLIC_CACHE_CONTROL = "public, max-age=1200"
 internal const val ORIGIN_SECRET_HEADER = "X-Origin-Verify"
 internal const val PUBLIC_CACHE_ELIGIBLE_HEADER = "X-Public-Cache-Eligible"
 private const val MIN_ORIGIN_SECRET_LENGTH = 32
@@ -74,7 +65,7 @@ internal fun Application.installApiCachePolicy(config: BackendConfig) {
                 call.response.headers.append(
                     HttpHeaders.CacheControl,
                     if (cacheable) {
-                        checkNotNull(call.attributes.getOrNull(publicResponsePolicy)).control
+                        PUBLIC_CACHE_CONTROL
                     } else {
                         PRIVATE_CACHE_CONTROL
                     },
@@ -93,7 +84,7 @@ private fun ApplicationCall.canCachePublicResponse(
     content: OutgoingContent,
 ): Boolean {
     // A route must explicitly attest to a public body. New routes are private even if they return GET/200.
-    if (!config.publicCacheEnabled || attributes.getOrNull(publicResponsePolicy) == null) return false
+    if (!config.publicCacheEnabled || attributes.getOrNull(publicResponse) == null) return false
     if (request.httpMethod != HttpMethod.Get || !hasPublicQuery()) return false
     val origins = request.headers.getAll(HttpHeaders.Origin)
     if (origins != null &&

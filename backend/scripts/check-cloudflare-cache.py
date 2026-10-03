@@ -50,12 +50,14 @@ def main():
         print(f"{method} {path.split('?')[0]}: HTTP {status}, CF-Cache-Status={cache_status or 'absent'}")
         return status, result, cache_status
 
-    def verify_public(path, origin=None):
+    def verify_public(path, origin=None, expect_miss=False):
         saw_hit = False
-        for _ in range(5):
+        for attempt in range(5):
             status, headers, cache_status = request(path, headers={"Origin": origin} if origin else {})
             require(status == 200, "Public data unavailable; verify origin, upstream, TLS and WAF")
-            require("public" in headers.get("Cache-Control", ""), "Origin public caching is not enabled")
+            if expect_miss and attempt == 0:
+                require(cache_status == "MISS", "Fresh public query did not produce a MISS")
+            require(headers.get("Cache-Control") == "public, max-age=1200", "Expected a 20-minute public TTL")
             require(not headers.get("Set-Cookie"), "Public response contains a cookie")
             require(headers.get("Access-Control-Allow-Origin") == origin, "Cached CORS variant mismatch")
             require("origin" in {value.strip().lower() for value in headers.get("Vary", "").split(",")},
@@ -64,10 +66,15 @@ def main():
             require(headers.get("X-Origin-Verify") is None, "Origin verification header leaked")
             require(headers.get("X-Public-Cache-Eligible") is None, "Cache attestation header leaked")
             if cache_status == "HIT":
+                require(headers.get("Age") is not None, "Cache HIT has no Age")
                 saw_hit = True
                 break
             time.sleep(1)
         require(saw_hit, "No warm HIT; check cache/attestation rules, Origin Cache Control and Development Mode")
+
+    # A supported timestamp creates a fresh cache key without purging unrelated cached data.
+    fresh_path = f"/v1/games/anticipated?currentTimestamp={int(time.time())}&pageSize=1"
+    verify_public(fresh_path, expect_miss=True)
 
     public_paths = [
         "/v1/giveaways",
@@ -109,6 +116,7 @@ def main():
         ("/v1/games/details?id=42", "GET", {"Cookie": "session=dummy"}),
     ]
     cases.extend(("/v1/giveaways", method, {}) for method in ("POST", "PUT", "PATCH", "DELETE", "HEAD"))
+    cases.extend(("/v1/games/details?id=42", method, {}) for method in ("POST", "PUT", "PATCH", "DELETE", "HEAD"))
     for path, method, request_headers in cases:
         for _ in range(2):
             status, headers, cache_status = request(path, method, request_headers)
@@ -125,10 +133,10 @@ def main():
                 require(headers.get("Access-Control-Allow-Origin") == expected, "CORS origin mismatch")
                 require(headers.get("Access-Control-Allow-Credentials") is None, "Credentialed CORS is enabled")
 
-    status, headers, cache_status = request("/v1/giveaways")
-    require(status == 200 and cache_status in ("HIT", "UPDATING"), "Public entry changed after excluded probes")
-    require(headers.get("Access-Control-Allow-Origin") is None, "Browser headers contaminated public entry")
+    # The entry can expire during the bypass probes; refill it and verify the absent-Origin variant again.
+    verify_public("/v1/giveaways")
     print("PASS: public GET/CORS variants and excluded requests stayed separated at this edge.")
+    print("Check Cloud Run request logs separately to confirm HIT requests did not contact the origin.")
 
 
 if __name__ == "__main__":

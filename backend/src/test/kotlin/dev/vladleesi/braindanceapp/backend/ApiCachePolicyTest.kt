@@ -105,26 +105,25 @@ class ApiCachePolicyTest {
         }
 
     @Test
-    fun successfulPublicGetsUseTheirRoutePolicy() =
+    fun successfulPublicGetsUseTwentyMinutePolicy() =
         testApplication {
             val client = publicClient()
             val remote = PublicUpstream()
             application { api(config, IgdbService(remote, RateLimiter { true }, config), GiveawayService(remote)) }
             val cases =
-                mapOf(
-                    "/v1/games/details?id=42" to PublicCachePolicy.GAME_DETAILS,
-                    "/v1/games/anticipated?pageSize=20" to PublicCachePolicy.FEED,
-                    "/v1/games/popular?ids=42,43&pageSize=20" to PublicCachePolicy.FEED,
-                    "/v1/games/popularity?type=34&pageSize=40" to PublicCachePolicy.FEED,
-                    "/v1/giveaways/42" to PublicCachePolicy.GIVEAWAY,
-                    "/v1/giveaways/image?url=https%3A%2F%2Fwww.gamerpower.com%2Foffers%2Fa.png" to
-                        PublicCachePolicy.IMAGE,
+                listOf(
+                    "/v1/games/details?id=42",
+                    "/v1/games/anticipated?pageSize=20",
+                    "/v1/games/popular?ids=42,43&pageSize=20",
+                    "/v1/games/popularity?type=34&pageSize=40",
+                    "/v1/giveaways/42",
+                    "/v1/giveaways/image?url=https%3A%2F%2Fwww.gamerpower.com%2Foffers%2Fa.png",
                 )
-            for ((path, policy) in cases) {
+            for (path in cases) {
                 for (origin in listOf(null, "https://app.example", "https://second.example")) {
                     val response = client.get("$base$path") { origin?.let { header(HttpHeaders.Origin, it) } }
                     assertEquals(HttpStatusCode.OK, response.status, path)
-                    assertEquals(policy.control, response.headers[HttpHeaders.CacheControl], path)
+                    assertEquals("public, max-age=1200", response.headers[HttpHeaders.CacheControl], path)
                     assertEquals(origin, response.headers["Access-Control-Allow-Origin"], path)
                     val authenticated = client.get("$base$path") { header(HttpHeaders.Authorization, "Bearer dummy") }
                     assertEquals(PRIVATE_CACHE_CONTROL, authenticated.headers[HttpHeaders.CacheControl], path)
@@ -181,7 +180,7 @@ class ApiCachePolicyTest {
                 installApiCachePolicy(config)
                 routing {
                     get("/v1/giveaways") {
-                        call.attributes.put(publicResponsePolicy, PublicCachePolicy.GIVEAWAY)
+                        call.attributes.put(publicResponse, Unit)
                         val name = extraHeader
                         if (contentHeader && name != null) {
                             call.respond(

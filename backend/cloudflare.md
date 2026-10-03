@@ -10,17 +10,15 @@ Shared caching is disabled by default (`PUBLIC_CACHE_ENABLED=false`); the origin
 
 | Successful anonymous GET | Cache-Control |
 | --- | --- |
-| `/v1/games/details?id=42` | `public, max-age=3600, stale-while-revalidate=86400` |
-| `/v1/games/anticipated?pageSize=20` | `public, max-age=300, stale-while-revalidate=86400` |
-| `/v1/games/popular?ids=42,43&pageSize=20` | `public, max-age=300, stale-while-revalidate=86400` |
-| `/v1/games/popularity?type=34&pageSize=40` | `public, max-age=300, stale-while-revalidate=86400` |
-| `/v1/giveaways` and `/v1/giveaways/{id}` | `public, max-age=300, stale-while-revalidate=3600` |
-| `/v1/giveaways/image?url=...` | `public, max-age=86400, stale-while-revalidate=604800` |
+| `/v1/games/details?id=42` | `public, max-age=1200` |
+| `/v1/games/anticipated?pageSize=20` | `public, max-age=1200` |
+| `/v1/games/popular?ids=42,43&pageSize=20` | `public, max-age=1200` |
+| `/v1/games/popularity?type=34&pageSize=40` | `public, max-age=1200` |
+| `/v1/giveaways` and `/v1/giveaways/{id}` | `public, max-age=1200` |
+| `/v1/giveaways/image?url=...` | `public, max-age=1200` |
 | Everything else | `private, no-store` |
 
-Game feeds change slowly; their stale window can hide an origin restart. Game details get a longer freshness
-period. Giveaway availability changes more often, so stale offers are limited to one hour; redemption still
-happens at the provider. Image URLs identify public assets and can tolerate longer staleness.
+All public reads use the same 20-minute freshness period, without a stale revalidation window.
 Only HTTP 200 responses explicitly marked public by a handler can be stored. Authentication, cookies, identity,
 method overrides, suspicious forwarding headers, unknown/duplicate query parameters, errors, health, preflight,
 and non-GET methods (including legacy POST and HEAD) remain uncached. New routes default to private.
@@ -100,7 +98,7 @@ http.host eq "api.example.com"
 
 - Cache eligibility: **Eligible for cache**.
 - Edge TTL: **Use cache-control header if present, bypass cache if not** (`bypass_by_default`).
-- Browser TTL: **Respect origin**. Serve stale content while revalidating: **Enabled**.
+- Browser TTL: **Respect origin**. Serve stale content while revalidating: **Disabled**.
 - Keep Origin Cache Control enabled. No TTL overrides, Status Code TTLs, or **Ignore cache-control header**.
 - Preserve the default cache key, including the complete query string and Origin. Do not ignore queries/Origin
   or add cookies, identity, device, or arbitrary headers. If Vary settings are present, use Origin passthrough.
@@ -109,8 +107,7 @@ http.host eq "api.example.com"
 Raw/normalized path matching excludes encoded aliases. The origin separately validates endpoint paths and query
 schemas; an unknown path or query cannot obtain a public marker/cache policy. Keep the full query in the cache key.
 Empty/case-varied bypass headers and truncated inspection fail closed; only absent or single `Content-Length: 0`
-is allowed. Do not add `s-maxage`, `must-revalidate`, or `proxy-revalidate`: Cloudflare disables stale revalidation
-with those directives. Only a previous public 200 may be served during that endpoint's stale window.
+is allowed. Do not add stale-serving directives or override the origin's 1200-second freshness period.
 [Cache settings](https://developers.cloudflare.com/cache/how-to/cache-rules/settings/) and
 [Origin Cache Control](https://developers.cloudflare.com/cache/concepts/cache-control/).
 
@@ -156,8 +153,6 @@ curl --silent --show-error --dump-header - --output /dev/null https://api.exampl
 Repeat the GET; HEAD (`curl -I`) deliberately bypasses caching. Expected `CF-Cache-Status`:
 
 - **MISS:** eligible response fetched from origin. **HIT:** cached response served.
-- **UPDATING:** a previous public response served during its stale revalidation window.
-  Fast refreshes can make it hard to observe; Tiered Cache can make the first local request a HIT.
 - **BYPASS/DYNAMIC:** excluded request. Require `private, no-store`, no `Age`, and no leaked credentials/cookies.
   Cloudflare-generated errors may omit this header.
 
@@ -170,6 +165,12 @@ leave variants behind. Follow Cloudflare's CORS purge instructions or plan a ful
 Check legacy POST compatibility, exact CORS origins, no credentialed CORS, and existing security headers.
 Use staging to inject 401/403/429/5xx; require no-store and no cache hits. Repeat from another network.
 [Cache statuses](https://developers.cloudflare.com/cache/concepts/cache-responses/).
+
+To prove HIT requests do not reach Cloud Run, use a fresh public URL (a supported unused query value,
+not an arbitrary cache-buster). Record UTC times and `CF-Ray` for one MISS and several identical HIT requests.
+After request logs arrive, filter Cloud Run request logs by that exact URL and time interval: only the MISS
+should appear. Send a dummy Authorization or session Cookie to the same warm URL; it must bypass cache and
+appear in origin logs. Log delay or missing log access means origin-contact verification is incomplete.
 
 **Rollback:** disable Rule 2, retain Rule 1, set `PUBLIC_CACHE_ENABLED=false`, and purge existing objects.
 Keep the proxy and origin guard enabled.

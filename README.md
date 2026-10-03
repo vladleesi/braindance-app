@@ -20,7 +20,7 @@ The current frontend version for Android, iOS, and Web is `0.3.2`, with one shar
 All three platforms use the same `MAJOR.MINOR.PATCH` version from `version.xcconfig`; Android and iOS also use its
 shared build number. Existing `mobile-v*` releases remain available as historical releases.
 
-The backend is versioned independently from the frontend. Its current version is `0.5.0`.
+The backend is versioned independently from the frontend. Its current version is `0.5.1`.
 GitHub Actions publishes one frontend source release tagged `app-vMAJOR.MINOR.PATCH` only after Android,
 iOS, Web, and backend checks succeed. Validated `develop` pushes are promoted to `master`; direct `master` pushes
 run the same checks before release publication. Frontend releases publish only when `MARKETING_VERSION` differs

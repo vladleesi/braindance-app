@@ -91,7 +91,7 @@ fun Application.api(
                                 val result = giveaways.giveaway(path, base)
                                 when (result.status) {
                                     200 -> {
-                                        call.attributes.put(publicResponsePolicy, PublicCachePolicy.GIVEAWAY)
+                                        call.attributes.put(publicResponse, Unit)
                                         respondJson(200, checkNotNull(result.body).decodeToString())
                                     }
                                     404 -> respondJson(404, """{"error":"Giveaway not found"}""")
@@ -160,8 +160,7 @@ private suspend fun RoutingContext.respondGame(
     when (result.status) {
         200 -> {
             if (get) {
-                val policy = if (path == "/v1/games/details") PublicCachePolicy.GAME_DETAILS else PublicCachePolicy.FEED
-                call.attributes.put(publicResponsePolicy, policy)
+                call.attributes.put(publicResponse, Unit)
             }
             respondJson(200, checkNotNull(result.body).decodeToString())
         }
@@ -207,7 +206,7 @@ private suspend fun RoutingContext.respondImage(giveaways: GiveawayService) {
     val (result, contentType) = imageResult
     when (result.status) {
         200 -> {
-            call.attributes.put(publicResponsePolicy, PublicCachePolicy.IMAGE)
+            call.attributes.put(publicResponse, Unit)
             call.respondBytes(
                 checkNotNull(result.body),
                 ContentType.parse(checkNotNull(contentType)),
